@@ -1,0 +1,30 @@
+.tabs ul {
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 0;
+    list-style: none;
+}
+
+.tabs li {
+    box-sizing: border-box;
+    border-bottom: 1px solid transparent;
+    cursor: pointer;
+}
+
+.tabs li button {
+    font-size: 14px;
+    font-weight: unset;
+    text-transform: uppercase;
+    padding: 1em 1.5em;
+    max-height: 3pc;
+    min-width: 3pc;
+    border-radius: 0;
+    background: none;
+    color: black;
+}
+
+.tabs li button.active {
+    border: none;
+    background-color: #202020;
+    color: #fff;
+}

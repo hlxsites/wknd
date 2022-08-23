@@ -2,8 +2,8 @@
 Your project's description...
 
 ## Environments
-- Preview: https://main--{repo}--{owner}.hlx.page/
-- Live: https://main--{repo}--{owner}.hlx.live/
+- Preview: https://main--wknd--hlxsites.hlx.page/
+- Live: https://main--wknd--hlxsites.hlx.live/
 
 ## Installation
 

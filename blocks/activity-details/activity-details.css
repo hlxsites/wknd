@@ -1,0 +1,30 @@
+.activity-details dl {
+    font-family: Source Sans Pro,Helvetica Neue,Helvetica,Arial,sans-serif;
+    text-transform: uppercase;
+    /*height: 84px;*/
+    /*margin-bottom: 1.25em;*/
+    /*padding-left: 1em;*/
+    /*padding-right: 1em;*/
+    /*float: left;*/
+    /*width: 100%;*/
+}
+
+.activity-details dt {
+    border-left: 5px solid #ebebeb;
+    color: #696969;
+    font-size: 9pt;
+    padding-top: 1em;
+    padding-left: 1em;
+}
+
+.activity-details dd {
+    border-left: 5px solid #ebebeb;
+    padding-top: .5em;
+    padding-bottom: 1em;
+    padding-left: 1em;
+    font-weight: 600;
+    font-size: 14px;
+    margin-inline-start: 0;
+    margin-bottom: 1.25em;
+}
+
