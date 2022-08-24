@@ -28,7 +28,8 @@ export function createTabs($block) {
   $block.replaceChildren($ul);
 
   // search referenced sections and move them inside the tab-container
-  const $tabsContainer = $block.parentElement.parentElement;
+  const $wrapper = $block.parentElement;
+  const $container = $wrapper.parentElement;
   const $sections = document.querySelectorAll('[data-tab]');
 
   // move the tab's section after the tab-block
@@ -41,7 +42,7 @@ export function createTabs($block) {
       $el.classList.add('tab-item');
       $el.append(...$tabContent.children);
       $el.classList.add('hidden');
-      $tabsContainer.append($el);
+      $container.insertBefore($el, $wrapper);
       $tabContent.remove();
       tab.$content = $el;
     }
