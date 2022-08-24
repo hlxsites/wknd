@@ -32,7 +32,7 @@ export function createTabs($block) {
   const $container = $wrapper.parentElement;
   const $sections = document.querySelectorAll('[data-tab]');
 
-  // move the tab's section after the tab-block
+  // move the tab's sections before the tab riders.
   [...$sections].forEach(($tabContent) => {
     const name = $tabContent.dataset.tab.toLowerCase().trim();
     /** @type TabInfo */
@@ -55,6 +55,12 @@ export function createTabs($block) {
  */
 export default function decorate($block) {
   const tabs = createTabs($block);
+
+  // move the tab riders in front
+  const $wrapper = $block.parentElement;
+  const $container = $wrapper.parentElement;
+  $container.insertBefore($wrapper, $container.firstElementChild);
+
   tabs.forEach((tab, index) => {
     const $button = document.createElement('button');
     const { $tab, title, name } = tab;
