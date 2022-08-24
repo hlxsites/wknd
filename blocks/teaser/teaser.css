@@ -9,6 +9,13 @@
     grid-area: teaser;
 }
 
+/* teaser image */
+.teaser > div > div:first-child {
+    height: 40pc;
+    max-height: 40pc;
+    width: 100%;
+}
+
 /* teaser content */
 .teaser > div > div:last-child {
     background-color: #fff;
@@ -20,6 +27,20 @@
     line-height: 1.75;
 }
 
+.teaser picture {
+    width: 100%;
+    height: 100%;
+
+}
+
+.teaser img {
+    margin-top: 0;
+    margin-bottom: 0;
+    object-fit: cover;
+    object-position: top;
+    width: 100%;
+    height: 100%;
+}
 
 .teaser h2 {
     font-family: Asar,Georgia,Times New Roman,Times,serif;
