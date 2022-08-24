@@ -31,7 +31,7 @@
 
   /* heading sizes */
   --heading-font-size-xxl: 40px;
-  --heading-font-size-xl: 40px;
+  --heading-font-size-xl: 36px;
   --heading-font-size-l: 32px;
   --heading-font-size-m: 24px;
   --heading-font-size-s: 20px;
@@ -73,7 +73,7 @@ header {
 h1, h2, h3,
 h4, h5, h6 {
   font-family: var(--heading-font-family);
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.25;
   margin-top: 1em;
   margin-bottom: .5em;
@@ -87,7 +87,15 @@ h1 {
   font-size: var(--heading-font-size-xxl);
 }
 
-h1::after {
+body.activity h1::after {
+  display: block;
+  width: 84px;
+  padding-top: 8px;
+  content: "";
+  border-bottom: 2px solid #ffea00;
+}
+
+body.article h2::after {
   display: block;
   width: 84px;
   padding-top: 8px;
@@ -154,12 +162,12 @@ a.button:any-link, button {
 }
 
 a.button:hover, a.button:focus, button:hover, button:focus  {
-  background-color: var(--link-hover-color);
+  /*background-color: var(--link-hover-color);*/
   cursor: pointer;
 }
 
 button:disabled, button:disabled:hover {
-  background-color: var(--overlay-background-color);
+  /*background-color: var(--overlay-background-color);*/
   cursor: unset;
 }
 
@@ -247,7 +255,7 @@ main img {
 @media (min-width: 900px) {
   :root {
     --heading-font-size-xxl: 40px;
-    --heading-font-size-xl: 40px;
+    --heading-font-size-xl: 36px;
     --heading-font-size-l: 36px;
     --heading-font-size-m: 30px;
     --heading-font-size-s: 24px;
