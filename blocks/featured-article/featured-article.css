@@ -14,6 +14,20 @@
     flex: 2;
 }
 
+.featured-article .image picture {
+    width: 100%;
+    height: 100%;
+}
+
+.featured-article .image img {
+    margin-top: 0;
+    margin-bottom: 0;
+    object-fit: cover;
+    object-position: top;
+    width: 100%;
+    height: 100%;
+}
+
 .featured-article .text {
     display: flex;
     flex-direction: column;
