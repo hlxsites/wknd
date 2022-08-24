@@ -1,0 +1,42 @@
+.teaser > div {
+    display: grid;
+    grid-template-areas: "teaser";
+    align-items: end;
+    justify-items: center;
+}
+
+.teaser > div > div {
+    grid-area: teaser;
+}
+
+/* teaser content */
+.teaser > div > div:last-child {
+    background-color: #fff;
+    min-height: 180px;
+    width: 75%;
+    padding: 0 28px;
+    font-size: 18px;
+    margin: 0;
+    line-height: 1.75;
+}
+
+
+.teaser h2 {
+    font-family: Asar,Georgia,Times New Roman,Times,serif;
+    margin: .5em 0;
+}
+
+.teaser h2 a {
+    color: #202020
+}
+
+.teaser .button-container a {
+    border-radius: 0;
+    background-color: #ffea00;
+    text-transform: uppercase;
+    font-size: 14px;
+    padding: 1em 2.5em;
+    font-weight: 600;
+    color: #202020;
+    float: left;
+}

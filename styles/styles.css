@@ -160,6 +160,17 @@ a.button.secondary, button.secondary {
   color: var(--text-color)
 }
 
+main {
+}
+
+body.activity main {
+  display: grid;
+  grid-template-columns: 25% 75%;
+  grid-template-areas:
+    "bread bread"
+    "hero hero"
+    "left main";
+}
 
 main input {
   font-size: 1.25rem;
@@ -230,7 +241,7 @@ main img {
 @media (min-width: 900px) {
   :root {
     --heading-font-size-xxl: 40px;
-    --heading-font-size-xl: 48px;
+    --heading-font-size-xl: 40px;
     --heading-font-size-l: 36px;
     --heading-font-size-m: 30px;
     --heading-font-size-s: 24px;
@@ -254,6 +265,7 @@ main .section.highlight {
 }
 
 nav.breadcrumb {
+  grid-area: bread;
   display: inline-block;
   list-style: none;
   padding: 0;

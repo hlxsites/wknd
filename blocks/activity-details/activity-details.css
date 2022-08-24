@@ -1,18 +1,10 @@
-.activity-details-wrapper {
-    float: left;
-    width: 25%;
-    height: 100%;
+.activity-details-container {
+    grid-area: left;
 }
 
 .activity-details dl {
     font-family: Source Sans Pro,Helvetica Neue,Helvetica,Arial,sans-serif;
     text-transform: uppercase;
-    /*height: 84px;*/
-    /*margin-bottom: 1.25em;*/
-    /*padding-left: 1em;*/
-    /*padding-right: 1em;*/
-    /*float: left;*/
-    /*width: 100%;*/
 }
 
 .activity-details dt {
