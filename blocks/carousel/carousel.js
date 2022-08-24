@@ -16,12 +16,12 @@ import { createTabs } from '../tabs/tabs.js';
  * @param {HTMLElement} $block
  */
 export default function decorate($block) {
+  const $wrapper = $block.parentElement;
+  const $container = $wrapper.parentElement;
   let tabs = createTabs($block);
   if (!tabs) {
     // use block content as tabs
     const $ul = document.createElement('ul');
-    const $tabsContainer = $block.parentElement.parentElement;
-
     tabs = [...$block.children].map(($tabContent, idx) => {
       const name = `tab${idx}`;
       const $li = document.createElement('li');
@@ -32,7 +32,9 @@ export default function decorate($block) {
       $el.classList.add('tab-item');
       $el.append(...$tabContent.children);
       $el.classList.add('hidden');
-      $tabsContainer.append($el);
+      // we add the tab-items before the wrapper, so that eventual default content
+      // stays after the carousel block
+      $container.insertBefore($el, $wrapper);
       $tabContent.remove();
 
       return {
@@ -68,9 +70,4 @@ export default function decorate($block) {
       tab.$content.classList.remove('hidden');
     }
   });
-
-  // move switchers at the end of the carousel-container
-  const $wrapper = $block.parentElement;
-  const $container = $wrapper.parentElement;
-  $container.appendChild($wrapper);
 }
