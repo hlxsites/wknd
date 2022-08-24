@@ -1,7 +1,8 @@
 footer {
-  padding: 2rem;
-  background-color: var(--overlay-background-color);
-  font-size: var(--body-font-size-s);
+  background-color: #202020;
+  color: #ebebeb;
+  padding: 1rem 0 1.5rem;
+  margin-top: 3rem;
 }
 
 footer .footer {
@@ -9,6 +10,58 @@ footer .footer {
   margin: auto;
 }
 
+.footer > div {
+  display: grid;
+  grid-template-columns: auto 50% auto;
+  grid-template-rows: auto;
+  grid-template-areas:
+          "brand nav follow"
+          "disc disc disc";
+}
+
+.footer .brand {
+  grid-area: brand;
+}
+
+.footer .nav {
+  grid-area: nav;
+}
+
+.footer .follow {
+  grid-area: follow;
+  display: block;
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 15px 17px;
+  text-decoration: none;
+}
+
+.footer .disc {
+  grid-area: disc;
+}
+
+footer ul {
+  list-style: none;
+  margin: 0;
+  padding-inline-start: 0;
+}
+
+footer li {
+  display: block;
+  float: left;
+  color: #202020;
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 15px 17px;
+  text-decoration: none;
+}
+
+.footer a {
+  color: white;
+}
+
 footer .footer p {
   margin: 0;
+  font-size: var(--body-font-size-xs);
+  line-height: 1.25;
 }
