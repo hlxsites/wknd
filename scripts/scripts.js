@@ -616,31 +616,14 @@ function buildHeroBlock(main) {
 }
 
 function buildBreadCrumbs(main) {
+  if (!document.body.classList.contains('activity')) {
+    return;
+  }
   const $nav = document.createElement('nav');
   $nav.classList.add('breadcrumb');
-  const $ul = document.createElement('ul');
-  $nav.append($ul);
-  const trail = [{
-    text: 'Adventures',
-    link: '/adventures',
-  }, {
-    text: 'Bali Surf',
-  }];
-  while (trail.length) {
-    const step = trail.shift();
-    const $li = document.createElement('li');
-    $ul.append($li);
-    let $wrap = $li;
-    if (step.link) {
-      $wrap = document.createElement('a');
-      $wrap.href = step.link;
-      $li.append($wrap);
-    }
-    const $span = document.createElement('span');
-    $wrap.append($span);
-    $span.textContent = step.text;
-  }
   main.insertBefore($nav, main.firstElementChild);
+  decorateBlock($nav);
+  loadBlock($nav);
 }
 
 function loadHeader(header) {

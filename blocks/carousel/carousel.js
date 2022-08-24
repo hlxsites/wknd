@@ -16,7 +16,35 @@ import { createTabs } from '../tabs/tabs.js';
  * @param {HTMLElement} $block
  */
 export default function decorate($block) {
-  const tabs = createTabs($block);
+  let tabs = createTabs($block);
+  if (!tabs) {
+    // use block content as tabs
+    const $ul = document.createElement('ul');
+    const $tabsContainer = $block.parentElement.parentElement;
+
+    tabs = [...$block.children].map(($tabContent, idx) => {
+      const name = `tab${idx}`;
+      const $li = document.createElement('li');
+      $ul.appendChild($li);
+      $li.textContent = name;
+
+      const $el = document.createElement('div');
+      $el.classList.add('tab-item');
+      $el.append(...$tabContent.children);
+      $el.classList.add('hidden');
+      $tabsContainer.append($el);
+      $tabContent.remove();
+
+      return {
+        name,
+        $content: $el,
+        $tab: $li,
+      };
+    });
+    // move $ul below section div
+    $block.replaceChildren($ul);
+  }
+
   tabs.forEach((tab, index) => {
     const { $tab, name } = tab;
     $tab.addEventListener('click', () => {

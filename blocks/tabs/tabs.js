@@ -11,6 +11,9 @@
  */
 export function createTabs($block) {
   const $ul = $block.querySelector('ul');
+  if (!$ul) {
+    return null;
+  }
   /** @type TabInfo[] */
   const tabs = [...$ul.querySelectorAll('li')].map(($li) => {
     const title = $li.textContent;

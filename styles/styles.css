@@ -38,7 +38,7 @@
   --heading-font-size-xs: 18px;
 
   /* nav height */
-  --nav-height: 64px;
+  --nav-height: 90px;
 }
 
 body {
@@ -49,6 +49,13 @@ body {
   color: var(--text-color);
   background-color: var(--background-color);
   display: none;
+}
+
+body p {
+  margin: 0 0 13.5px;
+  font-size: 18px;
+  line-height: 2.5;
+  text-align: justify;
 }
 
 body.appear {
@@ -125,23 +132,25 @@ pre {
 /* buttons */
 
 a.button:any-link, button {
-  font-family: var(--font-family-body);
+  border-radius: 0;
+  color: #202020;
+  background-color: #ffea00;
+  text-transform: uppercase;
+  font-size: 14px;
+  padding: 1em 2.5em;
+  font-weight: 600;
+  font-family: var(--body-font-family);
   display: inline-block;
   box-sizing: border-box;
   text-decoration: none;
   border: 2px solid transparent;
-  padding: 5px 30px;
   text-align: center;
   font-style: normal;
-  font-weight: 600;
   cursor: pointer;
-  color: var(--background-color);
-  background-color: var(--link-color);
   margin: 16px 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-radius: 30px;
 }
 
 a.button:hover, a.button:focus, button:hover, button:focus  {
@@ -158,9 +167,6 @@ a.button.secondary, button.secondary {
   background-color: unset;
   border: 2px solid currentcolor;
   color: var(--text-color)
-}
-
-main {
 }
 
 body.activity main {
@@ -264,42 +270,9 @@ main .section.highlight {
   background-color: var(--highlight-background-color);
 }
 
-nav.breadcrumb {
-  grid-area: bread;
+.icon-wknd-logo-dk {
   display: inline-block;
-  list-style: none;
-  padding: 0;
-}
-
-.breadcrumb ul {
-  padding-top: 0;
-  margin-top: 0;
-}
-
-.breadcrumb li {
-  display: inline-block;
-  padding: 10px 5px;
-  text-transform: uppercase;
-}
-
-.breadcrumb li:first-child {
-  padding-left: 0;
-}
-
-.breadcrumb li::before {
-  font-family: arial, sans-serif;
-  speak: none;
-  font-style: normal;
-  font-weight: 400;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-  font-size: 1.25rem;
-  content: "▶";
-  color: #ffea00;
-  padding-right: 5px;
-}
-
-.breadcrumb li:first-child::before {
-  content: none;
+  width:128px;
+  margin-top: 14px;
+  margin-bottom: 7px;
 }
