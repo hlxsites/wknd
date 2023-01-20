@@ -1,8 +1,6 @@
 import {
-  decorateMain,
-  loadBlocks,
   getMetadata,
-} from '../../scripts/scripts.js';
+} from '../../scripts/lib-franklin.js';
 
 /**
  * Loads a fragment.

@@ -1,50 +1,93 @@
 main .carousel-container {
-    grid-area: hero;
-    display: inline-block;
-    width: 100%;
-    margin: 0;
-    padding: 0;
+  padding: 0;
 }
 
-.carousel ul {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 0;
-    list-style: none;
-    margin-top: .5em;
-    cursor: pointer;
+main .carousel {
+  display: flex;
+  scroll-snap-type: x mandatory;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
 }
 
-.carousel li {
-    position: relative;
-    flex: 0 1 auto;
-    width: 10px;
-    height: 10px;
-    margin: 0 7px;
-    border-radius: 50%;
-    font-size: 0;
-    text-indent: -3000px;
-    background-color: rgb(0 0 0 / 50%);
+main .carousel picture {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  box-sizing: border-box;
 }
 
-.carousel li.active {
-    background-color: rgb(0 0 0 / 80%);
+main .carousel img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-position: 90%;
+}
+  
+main .carousel > div {
+  width: 100%;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  position: relative;
+  height: 580px;
+  align-items: flex-end;
+  display: flex;
+  background-image: linear-gradient(#0000, #0008);
+  color: white;
 }
 
-.activity .carousel-container .tab-item > div {
-    height: 400px;
+main .carousel div.carousel-text {
+  text-align: center;
+  width: 500px;
+  margin: 0 auto;
+}
+  
+
+main .carousel::-webkit-scrollbar {
+    display: none;
+  }
+
+main .carousel-wrapper {
+  max-width: unset;
 }
 
-.carousel-container picture {
-    width: 100%;
-    height: 100%;
+main .carousel-wrapper .carousel-buttons {
+  text-align: center;
+  margin-top: -40px;
+  position: absolute;
+  display: flex;
+  right: 0;
+  left: 0;
+  justify-content: center;
 }
 
-.carousel-container img {
-    margin-top: 0;
-    margin-bottom: 0;
-    object-fit: cover;
-    width: 100%;
-    height: 25pc;
+main .carousel-buttons button {
+  display: block;
+  height: 10px;
+  width: 10px;
+  padding: 0;
+  margin: 5px;
+  border-radius: 5px;
+  background-color: var(--highlight-background-color);
+}
+
+main .carousel-buttons button.selected {
+  background-color: var(--link-color);
+}
+
+
+@media (min-width: 900px) {
+  main .carousel > div {
+    background-image: unset;
+    color: unset;
+    align-items: center;
+  }
+  
+  main .carousel div.carousel-text {
+    margin: unset;
+    padding: 32px;
+    text-align: left;
+  }
 }

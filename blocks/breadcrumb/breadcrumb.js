@@ -1,4 +1,4 @@
-import { getMetadata } from '../../scripts/scripts.js';
+import { getMetadata } from '../../scripts/lib-franklin.js';
 
 /**
  *
