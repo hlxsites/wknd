@@ -6,8 +6,6 @@ import { getMetadata } from '../../scripts/lib-franklin.js';
  */
 export default function decorate($block) {
   const title = getMetadata('og:title');
-  console.log($block, title);
-
   const $ul = document.createElement('ul');
   $block.append($ul);
   const trail = [{

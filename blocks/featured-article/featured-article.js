@@ -54,7 +54,6 @@ export default async function decorate($block) {
   $image.classList.add('image');
   // find image
   const $hero = doc.querySelector('body > main picture');
-  console.log($hero);
   if ($hero) {
     $image.append($hero);
   }

@@ -47,7 +47,7 @@ main .carousel div.carousel-text {
 }
 
 main .carousel div.carousel-text p {
-  margin: 10px 0 16px 0;
+  margin: 10px 0 16px;
   line-height: 1.2;
 }
 
@@ -71,7 +71,7 @@ main .carousel-wrapper {
 
 main .carousel-wrapper .carousel-buttons {
   text-align: center;
-  margin-top: 0px;
+  margin-top: 0;
   position: absolute;
   display: flex;
   right: 0;
