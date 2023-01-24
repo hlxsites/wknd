@@ -3,7 +3,7 @@
 }
 
 .activity-details dl {
-    font-family: Source Sans Pro,Helvetica Neue,Helvetica,Arial,sans-serif;
+    font-family: var(--body-font-family);
     text-transform: uppercase;
 }
 

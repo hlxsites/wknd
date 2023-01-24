@@ -5,7 +5,7 @@
 export default function decorate(block) {
   /* change to definition list */
   const dl = document.createElement('dl');
-  for (const row of block.children) {
+  [...block.children].forEach((row) => {
     // const term = row.firstElementChild.textContent;
     // const def = row.lastElementChild.textContent;
     const dt = document.createElement('dt');
@@ -13,6 +13,6 @@ export default function decorate(block) {
     dt.append(...row.firstElementChild.childNodes);
     dd.append(...row.lastElementChild.childNodes);
     dl.append(dt, dd);
-  }
+  });
   block.replaceChildren(dl);
 }

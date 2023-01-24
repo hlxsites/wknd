@@ -1,4 +1,4 @@
-import { readBlockConfig, decorateIcons } from '../../scripts/scripts.js';
+import { readBlockConfig, decorateIcons } from '../../scripts/lib-franklin.js';
 
 /**
  * collapses all open nav sections
@@ -58,9 +58,13 @@ export default async function decorate(block) {
       document.body.style.overflowY = expanded ? '' : 'hidden';
       nav.setAttribute('aria-expanded', expanded ? 'false' : 'true');
     });
+    const topBar = document.createElement('div');
+    topBar.classList.add('header-topbar');
+    block.prepend(topBar);
+    topBar.innerHTML = '<div>Sign In</div><div class="header-markets"><span class="icon icon-flag-us"></span>EN-US<span class="header-chevron-down"></span></div>';
     nav.prepend(hamburger);
     nav.setAttribute('aria-expanded', 'false');
-    decorateIcons(nav);
+    decorateIcons(block);
     block.append(nav);
   }
 }

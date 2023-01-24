@@ -42,7 +42,7 @@
 }
 
 .teaser h2 {
-    font-family: Asar,Georgia,Times New Roman,Times,serif;
+    font-family: var(--body-font-family);
     margin: .5em 0;
 }
 

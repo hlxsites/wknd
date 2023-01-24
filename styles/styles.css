@@ -12,15 +12,16 @@
 
  :root {
   /* colors */
-  --link-color: #035fe6;
-  --link-hover-color: #136ff6;
+  --link-color: black;
+  --link-hover-color: black;
   --background-color: #fff;
   --overlay-background-color: #eee;
   --highlight-background-color: #ccc;
   --text-color: #202020;
+  --text-color-light: #ebebeb;
 
   /* fonts */
-  --body-font-family: 'helvetica neue', helvetica, ubuntu, roboto, noto, sans-serif;
+  --body-font-family: 'Source Sans Pro', 'helvetica neue', helvetica, ubuntu, roboto, noto, sans-serif;
   --heading-font-family: asar, georgia, 'Times New Roman', times, serif;
   --fixed-font-family: 'Roboto Mono', menlo, consolas, 'Liberation Mono', monospace;
 
@@ -38,7 +39,7 @@
   --heading-font-size-xs: 18px;
 
   /* nav height */
-  --nav-height: 90px;
+  --nav-height: 115px;
 }
 
 body {
@@ -49,13 +50,6 @@ body {
   color: var(--text-color);
   background-color: var(--background-color);
   display: none;
-}
-
-body p {
-  margin: 0 0 13.5px;
-  font-size: 18px;
-  line-height: 2.5;
-  text-align: justify;
 }
 
 body.appear {
@@ -114,6 +108,13 @@ p, dl, ol, ul, pre, blockquote {
   margin-bottom: 1em;
 }
 
+body p {
+  margin: 0 0 13.5px;
+  font-size: 18px;
+  line-height: 2.5;
+  text-align: justify;
+}
+
 a:any-link {
   color: var(--link-color);
   text-decoration: none;
@@ -162,12 +163,12 @@ a.button:any-link, button {
 }
 
 a.button:hover, a.button:focus, button:hover, button:focus  {
-  /*background-color: var(--link-hover-color);*/
+  /* background-color: var(--link-hover-color); */
   cursor: pointer;
 }
 
 button:disabled, button:disabled:hover {
-  /*background-color: var(--overlay-background-color);*/
+  /* background-color: var(--overlay-background-color); */
   cursor: unset;
 }
 
@@ -268,12 +269,6 @@ main img {
   }
 }
 
-/* progressive section appearance */
-main .section[data-section-status='loading'],
-main .section[data-section-status='initialized'] {
-  display: none;
-}
-
 main .section.highlight {
   background-color: var(--highlight-background-color);
 }
@@ -284,9 +279,16 @@ main .section.highlight {
   margin-top: 14px;
   margin-bottom: 7px;
 }
+
 .icon-wknd-logo-light {
   display: inline-block;
   width:128px;
   margin-top: 14px;
   margin-bottom: 7px;
+}
+
+/* progressive section appearance */
+main .section[data-section-status='loading'],
+main .section[data-section-status='initialized'] {
+  display: none;
 }
