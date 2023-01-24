@@ -14,6 +14,8 @@ header nav {
   font-family: var(--body-font-family);
   transition: padding-bottom 0s ease-out,padding-top 0s ease-out 0s;
   margin-top: 0;
+  padding: 0 16px;
+  top: 25px;
 }
 
 header nav a:any-link {
@@ -161,7 +163,7 @@ header nav[aria-expanded='true'] .nav-tools li {
     display: flex;
     justify-content: space-between;
     height: var(--nav-height);
-    padding: 16px 2rem;
+    padding: 16px;
   }
 
   header nav .nav-sections > ul > li.nav-drop {
@@ -257,4 +259,57 @@ header nav[aria-expanded='true'] .nav-tools li {
     padding: 16px;
     box-shadow: 0 0 5px var(text-color);
   }
+}
+
+header .header-topbar {
+  height: 25px;
+  background-color: black;
+  color: var(--text-color-light);
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--body-font-size-xs);
+  text-transform: uppercase;
+  padding: 0 16px;
+  position: fixed;
+  z-index: 1;
+  right: 0;
+  left: 0;
+}
+
+header .header-topbar .icon {
+  height: 24px;
+  width: 34px;
+  margin-right: 6px;
+}
+
+header .header-chevron-down {
+    box-sizing: border-box;
+    position: relative;
+    display: block;
+    width: 22px;
+    height: 22px;
+    border: 2px solid transparent;
+    border-radius: 100px
+}
+header .header-chevron-down::after {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-bottom: 1px solid;
+    border-right: 1px solid;
+    transform: rotate(45deg);
+    left: 4px;
+    top: 2px
+}
+
+header .header-markets {
+  display: flex;
+  align-items: center;
+}
+
+header .header-topbar .icon svg {
+  height: 100%;
 }
