@@ -58,10 +58,20 @@ export default async function decorate(block) {
       document.body.style.overflowY = expanded ? '' : 'hidden';
       nav.setAttribute('aria-expanded', expanded ? 'false' : 'true');
     });
-    const topBar = document.createElement('div');
-    topBar.classList.add('header-topbar');
-    block.prepend(topBar);
-    topBar.innerHTML = '<div>Sign In</div><div class="header-markets"><span class="icon icon-flag-us"></span>EN-US<span class="header-chevron-down"></span></div>';
+
+    if (navPath === '/nav') {
+      block.parentElement.classList.add('has-topbar');
+      const topBar = document.createElement('div');
+      topBar.classList.add('header-topbar');
+      block.prepend(topBar);
+      topBar.innerHTML = `<div>Sign In</div>
+        <div class="header-markets">
+          <span class="icon icon-flag-us"></span>EN-US<span class="header-chevron-down"></span>
+        </div>`;
+    } else {
+      block.parentElement.classList.add('app-header');
+    }
+
     nav.prepend(hamburger);
     nav.setAttribute('aria-expanded', 'false');
     decorateIcons(block);
