@@ -325,6 +325,7 @@ header.app-header nav {
   top: 0;
   width: 100%;
   height: var(--app-nav-height);
+  z-index: 2;
 }
 
 header.app-header nav[aria-expanded='true'] {
@@ -332,8 +333,6 @@ header.app-header nav[aria-expanded='true'] {
     'brand hamburger' var(--app-nav-height)
     'sections sections' 1fr
     'tools tools' auto / 1fr 28px;
-  /* grid-template-columns: 1fr 28px;
-  grid-template-rows:  */
   gap: 0 16px;
   overflow-y: auto;
   width: 60vw;

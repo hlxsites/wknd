@@ -68,8 +68,6 @@ export default async function decorate(block) {
         <div class="header-markets">
           <span class="icon icon-flag-us"></span>EN-US<span class="header-chevron-down"></span>
         </div>`;
-    } else {
-      block.parentElement.classList.add('app-header');
     }
 
     nav.prepend(hamburger);
