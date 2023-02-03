@@ -12,6 +12,7 @@
 
  :root {
   /* colors */
+  --color-yellow: #ffea00;
   --link-color: black;
   --link-hover-color: black;
   --background-color: #fff;
@@ -40,6 +41,17 @@
 
   /* nav height */
   --nav-height: 115px;
+  --app-nav-height: 50px;
+  --topbar-height: 25px;
+  --topmenu-height: 42px;
+}
+
+@media (min-width: 900px) {
+  :root {
+    /* stylelint-disable-next-line length-zero-no-unit */
+    --app-nav-height: 0px;
+    --topmenu-height: 0;
+  }
 }
 
 body {
@@ -58,6 +70,22 @@ body.appear {
 
 header {
   height: var(--nav-height);
+}
+
+header.app-header {
+  height: calc(var(--app-nav-height) + var(--topmenu-height));
+}
+
+header.app-header > div {
+  visibility: hidden;
+}
+
+header.app-header > div[data-block-status='loaded'] {
+  visibility: visible;
+}
+
+header.has-topbar {
+  height: calc(var(--nav-height) + var(--topbar-height));
 }
 
 .hidden {
@@ -86,7 +114,7 @@ body.activity h1::after {
   width: 84px;
   padding-top: 8px;
   content: "";
-  border-bottom: 2px solid #ffea00;
+  border-bottom: 2px solid var(--color-yellow);
 }
 
 body.article h2::after {
@@ -94,7 +122,7 @@ body.article h2::after {
   width: 84px;
   padding-top: 8px;
   content: "";
-  border-bottom: 2px solid #ffea00;
+  border-bottom: 2px solid var(--color-yellow);
 }
 
 h2 { font-size: var(--heading-font-size-xl) }
@@ -108,7 +136,7 @@ p, dl, ol, ul, pre, blockquote {
   margin-bottom: 1em;
 }
 
-body p {
+p {
   margin: 0 0 13.5px;
   font-size: 18px;
   line-height: 2.5;
@@ -138,12 +166,26 @@ pre {
   overflow: scroll;
 }
 
+.badge-container {
+  text-align: inherit;
+}
+
+.badge {
+  padding: 6px;
+  background-color: var(--color-yellow);
+  color: var(--text-color);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+}
+
 /* buttons */
 
 a.button:any-link, button {
   border-radius: 0;
   color: #202020;
-  background-color: #ffea00;
+  background-color: var(--color-yellow);
   text-transform: uppercase;
   font-size: 14px;
   padding: 1em 2.5em;
@@ -291,4 +333,189 @@ main .section.highlight {
 main .section[data-section-status='loading'],
 main .section[data-section-status='initialized'] {
   display: none;
+}
+
+main .section[data-background],
+main .section[data-video] {
+  position: relative;
+  color: var(--background-color);
+  text-shadow: 0 0 32px black;
+}
+
+main .section[data-background] picture.section-background,
+main .section[data-video] .section-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+main .section[data-video] .section-video {
+  display: none;
+  visibility: hidden;
+}
+
+@media (min-width: 900px) {
+  main .section[data-background] picture.section-background {
+    display: none;
+    visibility: hidden;
+  }
+
+  main .section[data-video] .section-video {
+    display: block;
+    visibility: visible;
+  }
+}
+
+main .section[data-background] picture.section-background img,
+main .section[data-video] .section-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* themes */
+/* stylelint-disable-next-line no-descending-specificity */
+.app.appear main {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--app-nav-height) - var(--topmenu-height));
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+}
+
+@media (min-width: 900px) {
+  .app.appear main {
+    height: 100vh;
+  }
+}
+
+.app main .section {
+  scroll-snap-align: start;
+}
+
+.app main h2,
+.app main p {
+  text-align: center;
+  line-height: 1.2;
+}
+
+.app main h2 + p {
+  text-transform: uppercase;
+}
+
+.app main .button-container {
+  margin: 0;
+}
+
+.app main .button {
+  margin: 0;
+  padding: 16px 40px;
+  background-color: var(--link-color);
+  color: white;
+  line-height: 1;
+}
+
+.app main > .section {
+  box-sizing: border-box;
+  overflow: hidden;
+  min-height: calc(100vh - var(--app-nav-height) - var(--topmenu-height));
+  background-color: var(--color-yellow);
+}
+
+@media (min-width: 600px) {
+  .app main > .section {
+    padding: 20px;
+  }
+}
+
+@media (min-width: 900px) {
+  .app main > .section {
+    min-height: 100vh;
+    padding-top: 100px;
+  }
+
+  .app main > .section > div {
+    max-width: unset;
+  }
+}
+
+.app main > .section[data-section-status='loaded'] {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.app main > .section[data-background][data-section-status='loaded'] {
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 900px) {
+  .app main > .section[data-background] .default-content-wrapper {
+    width: 50%;
+    margin-left: 0;
+    text-align: left;
+  }
+
+  .app main > .section[data-background] .default-content-wrapper > * {
+    text-align: left;
+  }
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.app main > .section .columns img {
+  max-height: 50vh;
+  width: auto;
+  overflow: hidden;
+}
+
+@media (min-width: 900px) {
+  .app main > .section .columns {
+    width: 66%;
+  }
+}
+
+.app main > .section[data-section-status='loaded'].parallax-container {
+  display: unset;
+  padding: 0;
+  background-color: transparent;
+}
+
+.app main .parallax > div {
+  min-height: calc(100vh - var(--app-nav-height) - var(--app-nav-height) + 8px);
+}
+
+@media (min-width: 900px) {
+  .app main .parallax .parallax-text {
+    width: 50%;
+    text-align: left;
+  }
+
+  .app main .parallax .parallax-text > * {
+    text-align: left;
+  }
+}
+
+.app main .menu-wrapper {
+  position: fixed;
+  top: var(--app-nav-height);
+  width: 100%;
+  z-index: 2;
+}
+
+@media (min-width: 900px) {
+  .app main .menu-wrapper {
+    box-sizing: border-box;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: auto;
+    padding: 0 20px;
+  }
 }

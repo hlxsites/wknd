@@ -3,6 +3,7 @@ import {
   buildBlock,
   loadHeader,
   loadFooter,
+  createOptimizedPicture,
   decorateButtons,
   decorateIcons,
   decorateSections,
@@ -11,9 +12,11 @@ import {
   waitForLCP,
   loadBlocks,
   loadCSS,
+  getMetadata,
+  toClassName,
 } from './lib-franklin.js';
 
-const LCP_BLOCKS = []; // add your LCP blocks to the list
+const LCP_BLOCKS = ['parallax']; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
 function buildHeroBlock(main) {
@@ -34,6 +37,20 @@ function buildHeroBlock(main) {
 function buildAutoBlocks(main) {
   try {
     buildHeroBlock(main);
+    const isApp = toClassName(getMetadata('template')) === 'app';
+    if (isApp) {
+      // setup badges
+      const badges = main.querySelectorAll('a[href$="#menu-item"]');
+      badges.forEach((b) => {
+        const container = b.closest('.button-container') || b.parentElement;
+        container.classList.remove('button-container');
+        container.classList.add('badge-container');
+        const badge = document.createElement('span');
+        badge.className = 'badge';
+        badge.innerHTML = b.innerHTML;
+        b.replaceWith(badge);
+      });
+    }
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -51,6 +68,39 @@ export function decorateMain(main) {
   decorateIcons(main);
   buildAutoBlocks(main);
   decorateSections(main);
+
+  const isApp = toClassName(getMetadata('template')) === 'app';
+  if (isApp) {
+    const header = document.querySelector('header');
+    header.classList.add('app-header');
+  }
+  const sections = [...main.querySelectorAll('.section')];
+  const menuItems = [];
+  sections.forEach((section) => {
+    const { menuItem, background, video } = section.dataset;
+    if (menuItem) {
+      section.id = toClassName(menuItem);
+      menuItems.push(menuItem);
+    }
+    if (background) {
+      const picture = createOptimizedPicture(background);
+      picture.classList.add('section-background');
+      section.prepend(picture);
+    }
+    if (video) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'section-video';
+      wrapper.innerHTML = `<video autoplay loop muted playsInline>
+        <source src="${video}" type="video/mp4" />
+      </video>`;
+      section.prepend(wrapper);
+    }
+  });
+  const menuWrapper = document.createElement('div');
+  const menu = buildBlock('menu', [menuItems]);
+  menuWrapper.append(menu);
+  sections[0].prepend(menuWrapper);
+
   decorateBlocks(main);
 }
 
@@ -95,8 +145,13 @@ async function loadLazy(doc) {
   const element = hash ? main.querySelector(hash) : false;
   if (hash && element) element.scrollIntoView();
 
-  loadHeader(doc.querySelector('header'));
-  loadFooter(doc.querySelector('footer'));
+  const isApp = toClassName(getMetadata('template')) === 'app';
+  if (!isApp) {
+    loadHeader(doc.querySelector('header'));
+    loadFooter(doc.querySelector('footer'));
+  } else {
+    loadHeader(doc.querySelector('header'), '/drafts/fkakatie/app-nav');
+  }
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   addFavIcon(`${window.hlx.codeBasePath}/styles/favicon.svg`);
