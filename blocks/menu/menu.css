@@ -1,0 +1,160 @@
+@media (min-width: 900px) {
+  .menu {
+    width: max-content;
+    padding-right: 20px;
+  }
+}
+
+/* button */
+.menu button {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  padding: 12px;
+  font-weight: 800;
+  text-align: left;
+}
+
+.menu button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%) rotate(45deg);
+  width: 6px;
+  height: 6px;
+  border-radius: 0 1px 2px;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+  transition: transform .3s ease-in-out;
+}
+
+.menu button[aria-expanded=true]::after {
+  transform: translateY(-50%) rotate(225deg);
+}
+
+@media (min-width: 900px) {
+  .menu button {
+    visibility: hidden;
+    display: none;
+  }
+}
+
+/* menu */
+.menu menu,
+.menu menu ul {
+  margin: 0;
+  padding: 0;
+}
+
+.menu menu {
+  padding: 20px 8px;
+  background-color: #202020;
+  color: white;
+  font-size: 16px;
+  opacity: 1;
+  transition: opacity .3s ease-in-out;
+}
+
+.menu menu ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  border-left: 2px solid #4a4a4a;
+  padding: 8px 0;
+}
+
+.menu menu li {
+  margin-left: -2px;
+  border-left: 2px solid #4a4a4a;
+}
+
+.menu menu li:hover,
+.menu menu li:focus {
+  border-left: 2px solid var(--color-yellow);
+}
+
+.menu menu a {
+  display: block;
+  padding-left: 12px;
+  color: white;
+}
+
+.menu menu a:hover {
+  color: var(--color-yellow);
+  text-decoration: none;
+}
+
+.menu button[aria-expanded=false] + menu {
+  opacity: 0;
+  visibility: hidden;
+  height: 0;
+}
+
+@media (min-width: 900px) {
+  .menu menu {
+    padding: 0;
+    background-color: transparent;
+    color: var(--text-color);
+    font-size: 14px;
+    letter-spacing: .28px;
+    text-align: right;
+    text-transform: uppercase;
+  }
+  
+  .menu menu,
+  .menu button[aria-expanded=false] + menu {
+    opacity: 1;
+    visibility: visible;
+    height: initial;
+  }
+
+  .menu menu.dark {
+    color: white;
+  }
+ 
+  .menu menu ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-left: 0;
+    border-right: 2px solid;
+    padding: 0;
+  }
+  
+  .menu menu li {
+    margin-right: -2px;
+    border-left: 0;
+    border-right: 2px solid;
+    padding: 4px 0;
+    transition: all .3s ease-in-out;
+  }
+  
+  .menu menu li.active,
+  .menu menu li:hover,
+  .menu menu li:focus {
+    margin-right: -3px;
+    border-left: 0;
+    border-right: 4px solid;
+    padding: 2px 0;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .menu menu a {
+    padding-right: 6px;
+    color: var(--text-color);
+  }
+
+  .menu menu a:hover {
+    color: var(--text-color);
+  }
+
+  .menu menu.dark a,
+  .menu menu.dark a:hover {
+    color: white;
+  }
+}
