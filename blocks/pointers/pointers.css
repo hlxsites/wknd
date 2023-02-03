@@ -1,9 +1,15 @@
 .pointers {
   position: relative;
-  width: 100vw;
+  width: 100%;
   max-width: 500px;
   height: min(calc(100vw + 64px), 500px);
   margin: auto;
+}
+
+@media (min-width: 900px) {
+  .pointers {
+    width: 500px;
+  }
 }
 
 .pointers picture {

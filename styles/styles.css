@@ -470,9 +470,9 @@ main .section[data-video] .section-video video {
 
 /* stylelint-disable-next-line no-descending-specificity */
 .app main > .section .columns img {
-  max-height: 50vh;
+  max-height: 50vw;
   width: auto;
-  overflow: hidden;
+  margin: auto;
 }
 
 @media (min-width: 900px) {
