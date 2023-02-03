@@ -1,4 +1,4 @@
-import { readBlockConfig, decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 /**
  * collapses all open nav sections
@@ -17,12 +17,10 @@ function collapseAllNavSections(sections) {
  */
 
 export default async function decorate(block) {
-  const cfg = readBlockConfig(block);
-  block.textContent = '';
-
   // fetch nav content
-  const navPath = cfg.nav || '/nav';
-  const resp = await fetch(`${navPath}.plain.html`);
+  const navPath = window.wknd.demoConfig.demoBase || '';
+
+  const resp = await fetch(`${navPath}/nav.plain.html`);
   if (resp.ok) {
     const html = await resp.text();
 
