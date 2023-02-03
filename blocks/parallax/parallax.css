@@ -1,0 +1,175 @@
+.parallax.dark {
+  color: white;
+}
+
+.parallax > div {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.parallax img {
+  display: block;
+}
+
+/* background */
+.parallax .parallax-background picture {
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+}
+
+.parallax .parallax-background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* text */
+.parallax .parallax-text {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  opacity: 0;
+  margin-top: 100%;
+  z-index: 0;
+  padding: 32px;
+  text-align: center;
+  text-shadow: 0 0 32px white;
+}
+
+.parallax.dark .parallax-text {
+  text-shadow: 0 0 32px black;
+}
+
+.parallax .parallax-text.active {
+  opacity: 1;
+  margin-top: 0;
+  transition: opacity .9s ease-in-out, margin .6s ease-in;
+}
+
+@media (min-width: 900px) {
+  .parallax .parallax-text {
+    justify-content: center;
+  }
+
+  .parallax .parallax-text h2 {
+    margin-top: 16px;
+    font-size: 60px;
+  }
+}
+
+/* layer */
+.parallax .parallax-layer {
+  overflow: hidden;
+}
+
+.parallax .parallax-layer picture {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  z-index: -1;
+  /* stylelint-disable declaration-block-no-redundant-longhand-properties */
+  transition-delay: .2s;
+  transition-property: top, left, bottom, right, opacity;
+  transition-timing-function: ease-in-out;
+  transition-duration: .6s;
+}
+
+.parallax .parallax-layer img {
+  box-sizing: border-box;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.parallax .parallax-layer[class*='from'] picture {
+  opacity: .5;
+}
+
+.parallax .parallax-layer[class*='to'] picture {
+  opacity: 1;
+}
+
+/* FROM */
+.parallax .parallax-layer.from-bottom picture {
+  bottom: -50%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.parallax .parallax-layer.from-bottom-left picture {
+  bottom: -50%;
+  left: -50%;
+}
+
+.parallax .parallax-layer.from-bottom-right picture {
+  bottom: -50%;
+  right: -50%;
+}
+
+/* TO */
+.parallax .parallax-layer.to-bottom picture {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.parallax .parallax-layer.to-bottom-left picture {
+  bottom: 0;
+  left: 0;
+}
+
+.parallax .parallax-layer.to-bottom-right picture {
+  bottom: 0;
+  right: 0;
+}
+
+.parallax .parallax-layer.to-center picture {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.parallax .parallax-layer.parallax-focal picture {
+  max-width: 500px;
+  max-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.parallax .parallax-layer.parallax-focal img {
+  padding: 16px;
+  padding-top: 33vh;
+}
+
+@media (min-width: 900px) {
+  .parallax .parallax-layer.to-bottom picture {
+    bottom: 0;
+  }
+  
+  .parallax .parallax-layer.to-center picture {
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .parallax .parallax-layer.parallax-focal.to-bottom picture {
+    bottom: 5%;
+  }
+  
+  .parallax .parallax-layer.parallax-focal img {
+    padding: 0;
+    padding-top: 0;
+  }
+}
