@@ -91,9 +91,20 @@ export function decorateMain(main) {
       const wrapper = document.createElement('div');
       wrapper.className = 'section-video';
       wrapper.innerHTML = `<video autoplay loop muted playsInline>
-        <source src="${video}" type="video/mp4" />
+        <source data-src="${video}" type="video/mp4" />
       </video>`;
       section.prepend(wrapper);
+
+      const videoObserver = new IntersectionObserver(async (entries) => {
+        const observed = entries.find((entry) => entry.isIntersecting);
+        if (observed) {
+          const source = wrapper.querySelector('source');
+          source.src = source.dataset.src;
+          wrapper.querySelector('video').load();
+          videoObserver.disconnect();
+        }
+      }, { threshold: 0 });
+      videoObserver.observe(wrapper);
     }
   });
   const menuWrapper = document.createElement('div');
