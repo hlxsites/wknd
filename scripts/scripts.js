@@ -62,6 +62,7 @@ async function loadDemoConfig() {
   const pathSegments = window.location.pathname.split('/');
   if (window.location.pathname.startsWith('/drafts/') && pathSegments.length > 4) {
     const demoBase = pathSegments.slice(0, 4).join('/');
+    demoConfig.demoBase = demoBase;
     const resp = await fetch(`${demoBase}/theme.json`);
     if (resp.status === 200) {
       const json = await resp.json();
@@ -72,7 +73,6 @@ async function loadDemoConfig() {
         demoConfig[e.token] = e.value;
       });
       demoConfig.tokens = tokens;
-      demoConfig.demoBase = demoBase;
     }
   }
   window.wknd = window.wknd || {};
@@ -183,13 +183,9 @@ async function loadLazy(doc) {
   const element = hash ? main.querySelector(hash) : false;
   if (hash && element) element.scrollIntoView();
 
+  loadHeader(doc.querySelector('header'));
   const isApp = toClassName(getMetadata('template')) === 'app';
-  if (!isApp) {
-    loadHeader(doc.querySelector('header'));
-    loadFooter(doc.querySelector('footer'));
-  } else {
-    loadHeader(doc.querySelector('header'), '/drafts/fkakatie/app-nav');
-  }
+  if (!isApp) loadFooter(doc.querySelector('footer'));
 
   if (window.wknd.demoConfig.fonts) {
     const fonts = window.wknd.demoConfig.fonts.split('\n');

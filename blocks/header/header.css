@@ -337,6 +337,7 @@ header.app-header nav[aria-expanded='true'] {
   overflow-y: auto;
   width: 60vw;
   min-height: 100vh;
+  z-index: 3;
 }
 
 @media (min-width: 900px) {
