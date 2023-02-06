@@ -188,27 +188,26 @@ pre {
 /* buttons */
 
 a.button:any-link, button {
-  border-radius: 0;
-  color: var(--button-text-color);
-  background-color: var(--button-background-color);
-  text-transform: uppercase;
-  font-size: 14px;
-  padding: var(--button-padding);
-  font-weight: 600;
-  font-family: var(--body-font-family);
-  display: inline-block;
   box-sizing: border-box;
-  text-decoration: none;
-  border: 2px solid transparent;
-  text-align: center;
-  font-style: normal;
-  cursor: pointer;
+  display: inline-block;
   margin: 16px 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  border: 2px solid transparent;
   border-radius: var(--button-border-radius);
+  padding: var(--button-padding);
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
   line-height: 1.5;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
 a.button:hover, a.button:focus, button:hover, button:focus  {
