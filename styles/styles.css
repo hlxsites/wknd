@@ -43,7 +43,13 @@
   --nav-height: 115px;
   --app-nav-height: 50px;
   --topbar-height: 25px;
-  --topmenu-height: 42px;
+  --topmenu-height: 42px;  
+  
+  /* buttons */
+  --button-background-color: var(--color-yellow);
+  --button-border-radius: 0;
+  --button-text-color: var(--text-color);
+  --button-padding: 1em 2.5em;
 }
 
 @media (min-width: 900px) {
@@ -140,7 +146,6 @@ p {
   margin: 0 0 13.5px;
   font-size: 18px;
   line-height: 2.5;
-  text-align: justify;
 }
 
 a:any-link {
@@ -184,11 +189,11 @@ pre {
 
 a.button:any-link, button {
   border-radius: 0;
-  color: #202020;
-  background-color: var(--color-yellow);
+  color: var(--button-text-color);
+  background-color: var(--button-background-color);
   text-transform: uppercase;
   font-size: 14px;
-  padding: 1em 2.5em;
+  padding: var(--button-padding);
   font-weight: 600;
   font-family: var(--body-font-family);
   display: inline-block;
@@ -202,6 +207,8 @@ a.button:any-link, button {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  border-radius: var(--button-border-radius);
+  line-height: 1.5;
 }
 
 a.button:hover, a.button:focus, button:hover, button:focus  {
@@ -283,7 +290,7 @@ hr {
   border-bottom: 1px solid var(--overlay-background-color);
 }
 
-main img {
+img {
   max-width: 100%;
   width: auto;
   height: auto;

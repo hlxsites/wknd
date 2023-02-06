@@ -20,8 +20,8 @@ const LCP_BLOCKS = ['parallax']; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
 function buildHeroBlock(main) {
-  const h1 = main.querySelector('h1');
-  const picture = main.querySelector('picture');
+  const h1 = main.querySelector('main > div > h1');
+  const picture = main.querySelector('main > div > p > picture');
   // eslint-disable-next-line no-bitwise
   if (h1 && picture && (h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING)) {
     const section = document.createElement('div');
@@ -57,6 +57,28 @@ function buildAutoBlocks(main) {
   }
 }
 
+async function loadDemoConfig() {
+  const demoConfig = {};
+  const pathSegments = window.location.pathname.split('/');
+  if (window.location.pathname.startsWith('/drafts/') && pathSegments.length > 4) {
+    const demoBase = pathSegments.slice(0, 4).join('/');
+    const resp = await fetch(`${demoBase}/theme.json`);
+    if (resp.status === 200) {
+      const json = await resp.json();
+      const tokens = json.data;
+      const root = document.querySelector(':root');
+      tokens.forEach((e) => {
+        root.style.setProperty(`--${e.token}`, `${e.value}`);
+        demoConfig[e.token] = e.value;
+      });
+      demoConfig.tokens = tokens;
+      demoConfig.demoBase = demoBase;
+    }
+  }
+  window.wknd = window.wknd || {};
+  window.wknd.demoConfig = demoConfig;
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
@@ -66,6 +88,7 @@ export function decorateMain(main) {
   // hopefully forward compatible button decoration
   decorateButtons(main);
   decorateIcons(main);
+
   buildAutoBlocks(main);
   decorateSections(main);
 
@@ -121,6 +144,10 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+
+  // load demo config
+  await loadDemoConfig();
+
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
@@ -164,7 +191,17 @@ async function loadLazy(doc) {
     loadHeader(doc.querySelector('header'), '/drafts/fkakatie/app-nav');
   }
 
-  loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
+  if (window.wknd.demoConfig.fonts) {
+    const fonts = window.wknd.demoConfig.fonts.split('\n');
+    fonts.forEach(async (font) => {
+      const [family, url] = font.split(': ');
+      const ff = new FontFace(family, `url('${url}')`);
+      await ff.load();
+      document.fonts.add(ff);
+    });
+  } else {
+    loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
+  }
   addFavIcon(`${window.hlx.codeBasePath}/styles/favicon.svg`);
   sampleRUM('lazy');
   sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
