@@ -1,0 +1,157 @@
+.pointers {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  height: min(calc(100vw + 64px), 500px);
+  margin: auto;
+}
+
+@media (min-width: 900px) {
+  .pointers {
+    width: 500px;
+  }
+}
+
+.pointers picture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  box-sizing: border-box;
+}
+
+.pointers img {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+
+.pointers .pointers-pointer {
+  box-sizing: border-box;
+  position: absolute;
+  opacity: 0;
+  z-index: 1;
+  width: min(150px, calc(50vw - 16px));
+  margin-top: 50%;
+  border: 2px solid #0e67cf;
+  border-radius: 4px;
+  padding: 4px 12px;
+  background-color: #0e67cf;
+  color: white;
+  cursor: pointer;
+}
+
+.pointers.active .pointers-pointer {
+  opacity: 1;
+  margin-top: 0;
+  transition: opacity .9s ease-in-out, margin .6s ease-in;
+}
+
+.pointers .pointers-pointer .pointer-text {
+  transition: opacity .2s;
+}
+
+.pointers .pointers-pointer:hover .pointer-text {
+  opacity: 0;
+}
+
+.pointers .pointers-pointer::before,
+.pointers .pointers-pointer::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.pointers .pointers-pointer::before {
+  bottom: -22px; /* height + border */
+  border: 10px solid transparent;
+  border-top: 10px solid #0e67cf;
+}
+
+.pointers .pointers-pointer::after {
+  box-sizing: border-box;
+  bottom: -35px;
+  width: 15px;
+  height: 15px;
+  background-color: white;
+  border: 2px solid var(--text-color);
+  border-radius: 50%;
+}
+
+.pointers .pointers-pointer.pointer-left {
+  top: 50%;
+  left: -12px;
+  transform: translateY(-50%);
+}
+
+.pointers .pointers-pointer.pointer-right {
+  top: 50%;
+  right: -12px;
+  transform: translateY(-50%);
+}
+
+.pointers .pointers-pointer.pointer-top {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.pointers .pointers-pointer.pointer-top-left {
+  top: 0;
+  left: 0;
+}
+
+.pointers .pointers-pointer.pointer-top-right {
+  top: 0;
+  right: 0;
+}
+
+@media (min-width: 900px) {
+  .pointers .pointers-pointer.pointer-left {
+    left: 32px;
+  }
+  
+  .pointers .pointers-pointer.pointer-right {
+    right: 32px;
+  }
+
+  .pointers .pointers-pointer.pointer-top-right {
+    right: 64px;
+  }
+}
+
+.pointers .pointers-pointer p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.pointers .pointers-pointer .pointer-button {
+  box-sizing: border-box;
+  position: absolute;
+  top: calc(50% + 2px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: calc(150px - 12px);
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.pointers .pointers-pointer:hover .pointer-button {
+  opacity: 1;
+}
+
+.pointers .pointers-pointer .pointer-button .button {
+  max-width: 100%;
+  margin: 0;
+  border: 2px solid;
+  border-radius: 50px;
+  padding: 4px 12px;
+  background-color: transparent;
+  font-size: 16px;
+  font-weight: 800;
+  text-transform: initial;
+}
