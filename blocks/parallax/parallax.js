@@ -77,7 +77,7 @@ export default function decorate(block) {
     } else {
       text.classList.remove('active');
     }
-  }, { threshold: 0.1 });
+  }, { threshold: 0.5 });
   observer.observe(block);
 
   block.append(wrapper);

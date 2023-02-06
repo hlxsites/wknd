@@ -121,7 +121,7 @@
 }
 
 /* TO */
-.parallax .parallax-layer.from-bottom img {
+.parallax .parallax-layer.to-bottom img {
   bottom: 0;
   left: 0;
   right: 0;
