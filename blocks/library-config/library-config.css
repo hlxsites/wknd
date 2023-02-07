@@ -42,11 +42,11 @@ section.library-config-container {
 }
 
 .allow-back .sk-library-logo {
-    background-color: transparent;
     border: 0;
     background: url('data:image/svg+xml;utf8, %3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%20width%3D%2218%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3Cstyle%3E%0A%20%20%20%20%20%20.a%20%7B%0A%20%20%20%20%20%20%20%20fill%3A%20%236b6b6b%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%3C%2Fstyle%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Ctitle%3ES%20Back%2018%20N%3C%2Ftitle%3E%0A%20%20%3Crect%20id%3D%22Canvas%22%20fill%3D%22%23ff13dc%22%20opacity%3D%220%22%20width%3D%2218%22%20height%3D%2218%22%20%2F%3E%3Cpath%20class%3D%22a%22%20d%3D%22M5%2C5V2.6035a.25.25%2C0%2C0%2C0-.427-.177L0%2C7l4.573%2C4.573A.25.25%2C0%2C0%2C0%2C5%2C11.3965V9h8v6.5a.5.5%2C0%2C0%2C0%2C.5.5h3a.5.5%2C0%2C0%2C0%2C.5-.5V8a3%2C3%2C0%2C0%2C0-3-3Z%22%20%2F%3E%0A%3C%2Fsvg%3E');
     background-repeat: no-repeat;
     background-position: 50%;
+    background-color: transparent;
     width: 36px;
     height: 36px;
     cursor: pointer;
@@ -162,10 +162,6 @@ section.library-config-container {
     transform: rotate(45deg);
 }
 
-.sk-library li:hover button {
-    display: unset;
-}
-
 .sk-library li button.copied,
 .sk-library li button.copied:hover {
     background-color: rgb(54 127 61 / 50%);
@@ -177,11 +173,35 @@ section.library-config-container {
     font-weight: 700;
 }
 
+
+.con-assets-list li {
+    flex: 0 0 50%;
+    height: 180px;
+    text-align: middle;
+    display: flex;
+    align-items: center;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.con-assets-list li:hover {
+    cursor: pointer;
+    background: #85858545;
+}
+
+.con-assets-list li:nth-child(odd) {
+    border-right: 1px solid #676767;
+}
+
+.sk-library button:hover, 
 .sk-library .content-type:hover,
-.sk-library .block-group:hover,
-.sk-library button:hover {
+.sk-library .block-group:hover {
     cursor: pointer;
     background-color: rgb(255 255 255 / 5%);
+}
+
+.sk-library li:hover button {
+    display: unset;
 }
 
 .sk-library .block-group-list {
@@ -228,21 +248,11 @@ ul.con-type-list.con-assets-list {
     flex-wrap: wrap;
 }
 
-.con-assets-list li {
-    flex: 0 0 50%;
-    height: 180px;
-    text-align: middle;
-    display: flex;
-    align-items: center;
-    padding: 24px;
-    box-sizing: border-box;
+
+main:has(.library-config-container) {
+    padding-top: 0;
 }
 
-.con-assets-list li:hover {
-    cursor: pointer;
-    background: #85858545;
-}
-
-.con-assets-list li:nth-child(odd) {
-    border-right: 1px solid #676767;
+.section.library-config-container {
+    padding: 0;
 }
