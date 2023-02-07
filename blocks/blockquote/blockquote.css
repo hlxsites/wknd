@@ -1,5 +1,5 @@
 .blockquote {
-  background-color: var(--blockquote-background-color);
+  background-color: var(--overlay-background-color);
   padding: 1em;
 }
 

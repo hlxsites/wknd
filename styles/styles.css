@@ -48,10 +48,6 @@
   --button-border-radius: 0;
   --button-text-color: var(--text-color);
   --button-padding: 1em 2.5em;
-
-  /* blockquote */
-  --blockquote-background-color: #ebebeb;
-  --blockquote-color: var(--text-color);
 }
 
 body {
