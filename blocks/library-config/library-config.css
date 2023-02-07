@@ -248,6 +248,9 @@ ul.con-type-list.con-assets-list {
     flex-wrap: wrap;
 }
 
+header {
+    display: none;
+}
 
 main:has(.library-config-container) {
     padding-top: 0;
