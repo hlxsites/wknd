@@ -34,7 +34,9 @@ export function isBlockLibrary() {
 export function createTag(tag, attributes, children) {
   const element = document.createElement(tag);
   if (children) {
-    if (children instanceof HTMLElement || children instanceof SVGElement || children instanceof DocumentFragment) {
+    if (children instanceof HTMLElement
+      || children instanceof SVGElement
+      || children instanceof DocumentFragment) {
       element.append(children);
     } else if (Array.isArray(children)) {
       element.append(...children);
@@ -156,9 +158,9 @@ async function loadLazy(doc) {
   const element = hash ? main.querySelector(hash) : false;
   if (hash && element) element.scrollIntoView();
 
-  if(!isBlockLibrary()) {
+  if (!isBlockLibrary()) {
     loadHeader(doc.querySelector('header'));
-    loadFooter(doc.querySelector('footer'));    
+    loadFooter(doc.querySelector('footer'));
   }
 
   if (window.wknd.demoConfig.fonts) {

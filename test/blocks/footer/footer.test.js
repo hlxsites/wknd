@@ -10,6 +10,11 @@ const { buildBlock, decorateBlock, loadBlock } = await import('../../../scripts/
 
 document.body.innerHTML = await readFile({ path: '../../scripts/body.html' });
 
+window.wknd = window.wknd || {};
+window.wknd.demoConfig = {
+  demoBase: '/test/blocks/footer',
+};
+
 const sleep = async (time = 1000) => new Promise((resolve) => {
   setTimeout(() => {
     resolve(true);
