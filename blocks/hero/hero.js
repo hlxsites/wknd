@@ -3,6 +3,6 @@ export default async function decorate(block) {
   const bg = row.querySelector('picture');
   const bgP = bg.closest('p');
   block.append(bg);
-  bgP.remove();
+  if (bgP) bgP.remove();
   row.classList.add('hero-body');
 }

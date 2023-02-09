@@ -21,7 +21,9 @@
   --text-color: #202020;
   --text-color-light: #ebebeb;
   --heading-highlight-color: #ffea00;
-  
+  --overlay-text-color: var(--text-color);
+  --highlight-text-color: var(--text-color);
+
   /* fonts */
   --body-font-family: 'Source Sans Pro', 'helvetica neue', helvetica, ubuntu, roboto, noto, sans-serif;
   --heading-font-family: asar, georgia, 'Times New Roman', times, serif;
@@ -48,6 +50,9 @@
   --button-border-radius: 0;
   --button-text-color: var(--text-color);
   --button-padding: 1em 2.5em;
+
+  /* default content */
+  --default-text-align: left;
 }
 
 body {
@@ -66,6 +71,10 @@ body.appear {
 
 header {
   height: var(--nav-height);
+}
+
+main {
+  text-align: var(--default-text-align);
 }
 
 .hidden {
@@ -183,7 +192,7 @@ button:disabled, button:disabled:hover {
 a.button.secondary, button.secondary {
   background-color: unset;
   border: 2px solid currentcolor;
-  color: var(--text-color)
+  color: unset;
 }
 
 body.activity main {
@@ -271,6 +280,12 @@ img {
 
 main .section.highlight {
   background-color: var(--highlight-background-color);
+  color: var(--highlight-text-color);
+}
+
+main .section.overlay {
+  background-color: var(--overlay-background-color);
+  color: var(--highlight-text-color);
 }
 
 .icon-wknd-logo-dk {
