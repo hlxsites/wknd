@@ -1,0 +1,80 @@
+main .form input,
+main .form textarea,
+main .form select {
+  border: 1px solid var(--overlay-background-color);
+  padding: 11px;
+  border-radius: 0;
+  width: 100%;
+  max-width: 50rem;
+  box-sizing: border-box;
+  margin-top: 4px;
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-s);
+}
+
+main .form textarea {
+  min-height: 100px;
+}
+
+main .form input:hover,
+main .form select:hover {
+  border-color: var(--highlight-background-color);
+}
+
+main .form label {
+  width: 100%;
+  display: block;
+  font-size: var(--body-font-size-xs);
+  text-transform: uppercase;
+  box-sizing: border-box;
+  font-weight: 800;
+}
+
+main .form label.required::after {
+  content: "*";
+  color: red;
+  padding-left: 5px;
+}
+
+main .form .field-wrapper {
+  margin-bottom: 20px;
+}
+
+main .form .form-checkbox-wrapper {
+  display: flex;
+}
+
+main .form .form-checkbox-wrapper input[type='checkbox'] {
+  display: none;
+}
+
+main .form .form-checkbox-wrapper input[type='checkbox'] + label::before {
+  float: left;
+  margin-top: 2px;
+  margin-right: 5px;
+  height: 30px;
+  width: 30px;
+  content: ' ';
+  background: url('./checkbox.svg');
+  background-size: contain;
+}
+
+main .form .form-checkbox-wrapper input[type='checkbox']:checked +label::before {
+  background: url('./checkbox-checked.svg');
+  background-size: contain;
+  content: ' ';
+}
+
+main .form .form-checkbox-wrapper label {
+  font-weight: normal;
+  text-transform: none;
+  display: block;
+}
+
+main .form .button {
+  cursor: pointer;
+  background: var(--button-background-color);
+  color: var(--button-text-color);
+  border-radius: var(--button-border-radius);;
+  padding: var(--button-padding);
+}
