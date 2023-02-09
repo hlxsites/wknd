@@ -287,6 +287,10 @@ main .section.highlight {
   background-color: var(--highlight-background-color);
 }
 
+main .section.overlay {
+  background-color: var(--overlay-background-color);
+}
+
 .icon-wknd-logo-dk {
   display: inline-block;
   width:128px;
