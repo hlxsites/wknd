@@ -1,4 +1,4 @@
-import { readBlockConfig, decorateIcons } from '../../scripts/lib-franklin.js';
+import { decorateIcons } from '../../scripts/lib-franklin.js';
 
 /**
  * loads and decorates the footer
@@ -6,21 +6,23 @@ import { readBlockConfig, decorateIcons } from '../../scripts/lib-franklin.js';
  */
 
 export default async function decorate(block) {
-  const cfg = readBlockConfig(block);
-  block.textContent = '';
+  const navPath = window.wknd.demoConfig.demoBase || '';
 
-  const footerPath = cfg.footer || '/footer';
-  const resp = await fetch(`${footerPath}.plain.html`);
-  const html = await resp.text();
-  const footer = document.createElement('div');
-  footer.innerHTML = html;
-  await decorateIcons(footer);
+  const resp = await fetch(`${navPath}/footer.plain.html`);
+  if (resp.ok) {
+    block.textContent = '';
 
-  const classes = ['brand', 'nav', 'follow', 'disc'];
-  let f = footer.firstElementChild;
-  while (f && classes.length) {
-    f.classList.add(classes.shift());
-    f = f.nextElementSibling;
+    const html = await resp.text();
+    const footer = document.createElement('div');
+    footer.innerHTML = html;
+    await decorateIcons(footer);
+
+    const classes = ['brand', 'nav', 'follow', 'disc'];
+    let f = footer.firstElementChild;
+    while (f && classes.length) {
+      f.classList.add(classes.shift());
+      f = f.nextElementSibling;
+    }
+    block.append(footer);
   }
-  block.append(footer);
 }
