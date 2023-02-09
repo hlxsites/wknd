@@ -1,6 +1,5 @@
 {
   "project": "WKND",
-  "host": "main--wknd--hlxsites.hlx.page",
   "plugins": [
     {
       "id": "library",
