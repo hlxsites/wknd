@@ -13,7 +13,7 @@
   border-bottom: 2px solid var(--heading-highlight-color);
   content: '';
   display: block;
-  width: 5pc;
+  width: 80px;
   position: relative;
   top: 0.25em;
 }
@@ -22,7 +22,7 @@
   margin: 10px 0 0 10px;
 }
 
-.blockquote blockquote * p {
+.blockquote blockquote * p, .blockquote blockquote * div {
   font-size: 36px;
   border: none;
   margin: 0;

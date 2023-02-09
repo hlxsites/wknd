@@ -1,22 +1,13 @@
-import { toClassName } from '../../scripts/lib-franklin.js';
-
 export default function decorate(block) {
-  const config = {};
-  block.querySelectorAll(':scope>div').forEach((row) => {
-    if (row.children) {
-      const cols = [...row.children];
-      if (cols[1]) {
-        const name = toClassName(cols[0].textContent);
-        config[name] = cols[1].innerHTML;
-      }
-    }
-  });
-  const { quote, author } = config;
-  block.innerHTML = '';
+  const quoteDiv = block.querySelector('div:last-of-type');
+  const blockquote = document.createElement('blockquote');
+  blockquote.innerHTML = `<strong>${quoteDiv.innerHTML}</strong>`;
+  quoteDiv.replaceWith(blockquote);
 
-  const blockquoteTag = document.createElement('blockquote');
-  blockquoteTag.innerHTML = `<strong>${quote}</strong>`;
-  const authorTag = document.createElement('p');
-  authorTag.innerHTML = `<b><i>${author}</i></b>`;
-  block.append(blockquoteTag, authorTag);
+  const authorDiv = block.querySelector('div:nth-child(2)');
+  if (authorDiv) {
+    const author = document.createElement('p');
+    author.innerHTML = `<b><i>${authorDiv.innerHTML}</i></b>`;
+    authorDiv.replaceWith(author);
+  }
 }
