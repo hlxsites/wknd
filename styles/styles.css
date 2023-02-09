@@ -20,6 +20,8 @@
   --highlight-background-color: #ccc;
   --text-color: #202020;
   --text-color-light: #ebebeb;
+  --overlay-text-color: var(--text-color);
+  --highlight-text-color: var(--text-color);
 
   /* fonts */
   --body-font-family: 'Source Sans Pro', 'helvetica neue', helvetica, ubuntu, roboto, noto, sans-serif;
@@ -285,10 +287,12 @@ img {
 
 main .section.highlight {
   background-color: var(--highlight-background-color);
+  color: var(--highlight-text-color);
 }
 
 main .section.overlay {
   background-color: var(--overlay-background-color);
+  color: var(--highlight-text-color);
 }
 
 .icon-wknd-logo-dk {
