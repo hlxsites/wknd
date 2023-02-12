@@ -18,6 +18,7 @@ import {
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
+// Define the custom audiences mapping for experimentation
 const EXPERIMENTATION_CONFIG = {
   audiences: {
     device: {
@@ -202,6 +203,7 @@ async function loadLazy(doc) {
   sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
   sampleRUM.observe(main.querySelectorAll('picture > img'));
 
+  // Load experimentation preview overlay
   if (window.location.hostname === 'localhost' || window.location.hostname.endsWith('.hlx.page')) {
     const preview = await import(`${window.hlx.codeBasePath}/tools/preview/preview.js`);
     await preview.default();
@@ -211,6 +213,7 @@ async function loadLazy(doc) {
     }
   }
 
+  // Mark customer as having viewed the page once
   localStorage.setItem('franklin-visitor-returning', true);
 }
 
