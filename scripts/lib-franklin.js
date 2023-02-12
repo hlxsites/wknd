@@ -351,6 +351,10 @@ function getBlockConfig(block) {
   const cssPath = `${window.hlx.codeBasePath}/blocks/${blockName}/${blockName}.css`;
   const jsPath = `${window.hlx.codeBasePath}/blocks/${blockName}/${blockName}.js`;
 
+  if (!window.hlx.patchBlockConfig) {
+    return { blockName, cssPath, jsPath };
+  }
+
   return window.hlx.patchBlockConfig.reduce(
     (config, fn) => (typeof fn === 'function' ? fn(config) : config),
     { blockName, cssPath, jsPath },
