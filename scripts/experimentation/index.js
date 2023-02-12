@@ -111,6 +111,13 @@ export function getExperimentName(tagName) {
   return toClassName(getMetadata(tagName)) || null;
 }
 
+/**
+ * Checks whether we have a valid experimentation config.
+ * Mostly used to validate custom parsers.
+ *
+ * @param {object} config the experimentation config
+ * @returns a boolean indicating whether the config is valid or not
+ */
 export function isValidConfig(config) {
   if (!config.variantNames
     || !config.variantNames.length
@@ -141,8 +148,8 @@ export function isValidConfig(config) {
  * a "Percentage Split", "Label" and a set of "Links".
  *
  *
- * @param {string} experimentId
- * @param {object} cfg
+ * @param {string} experimentId the experimentation id
+ * @param {string} instantExperiment the instant experiment config
  * @returns {object} containing the experiment manifest
  */
 export function getConfigForInstantExperiment(experimentId, instantExperiment) {
@@ -193,8 +200,8 @@ export function getConfigForInstantExperiment(experimentId, instantExperiment) {
  * a "Percentage Split", "Label" and a set of "Links".
  *
  *
- * @param {string} experimentId
- * @param {object} cfg
+ * @param {string} experimentId the experimentation id
+ * @param {object} cfg the custom experimentation config
  * @returns {object} containing the experiment manifest
  */
 export async function getConfigForFullExperiment(experimentId, cfg) {
@@ -222,6 +229,11 @@ export async function getConfigForFullExperiment(experimentId, cfg) {
   return null;
 }
 
+/**
+ * Gets the UED compatible decision policy for the specified experimentation config
+ * @param {object} config the experimentation config
+ * @returns the decision policy to run through the UED engine
+ */
 function getDecisionPolicy(config) {
   const decisionPolicy = {
     id: 'content-experimentation-policy',
@@ -292,7 +304,14 @@ async function replaceInner(path, element) {
   return false;
 }
 
-export async function getConfig(experiment, instantExperiment, config = DEFAULT_OPTIONS) {
+/**
+ * Gets the experimentation config for the specified experiment
+ * @param {string} experiment the experiment id
+ * @param {string} [instantExperiment] the instant experiment config
+ * @param {object} [config] the custom config for the experimentation plugin
+ * @returns the experiment configuration
+ */
+export async function getConfig(experiment, instantExperiment = null, config = DEFAULT_OPTIONS) {
   const usp = new URLSearchParams(window.location.search);
   const [forcedExperiment, forcedVariant] = usp.has(config.queryParameter) ? usp.get(config.queryParameter).split('/') : [];
 
@@ -324,6 +343,13 @@ export async function getConfig(experiment, instantExperiment, config = DEFAULT_
   return experimentConfig;
 }
 
+/**
+ * Runs the configured experiments on the current page.
+ * @param {string} experiment the experiment id
+ * @param {string} instantExperiment the instant experiment config
+ * @param {object} customOptions the custom config for the experimentation plugin
+ * @returns a boolean indicating whether the experiment was run successfully or not
+ */
 export async function runExperiment(experiment, instantExperiment, customOptions) {
   const options = {
     ...DEFAULT_OPTIONS,
@@ -366,6 +392,11 @@ export async function runExperiment(experiment, instantExperiment, customOptions
   return result;
 }
 
+/**
+ * Patches the block config for the experimentation use case.
+ * @param {object} config the block config
+ * @returns the patched block config for experimentation
+ */
 export function patchBlockConfig(config) {
   const { experiment } = window.hlx;
 
@@ -425,3 +456,4 @@ export function patchBlockConfig(config) {
     jsPath: `${origin}${codeBasePath}${path}/${config.blockName}.js`,
   };
 }
+window.hlx.patchBlockConfig.push(patchBlockConfig);
