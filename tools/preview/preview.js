@@ -100,7 +100,7 @@ export function getOverlay() {
  * @return {Object} returns the overlay container
  */
 export default function decoratePreviewOverlay() {
-  loadCSS(`${window.hlx.codeBasePath}/tools/preview/preview.js`);
+  loadCSS(`${window.hlx.codeBasePath}/tools/preview/preview.css`);
 
   getOverlay();
 }

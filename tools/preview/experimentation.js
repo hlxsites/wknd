@@ -48,6 +48,10 @@ const bigcountformat = {
   },
 };
 
+function capitalize(str) {
+  return str.replace(/\w+/g, (word) => word.charAt(0).toUpperCase() + word.substring(1));
+}
+
 function createVariant(experiment, variantName, config) {
   const selectedVariant = config?.selectedVariant || config?.variantNames[0];
   const variant = config.variants[variantName];
@@ -208,13 +212,14 @@ async function decorateExperimentPill(overlay) {
     return;
   }
 
+  const audiences = Object.entries(config.audiences).map(([key, value]) => `${capitalize(key)}: ${capitalize(value)}`).join(', ');
   const pill = createPopupButton(
     `Experiment: ${config.id}`,
     {
       label: config.label,
       description: `
         <div class="hlx-details">
-          ${config.status}${config.audience ? ', ' : ''}${config.audience}${config.variants[config.variantNames[0]].blocks.length ? ', Blocks: ' : ''}${config.variants[config.variantNames[0]].blocks.join(',')}
+          ${config.status}${audiences.length ? `, ${audiences}` : ''}${config.variants[config.variantNames[0]].blocks.length ? ', Blocks: ' : ''}${config.variants[config.variantNames[0]].blocks.join(',')}
         </div>
         <div class="hlx-info">How is it going?</div>`,
       actions: config.manifest ? [{ label: 'Manifest', href: config.manifest }] : [],

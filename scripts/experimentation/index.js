@@ -32,7 +32,9 @@ export const DEFAULT_OPTIONS = {
  *        id: <string>,
  *        label: <string>,
  *        blocks: [<string>]
- *        audience: Desktop | Mobile,
+ *        audiences: {
+ *          <string>: <string>,
+ *        }
  *        status: Active | Inactive,
  *        variantNames: [<string>],
  *        variants: {
@@ -46,10 +48,20 @@ export const DEFAULT_OPTIONS = {
  *      };
  */
 function parseExperimentConfig(json) {
-  const config = {};
+  const config = {
+    audiences: {},
+  };
   try {
     json.settings.data.forEach((line) => {
-      const key = toCamelCase(line.Name);
+      let key = toCamelCase(line.Name);
+      if (key.startsWith('audience')) {
+        key = toCamelCase(key.substring(8));
+        config.audiences[key] = toCamelCase(line.Value);
+        return;
+      }
+      if (key === 'experimentName') {
+        key = 'label';
+      }
       config[key] = line.Value;
     });
     const variants = {};
@@ -136,7 +148,7 @@ export function isValidConfig(config) {
 export function getConfigForInstantExperiment(experimentId, instantExperiment) {
   const config = {
     label: `Instant Experiment: ${experimentId}`,
-    audience: '',
+    audiences: {},
     status: 'Active',
     id: experimentId,
     variants: {},
@@ -239,17 +251,21 @@ function getDecisionPolicy(config) {
 
 /**
  * this is an extensible stub to take on audience mappings
- * @param {string} audience
+ * @param {object} audiences the experiment audiences
+ * @param {object} selected the experiment config
  * @return {boolean} is member of this audience
  */
-function isValidAudience(audience) {
-  if (audience === 'mobile') {
-    return window.innerWidth < 600;
-  }
-  if (audience === 'desktop') {
-    return window.innerWidth >= 600;
-  }
-  return true;
+async function isValidAudience(audiences, selected) {
+  const results = await Promise.all(Object.entries(selected).map(([key, value]) => {
+    if (audiences[key] && typeof audiences[key] === 'function') {
+      return audiences[key](value);
+    }
+    if (audiences[key] && audiences[key][value] && typeof audiences[key][value] === 'function') {
+      return audiences[key][value]();
+    }
+    return true;
+  }));
+  return results.every((res) => res);
 }
 
 /**
@@ -289,10 +305,10 @@ export async function getConfig(experiment, instantExperiment, config = DEFAULT_
   }
 
   experimentConfig.run = !!forcedExperiment
-    || isValidAudience(toClassName(experimentConfig.audience));
+    || await isValidAudience(config.audiences, experimentConfig.audiences);
   window.hlx = window.hlx || {};
   window.hlx.experiment = experimentConfig;
-  console.debug('run', experimentConfig.run, experimentConfig.audience);
+  console.debug('run', experimentConfig.run, experimentConfig.audiences);
   if (!experimentConfig.run) {
     return null;
   }

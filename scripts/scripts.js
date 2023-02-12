@@ -18,6 +18,19 @@ import {
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
+const EXPERIMENTATION_CONFIG = {
+  audiences: {
+    device: {
+      mobile: () => window.innerWidth < 600,
+      desktop: () => window.innerWidth >= 600,
+    },
+    visitor: {
+      new: () => !localStorage.getItem('franklin-visitor-returning'),
+      returning: () => !!localStorage.getItem('franklin-visitor-returning'),
+    },
+  },
+};
+
 /**
  * Determine if we are serving content for the block-library, if so don't load the header or footer
  * @returns {boolean} True if we are loading block library content
@@ -127,7 +140,7 @@ async function loadEager(doc) {
   const instantExperiment = getMetadata('instant-experiment');
   if (instantExperiment || experiment) {
     const { runExperiment } = await import('./experimentation/index.js');
-    await runExperiment(experiment, instantExperiment);
+    await runExperiment(experiment, instantExperiment, EXPERIMENTATION_CONFIG);
   }
 
   // load demo config
@@ -197,6 +210,8 @@ async function loadLazy(doc) {
       experimentation.default();
     }
   }
+
+  localStorage.setItem('franklin-visitor-returning', true);
 }
 
 /**
