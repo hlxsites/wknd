@@ -70,7 +70,7 @@ body.appear {
 }
 
 header {
-  height: var(--nav-height);
+  height: calc(var(--nav-height) + 25px);
 }
 
 main {
@@ -286,6 +286,14 @@ main .section.highlight {
 main .section.overlay {
   background-color: var(--overlay-background-color);
   color: var(--highlight-text-color);
+}
+
+main .section.full-bleed {
+  padding: 0;
+}
+
+main .section.full-bleed > div {
+  max-width: unset;
 }
 
 .icon-wknd-logo-dk {
