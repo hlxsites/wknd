@@ -30,6 +30,12 @@
     object-fit: cover;
 }
 
+.cards.no-crop > ul > li img {
+    aspect-ratio: unset;
+    object-fit: unset;
+}
+
+
 .cards.scroll > ul {
     scroll-snap-type: x mandatory;
     overflow-x: scroll;
