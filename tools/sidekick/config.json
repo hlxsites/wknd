@@ -7,7 +7,7 @@
       "environments": [ "edit" ],
       "isPalette": true,
       "paletteRect": "top: auto; bottom: 20px; left: 20px; height: 398px; width: 360px;",
-      "url": "/block-library/library",
+      "url": "/block-library/library?assets=https://hook.app.workfrontfusion.com/qd7qxl0xmqay71b2sfscdg6cgk6m81iy",
       "includePaths": [ "**.docx**" ]
     }
   ]
