@@ -23,6 +23,13 @@
   gap: 16px;
 }
 
+.hlx-preview-overlay p, .hlx-preview-overlay h5, .hlx-preview-overlay code {
+  font-family: unset;
+  line-height: unset;
+  font-size: unset;
+  padding: unset;
+}
+
 .hlx-badge {
   border-radius: 32px; 
   background-color: #888;
