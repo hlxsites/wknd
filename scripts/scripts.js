@@ -92,15 +92,33 @@ function buildAutoBlocks(main) {
   }
 }
 
+function patchDemoBlocks(config) {
+  if (window.wknd.demoConfig.blocks && window.wknd.demoConfig.blocks[config.blockName]) {
+    const url = window.wknd.demoConfig.blocks[config.blockName];
+    const splits = new URL(url).pathname.split('/');
+    const [, owner, repo, , branch] = splits;
+    const path = splits.slice(5).join('/');
+
+    const franklinPath = `https://little-forest-58aa.david8603.workers.dev/?url=https://${branch}--${repo}--${owner}.hlx.live/${path}`;
+    return {
+      ...config,
+      jsPath: `${franklinPath}/${config.blockName}.js`,
+      cssPath: `${franklinPath}/${config.blockName}.css`,
+    };
+
+  }
+  return (config);
+}
+
 async function loadDemoConfig() {
   const demoConfig = {};
   const pathSegments = window.location.pathname.split('/');
   if (window.location.pathname.startsWith('/drafts/') && pathSegments.length > 4) {
     const demoBase = pathSegments.slice(0, 4).join('/');
-    const resp = await fetch(`${demoBase}/theme.json`);
+    const resp = await fetch(`${demoBase}/theme.json?sheet=default&sheet=blocks`);
     if (resp.status === 200) {
       const json = await resp.json();
-      const tokens = json.data;
+      const tokens = json.default.data;
       const root = document.querySelector(':root');
       tokens.forEach((e) => {
         root.style.setProperty(`--${e.token}`, `${e.value}`);
@@ -108,6 +126,12 @@ async function loadDemoConfig() {
       });
       demoConfig.tokens = tokens;
       demoConfig.demoBase = demoBase;
+      const blocks = json.blocks ? json.blocks.data : [];
+      demoConfig.blocks = {}; 
+      blocks.forEach((block) => {
+        demoConfig.blocks[block.name] = block.url;
+      })
+      window.hlx.patchBlockConfig.push(patchDemoBlocks);
     }
   }
   window.wknd = window.wknd || {};
