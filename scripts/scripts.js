@@ -118,7 +118,7 @@ async function loadDemoConfig() {
     const resp = await fetch(`${demoBase}/theme.json?sheet=default&sheet=blocks`);
     if (resp.status === 200) {
       const json = await resp.json();
-      const tokens = json.default.data;
+      const tokens = json.data || json.default.data;
       const root = document.querySelector(':root');
       tokens.forEach((e) => {
         root.style.setProperty(`--${e.token}`, `${e.value}`);
