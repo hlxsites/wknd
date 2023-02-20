@@ -2,8 +2,8 @@
 Your project's description...
 
 ## Environments
-- Preview: https://main--wknd--hlxsites.hlx.page/
-- Live: https://main--wknd--hlxsites.hlx.live/
+- Preview: https://main--project-boilerplate--summit23-l715.hlx.page/
+- Live: https://main--project-boilerplate--summit23-l715.hlx.live/
 
 ## Installation
 
