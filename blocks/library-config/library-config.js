@@ -1,4 +1,5 @@
 import { createTag } from '../../scripts/scripts.js';
+import { readBlockConfig } from '../../scripts/lib-franklin.js';
 
 const LIBRARY_PATH = '/block-library/library.json';
 
@@ -115,6 +116,16 @@ function createList(libraries) {
   return container;
 }
 
+function appendAemAssetsLibrary(container, aemAssetsLib) {
+  const libraryList = container.querySelector('.sk-library-list');
+  const item = createTag('li', { class: 'content-type' }, 'AEM Assets');
+  item.addEventListener('click', () => {
+    window.open(aemAssetsLib, 'windowName', 'width=1000, height=700, left=24, top=24, scrollbars, resizable');
+    return false;
+  });
+  libraryList.append(item);
+}
+
 function createHeader() {
   const nav = createTag('button', { class: 'sk-library-logo' }, 'Franklin Library');
   const title = createTag('div', { class: 'sk-library-title' }, nav);
@@ -156,6 +167,11 @@ export default async function init(el) {
 
   const list = createList(libraries);
   skLibrary.append(list);
+
+  const cfg = readBlockConfig(el);
+  if (cfg['aem-assets-library']) {
+    appendAemAssetsLibrary(list, cfg['aem-assets-library']);
+  }
   el.attachShadow({ mode: 'open' });
 
   el.shadowRoot.append(skLibrary);

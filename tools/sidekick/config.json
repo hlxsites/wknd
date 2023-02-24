@@ -9,6 +9,16 @@
       "paletteRect": "top: auto; bottom: 20px; left: 20px; height: 398px; width: 360px;",
       "url": "/block-library/library",
       "includePaths": [ "**.docx**" ]
+    },
+    {
+      "id": "asset-library",
+      "title": "AEM Assets Library",
+      "environments": [
+        "edit"
+      ],
+      "url": "https://aem-assets--wknd--hlxsites.hlx.live/drafts/satyam/aem-asset-selector",
+      "isPalette": true,
+      "paletteRect": "width:1000px; height:700px"
     }
   ]
 }
