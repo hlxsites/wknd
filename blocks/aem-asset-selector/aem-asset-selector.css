@@ -1,0 +1,5 @@
+#asset-selector {
+    height: calc(100vh - 80px);
+    width: calc(100vw - 60px);
+    margin: -20px;
+}
