@@ -169,7 +169,7 @@ export default async function init(el) {
   skLibrary.append(list);
 
   const cfg = readBlockConfig(el);
-  if(cfg['aem-assets-library']) {
+  if (cfg['aem-assets-library']) {
     appendAemAssetsLibrary(list, cfg['aem-assets-library']);
   }
   el.attachShadow({ mode: 'open' });
