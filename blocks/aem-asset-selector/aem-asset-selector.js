@@ -15,11 +15,20 @@ function loadScript(url, callback, type) {
 }
 
 function load(cfg) {
+  let imsEnvironment;
+  if (cfg.environment.toUpperCase() === 'STAGE') {
+    imsEnvironment = 'stg1';
+  } else if (cfg.environment.toUpperCase() === 'PROD') {
+    imsEnvironment = 'prod';
+  } else {
+    throw new Error('Invalid environment setting!');
+  }
   const imsProps = {
     imsClientId: cfg['api-key'],
     imsScope: 'additional_info.projectedProductContext,openid,read_organizations',
     redirectUrl: window.location.href,
     modalMode: true,
+    imsEnvironment,
   };
   // eslint-disable-next-line no-undef
   const registeredTokenService = PureJSSelectors.registerAssetSelectorsIms(imsProps);
@@ -94,7 +103,13 @@ async function renderAssetSelectorWithImsFlow(cfg) {
   }
 
   if (cfg.mode.toLowerCase() === 'delivery') {
-    apikey = 'polaris-asset-search-api-key';
+    if (cfg.environment.toUpperCase() === 'STAGE') {
+      apikey = 'polaris-asset-search-api-key';
+    } else if (cfg.environment.toUpperCase() === 'PROD') {
+      apikey = 'asset_search_service';
+    } else {
+      throw new Error('Invalid environment setting!');
+    }
   } else if (cfg.mode.toLowerCase() === 'author') {
     apikey = 'aem-assets-backend-nr-1';
   } else {
@@ -111,7 +126,8 @@ async function renderAssetSelectorWithImsFlow(cfg) {
     onClose,
     handleSelection,
     handleNavigateToAsset,
-    env: cfg.environment,
+    env: cfg.environment.toUpperCase(),
+    selectionType: 'multiple',
   };
   const container = document.getElementById('asset-selector');
   // eslint-disable-next-line no-undef
