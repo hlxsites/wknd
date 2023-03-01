@@ -130,8 +130,16 @@ async function loadDemoConfig() {
       demoConfig.blocks = {}; 
       blocks.forEach((block) => {
         demoConfig.blocks[block.name] = block.url;
-      })
+      });
+
       window.hlx.patchBlockConfig.push(patchDemoBlocks);
+    }
+
+    if (!demoConfig.demoBase) {
+      const navCheck = await fetch(`${demoBase}/nav.plain.html`);
+      if (navCheck.status === 200) {
+        demoConfig.demoBase = demoBase;
+      }  
     }
   }
   window.wknd = window.wknd || {};
