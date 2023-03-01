@@ -105,7 +105,6 @@ function patchDemoBlocks(config) {
       jsPath: `${franklinPath}/${config.blockName}.js`,
       cssPath: `${franklinPath}/${config.blockName}.css`,
     };
-
   }
   return (config);
 }
@@ -127,7 +126,7 @@ async function loadDemoConfig() {
       demoConfig.tokens = tokens;
       demoConfig.demoBase = demoBase;
       const blocks = json.blocks ? json.blocks.data : [];
-      demoConfig.blocks = {}; 
+      demoConfig.blocks = {};
       blocks.forEach((block) => {
         demoConfig.blocks[block.name] = block.url;
       });
@@ -139,7 +138,7 @@ async function loadDemoConfig() {
       const navCheck = await fetch(`${demoBase}/nav.plain.html`);
       if (navCheck.status === 200) {
         demoConfig.demoBase = demoBase;
-      }  
+      }
     }
   }
   window.wknd = window.wknd || {};
