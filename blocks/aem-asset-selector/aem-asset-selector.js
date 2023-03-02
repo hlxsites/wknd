@@ -1,6 +1,24 @@
 import { readBlockConfig } from '../../scripts/lib-franklin.js';
 
+const IMS_API_KEY = 'sdm-eureka-api-key';
+const POLARIS_API_KEY_STAGE = 'polaris-asset-search-api-key';
+const POLARIS_API_KEY_PROD = 'asset_search_service';
+const AUTHOR_API_KEY = 'aem-assets-backend-nr-1';
+const AS_MFE_STAGE = 'https://experience-stage.adobe.com/solutions/CQ-assets-selectors/assets/resources/asset-selectors.js';
+const AS_MFE_PROD = 'https://experience.adobe.com/solutions/CQ-assets-selectors/assets/resources/asset-selectors.js';
+const DISCOVERY_URL_STAGE = 'https://aem-discovery-stage.adobe.io';
+const DISCOVERY_URL_PROD = 'https://aem-discovery.adobe.io';
+const CM_SUFFIX_STAGE = '-cmstg.adobeaemcloud.com';
+const CM_SUFFIX_PROD = '.adobeaemcloud.com';
+const IMS_ENV_STAGE = 'stg1';
+const IMS_ENV_PROD = 'prod';
+
 let imsInstance = null;
+let polarisApikey;
+let discoveryURL;
+let cmSuffix;
+let asMFE;
+let imsEnvironment;
 
 function loadScript(url, callback, type) {
   const $head = document.querySelector('head');
@@ -14,17 +32,27 @@ function loadScript(url, callback, type) {
   return $script;
 }
 
-function load(cfg) {
-  let imsEnvironment;
+function init(cfg) {
   if (cfg.environment.toUpperCase() === 'STAGE') {
-    imsEnvironment = 'stg1';
+    imsEnvironment = IMS_ENV_STAGE;
+    polarisApikey = POLARIS_API_KEY_STAGE;
+    discoveryURL = DISCOVERY_URL_STAGE;
+    cmSuffix = CM_SUFFIX_STAGE;
+    asMFE = AS_MFE_STAGE;
   } else if (cfg.environment.toUpperCase() === 'PROD') {
-    imsEnvironment = 'prod';
+    imsEnvironment = IMS_ENV_PROD;
+    polarisApikey = POLARIS_API_KEY_PROD;
+    discoveryURL = DISCOVERY_URL_PROD;
+    cmSuffix = CM_SUFFIX_PROD;
+    asMFE = AS_MFE_PROD;
   } else {
     throw new Error('Invalid environment setting!');
   }
+}
+
+function load() {
   const imsProps = {
-    imsClientId: cfg['api-key'],
+    imsClientId: IMS_API_KEY,
     imsScope: 'additional_info.projectedProductContext,openid,read_organizations',
     redirectUrl: window.location.href,
     modalMode: true,
@@ -88,41 +116,22 @@ function handleNavigateToAsset(asset) {
 }
 
 async function renderAssetSelectorWithImsFlow(cfg) {
-  let apikey;
-  let discoveryURL;
-  let cm;
-
-  if (cfg.environment.toUpperCase() === 'STAGE') {
-    discoveryURL = 'https://aem-discovery-stage.adobe.io';
-    cm = '-cmstg.adobeaemcloud.com';
-  } else if (cfg.environment.toUpperCase() === 'PROD') {
-    discoveryURL = 'https://aem-discovery.adobe.io';
-    cm = '.adobeaemcloud.com';
-  } else {
-    throw new Error('Invalid environment setting!');
-  }
-
+  let apiKey;
   if (cfg.mode.toLowerCase() === 'delivery') {
-    if (cfg.environment.toUpperCase() === 'STAGE') {
-      apikey = 'polaris-asset-search-api-key';
-    } else if (cfg.environment.toUpperCase() === 'PROD') {
-      apikey = 'asset_search_service';
-    } else {
-      throw new Error('Invalid environment setting!');
-    }
+    apiKey = polarisApikey;
   } else if (cfg.mode.toLowerCase() === 'author') {
-    apikey = 'aem-assets-backend-nr-1';
+    apiKey = AUTHOR_API_KEY;
   } else {
     throw new Error('Invalid asset selector mode!');
   }
 
-  const repoId = `${cfg.mode}-${cfg['repository-id']}${cm}`;
+  const repoId = `${cfg.mode}-${cfg['repository-id']}${cmSuffix}`;
   const assetSelectorProps = {
     discoveryURL,
     repositoryId: repoId,
     hideTreeNav: true,
     imsOrg: cfg['ims-org-id'],
-    apiKey: apikey,
+    apiKey,
     onClose,
     handleSelection,
     handleNavigateToAsset,
@@ -147,17 +156,19 @@ export default function decorate(block) {
   const cfg = readBlockConfig(block);
   block.textContent = '';
   block.innerHTML = `
+    <h1>AEM Assets Selector</h1>
     <div class="action-container">
         <button id="as-cancel">Sign Out</button>
-        <button id="as-submit">Submit</button>
+        <button id="as-submit">Sign In</button>
     </div>
     <dialog id="asset-selector-dialog">
         <div id="asset-selector" style="height: calc(100vh - 80px); width: calc(100vw - 60px); margin: -20px;">
         </div>
     </dialog>
     `;
-  loadScript(cfg['selector-mfe'], () => {
-    load(cfg);
+  init(cfg);
+  loadScript(asMFE, () => {
+    load();
     block.querySelector('#as-submit').addEventListener('click', () => {
       renderAssetSelectorWithImsFlow(cfg);
     });
