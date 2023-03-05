@@ -30,11 +30,12 @@ function loadScript(url, callback, type) {
   return $script;
 }
 
-function load() {
+function load(cfg) {
   const imsProps = {
     imsClientId: IMS_API_KEY,
     imsScope: 'additional_info.projectedProductContext,openid,read_organizations',
-    redirectUrl: 'https://bit.ly/aemassetswknd', // Temp workaround for https://jira.corp.adobe.com/browse/IMSS-2708
+    // Temp workaround for https://jira.corp.adobe.com/browse/IMSS-2708
+    redirectUrl: cfg['redirect-url'] ? cfg['redirect-url'] : window.location.href,
     modalMode: true,
     imsEnvironment,
   };
@@ -61,7 +62,7 @@ export function init(cfg, callback) {
   }
 
   loadScript(asMFE, () => {
-    load();
+    load(cfg);
     if (callback) {
       callback();
     }
