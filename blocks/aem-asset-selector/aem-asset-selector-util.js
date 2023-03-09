@@ -1,4 +1,4 @@
-const IMS_API_KEY = 'test_franklin_app';
+const IMS_API_KEY = 'exc_app';
 const AS_MFE_STAGE = 'https://experience-stage.adobe.com/solutions/CQ-assets-selectors/assets/resources/asset-selectors.js';
 const AS_MFE_PROD = 'https://experience.adobe.com/solutions/CQ-assets-selectors/assets/resources/asset-selectors.js';
 const IMS_ENV_STAGE = 'stg1';
@@ -25,7 +25,7 @@ function load() {
     imsClientId: IMS_API_KEY,
     imsScope: 'additional_info.projectedProductContext,openid,read_organizations,AdobeID,ab.manage',
     redirectUrl: 'https://bit.ly/aemassetswknd',
-    modalMode: false,
+    modalMode: true,
     imsEnvironment,
   };
   // eslint-disable-next-line no-undef
