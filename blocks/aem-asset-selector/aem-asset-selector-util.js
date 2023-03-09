@@ -1,4 +1,4 @@
-const IMS_API_KEY = 'exc_app';
+const IMS_API_KEY = 'test_franklin_app';
 const AS_MFE_STAGE = 'https://experience-stage.adobe.com/solutions/CQ-assets-selectors/assets/resources/asset-selectors.js';
 const AS_MFE_PROD = 'https://experience.adobe.com/solutions/CQ-assets-selectors/assets/resources/asset-selectors.js';
 const IMS_ENV_STAGE = 'stg1';
@@ -23,7 +23,7 @@ function loadScript(url, callback, type) {
 function load() {
   const imsProps = {
     imsClientId: IMS_API_KEY,
-    imsScope: 'additional_info.projectedProductContext,openid,read_organizations',
+    imsScope: 'additional_info.projectedProductContext,openid,read_organizations,AdobeID,ab.manage',
     redirectUrl: window.location.href,
     modalMode: true,
     imsEnvironment,
