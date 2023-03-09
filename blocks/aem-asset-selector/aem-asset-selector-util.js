@@ -25,7 +25,7 @@ function load() {
     imsClientId: IMS_API_KEY,
     imsScope: 'additional_info.projectedProductContext,openid,read_organizations,AdobeID,ab.manage',
     redirectUrl: window.location.href,
-    modalMode: true,
+    modalMode: false,
     imsEnvironment,
   };
   // eslint-disable-next-line no-undef
