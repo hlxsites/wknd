@@ -24,7 +24,7 @@ function load() {
   const imsProps = {
     imsClientId: IMS_API_KEY,
     imsScope: 'additional_info.projectedProductContext,openid,read_organizations,AdobeID,ab.manage',
-    redirectUrl: 'https://bit.ly/aemassetswknd',
+    redirectUrl: window.location.href,
     modalMode: true,
     imsEnvironment,
   };
