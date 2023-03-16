@@ -1,4 +1,4 @@
-const IMS_API_KEY = 'test_franklin_app';
+const IMS_API_KEY = 'franklin';
 const AS_MFE_STAGE = 'https://experience-stage.adobe.com/solutions/CQ-assets-selectors/assets/resources/asset-selectors.js';
 const AS_MFE_PROD = 'https://experience.adobe.com/solutions/CQ-assets-selectors/assets/resources/asset-selectors.js';
 const IMS_ENV_STAGE = 'stg1';
