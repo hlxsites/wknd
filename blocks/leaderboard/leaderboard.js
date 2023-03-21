@@ -20,7 +20,7 @@ function dateTimeSort(a, b) {
  */
 export default async function decorate(block) {
     // Fetch items from index
-    const indexContent = await fetchIndex('leaderboard');
+    const indexContent = await fetchIndex('drafts/summit23/beatthebuzzer/leaderboard');
     const data = indexContent.data;
 
     // Create the table
