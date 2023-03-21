@@ -20,12 +20,13 @@ function getTable(block, name, path) {
   const url = new URL(path);
   block.querySelectorAll('img').forEach((img) => {
     const srcSplit = img.src.split('/');
-    const mediaPath = srcSplit.pop();
+    const mediaPath = srcSplit.pop().split('?')[0];
     img.src = `${url.origin}/${mediaPath}`;
     const { width, height } = img;
     const ratio = width > 200 ? 200 / width : 1;
     img.width = width * ratio;
     img.height = height * ratio;
+    img.closest('picture').querySelectorAll('source').forEach((source) => source.remove());
   });
   const rows = [...block.children];
   const maxCols = rows.reduce((cols, row) => (
