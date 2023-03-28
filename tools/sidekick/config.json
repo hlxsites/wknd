@@ -14,7 +14,7 @@
       "id": "assets",
       "title": "AEM Assets",
       "environments": [ "edit" ],
-      "url": "https://adobe-gmo.findmy.media/",
+      "url": "https://wknd.findmy.media/",
       "includePaths": [ "**.docx**" ]
     }
   ]
