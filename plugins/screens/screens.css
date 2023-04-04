@@ -1,0 +1,38 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+.cq-Sequence,
+.cq-Sequence-item {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.cq-Sequence-item > div:only-child {
+  display: block;
+}
+
+.cq-Sequence-item > div > picture:only-child {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.cq-Sequence-item > div > picture:only-child img {
+  display: block;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.cq-Sequence-item[data-item-fit="contain"] > div > picture:only-child img {
+  object-fit: contain;
+}
+
+.cq-Sequence-item[data-item-fit="cover"] > div > picture:only-child img {
+  object-fit: cover;
+}
