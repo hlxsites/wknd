@@ -1,0 +1,11 @@
+.block.image {
+  height: 100%;
+  width: 100%;
+}
+
+.block.image picture,
+.block.image img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
