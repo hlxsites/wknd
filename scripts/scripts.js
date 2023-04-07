@@ -37,7 +37,7 @@ const EXPERIMENTATION_CONFIG = {
  * @returns {boolean} True if we are loading block library content
  */
 export function isBlockLibrary() {
-  return window.location.pathname.includes('block-library');
+  return window.location.pathname.includes('block-library') || window.location.pathname.includes('screens-demo');
 }
 
 /**
