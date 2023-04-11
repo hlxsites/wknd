@@ -3,12 +3,12 @@
     top: 0;
     left: 0;
     right: 0;
-    background-color: #f8ca38; /* Set the background color of the banner */
+    background-color: #ffea00; /* Set the background color of the banner */
     color:black; /* Set the text color of the banner */
     padding: 50px; /* Set padding as needed */
     text-align: center; /* Center align the text within the banner */
     z-index: 9999; /* Set a high z-index to ensure the banner appears above other elements */
-    font-family: 'Times New Roman', Times, serif;
-    font-size:xx-large;
+    font-family: 'asar, georgia, Times New Roman', times, serif;
+    font-size:40px;
   }
   
