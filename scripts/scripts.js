@@ -246,6 +246,16 @@ async function loadLazy(doc) {
 
   // Mark customer as having viewed the page once
   localStorage.setItem('franklin-visitor-returning', true);
+  if(window.location.href.includes('wkndcafemenu')) {
+    main.setAttribute("class","container");
+    main.childNodes.forEach(function(element) {
+      if (element.nodeType === Node.ELEMENT_NODE && !element.classList.contains('banner-container')) {
+        element.classList.add('box'); // Use classList.add() to add a class to an element
+      }
+    });
+}
+
+
 }
 
 /**

@@ -34,7 +34,7 @@
   grid-area: description;
   font-style: italic;
   font-size: .8em;
-  color: rgba(255 255 255 60%);
+  color: rgba(106, 42, 42, 0.6);
 }
 
 .block.product-list .product-list-price {

@@ -1,0 +1,17 @@
+.videoloop {
+    position: relative;
+  width: 100%; /* Set the width to 30% of the parent container */
+  height: 100%;
+  padding-bottom: 56.25%; /* Set the aspect ratio to 16:9 (56.25% = 9/16 * 100%) */
+  overflow: hidden; /* Hide any overflow outside the container */
+  }
+  
+  /* CSS code for the video element */
+  .videoloop video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+  }

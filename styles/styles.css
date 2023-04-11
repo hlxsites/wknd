@@ -315,3 +315,15 @@ main .section[data-section-status='loading'],
 main .section[data-section-status='initialized'] {
   display: none;
 }
+
+.container {
+  display: flex; /* Set display property to flex */
+}
+
+.box {
+  flex: 1; /* Set flex property to 1 for each div to distribute space evenly */
+  padding: 10px; /* Optional padding for div elements */
+  border: 1px solid rgb(199, 192, 192); /* Optional border for div elements */
+}
+
+
