@@ -1,0 +1,17 @@
+.startkioskbutton {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    
+}
+.startkioskbutton a {
+    background-color: #ffea00; /* Set the background color of the banner */
+    color:black; /* Set the text color of the banner */
+    padding: 50px; /* Set padding as needed */
+    text-align: center; /* Center align the text within the banner */
+    z-index: 9999; /* Set a high z-index to ensure the banner appears above other elements */
+    font-family: 'asar, georgia, Times New Roman', times, serif;
+    font-size:40px;            
+  }
