@@ -273,6 +273,8 @@ async function loadPage() {
   await loadLazy(document);
   loadDelayed();
   hideCards();
+  playCarousel(0,true);
+  createQROverLay();
 }
 
 loadPage();
