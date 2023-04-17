@@ -72,7 +72,7 @@ function showQR(data){
 
   function createQROverLay(){
     var QrDiv = document.createElement('div');
-    QrDiv.innerHTML='<div class=\"overlay\" id=\"qrOverlay\"> <div class=\"overlay-content\"> <span class=\"overlay-close\" onclick=\"hideQROverlay()\">&#10006;</span> <h2>QR Code</h2> <img src=\"\" alt=\"QR Code\" id=\"qrCode\" class=\"qr-code\"></div></div>';
+    QrDiv.innerHTML='<div class=\"overlay\" id=\"qrOverlay\"> <div class=\"overlay-content\"> <span class=\"overlay-close\" onclick=\"hideQROverlay()\">&#10006;</span> <h2>Order Here</h2> <img src=\"\" alt=\"QR Code\" id=\"qrCode\" class=\"qr-code\"></div></div>';
     document.querySelector('main').append(QrDiv);
     hideQROverlay();
     
