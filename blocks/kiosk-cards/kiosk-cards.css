@@ -7,11 +7,6 @@
     grid-gap: 16px;
 }
 
-.kiosk-card .button-container{
-    display: flex;
-  flex-wrap: wrap;
-}
-
 .kiosk-cards .kiosk-add-to-cart-button{
   background-color:  #ffea00;
   text-transform: uppercase;

@@ -246,7 +246,7 @@ async function loadLazy(doc) {
 
   // Mark customer as having viewed the page once
   localStorage.setItem('franklin-visitor-returning', true);
-  if(window.location.href.includes('wkndcafemenu')) {
+  if(window.location.pathname.includes('screens-demo/wknd-cafe-menu')) {
     main.setAttribute("class","container");
     main.childNodes.forEach(function(element) {
       if (element.nodeType === Node.ELEMENT_NODE && !element.classList.contains('banner-container')) {
@@ -272,9 +272,12 @@ async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadDelayed();
-  hideCards();
-  playCarousel(0,true);
-  createQROverLay();
+  if(window.location.pathname.includes('screens-demo/wknd-ordering-kiosk')){
+    hideCards();
+    playCarousel(0,true);
+    createQROverLay();
+    createMoreDetailOverLay();
+  }
 }
 
 loadPage();
