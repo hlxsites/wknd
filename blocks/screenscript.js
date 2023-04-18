@@ -21,6 +21,7 @@ function loadHome()
     itemInCard = 0;
     document.querySelector(".cart-button").children[0].children[0].textContent = 'cart ('+itemInCard+')';
     document.getElementById("qrOverlay").style.display = "none";
+    document.getElementById("moreDetailOverlay").style.display = "none";
 }
 
 function hideCards(){
