@@ -60,7 +60,7 @@ function showMoreDetails(key){
     hideQROverlay();    
 }
 
-function addToCart(){
+function addToCart(data){
     itemInCard++;
     document.querySelector(".cart-button").children[0].children[0].textContent = 'cart ('+itemInCard+')';
     //alert("Item added to cart, now total items are "+itemInCard);

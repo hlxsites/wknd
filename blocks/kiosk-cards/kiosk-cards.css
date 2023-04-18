@@ -7,7 +7,8 @@
     grid-gap: 16px;
 }
 
-.kiosk-cards .kiosk-add-to-cart-button{
+.kiosk-add-to-cart-button{
+  color:  #202020;
   background-color:  #ffea00;
   text-transform: uppercase;
   font-size: 14px;
@@ -31,7 +32,8 @@
   right: 10px;
   position: relative;
 }
-.kiosk-cards .kiosk-more-detail-button{
+
+.kiosk-more-detail-button{
     color:  #202020;
     background-color:  #ffea00;
     text-transform: uppercase;

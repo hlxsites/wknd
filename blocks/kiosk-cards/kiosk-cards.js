@@ -15,7 +15,7 @@ export default function decorate(block) {
     const addTocart = document.createElement('div');
     addTocart.classList="kiosk-add-to-cart-button";
     addTocart.textContent="Add to Cart";
-    addTocart.setAttribute("onclick","addToCart()");
+    addTocart.setAttribute("onclick",`addToCart('${key}')`);
     const moreDetail = document.createElement('div');
     moreDetail.classList="kiosk-more-detail-button";
     moreDetail.textContent="More Details";
