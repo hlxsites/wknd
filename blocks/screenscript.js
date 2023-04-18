@@ -46,14 +46,14 @@ function playCarousel(currentIndex,wipeAll){
 }
 function showMoreDetails(key){
     let myMap = new Map([
-        ['bagpack', 'https://main--wknd--ravverma.hlx.page/media_1179bfe02cad5dfe335de888f7ea4f233e4d9dfce.mp4'],
-        ['helmet', 'https://main--wknd--ravverma.hlx.page/media_1179bfe02cad5dfe335de888f7ea4f233e4d9dfce.mp4'],
-        ['skiingshoes', 'https://main--wknd--ravverma.hlx.page/media_1179bfe02cad5dfe335de888f7ea4f233e4d9dfce.mp4'],
-        ['surfboard', 'https://main--wknd--ravverma.hlx.page/media_1179bfe02cad5dfe335de888f7ea4f233e4d9dfce.mp4'],
-        ['gloves', 'https://main--wknd--ravverma.hlx.page/media_1179bfe02cad5dfe335de888f7ea4f233e4d9dfce.mp4'],
-        ['alpineskis', 'https://main--wknd--ravverma.hlx.page/media_1179bfe02cad5dfe335de888f7ea4f233e4d9dfce.mp4']
+        ['Bagpack', 'https://main--wknd--ravverma.hlx.page/media_1179bfe02cad5dfe335de888f7ea4f233e4d9dfce.mp4'],
+        ['Skiing Helmet', 'https://main--wknd--ravverma.hlx.page/media_137760a6e81a9e96e53eadad7d262d7af421b06bc.mp4'],
+        ['Skiing Shoes', 'https://main--wknd--ravverma.hlx.page/media_137760a6e81a9e96e53eadad7d262d7af421b06bc.mp4'],
+        ['Surfboard', 'https://main--wknd--ravverma.hlx.page/media_1974df0c459b917c90e933519026cae2a4d05c5c9.mp4'],
+        ['Gloves', 'https://main--wknd--ravverma.hlx.page/media_137760a6e81a9e96e53eadad7d262d7af421b06bc.mp4'],
+        ['Alpine Skis', 'https://main--wknd--ravverma.hlx.page/media_137760a6e81a9e96e53eadad7d262d7af421b06bc.mp4']
       ]);
-    var src = myMap.get('bagpack'); 
+    var src = myMap.get(key); 
     document.getElementById("moreDetailOverlay").innerHTML='<div class="overlay-content-more-detail"><video src='+src+' autoplay loop "></video> <span class="overlay-close" onclick="hideMoreDetailOverlay()">&#10006;</span></div>';
     document.getElementById("moreDetailOverlay").style.display = "flex";
     hideQROverlay();    
@@ -93,7 +93,7 @@ function createQROverLay(){
 
 function createMoreDetailOverLay(){
     var QrDiv = document.createElement('div');
-    QrDiv.innerHTML='<div class=\"overlay\" id=\"moreDetailOverlay\"></div>';
+    QrDiv.innerHTML='<div class=\"overlay-more-detail\" id=\"moreDetailOverlay\"></div>';
     document.querySelector('main').append(QrDiv);
     hideMoreDetailOverlay();
 }

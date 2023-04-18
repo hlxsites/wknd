@@ -337,16 +337,18 @@ main .section[data-section-status='initialized'] {
   align-items: center;
 }
 
-.overlay-more-detail{
+.overlay-more-detail {
   position: fixed;
-  width: 100%; /* Width of the overlay */
-  height: 100%; /* Height of the overlay */
-  background-color: rgba(0, 0, 0, 0.7); /* Overlay background color and opacity */
-  z-index: 9999; /* Set a high z-index to ensure the overlay is on top of other content */
+  top: 100px;
+  left: 100px;
+  right: 100px;
+  bottom: 100px;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .overlay-content-more-detail {
   position: fixed;
   background-color: transparent;
