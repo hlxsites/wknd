@@ -343,7 +343,7 @@ main .section[data-section-status='initialized'] {
   left: 100px;
   right: 100px;
   bottom: 100px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.5);;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -352,8 +352,9 @@ main .section[data-section-status='initialized'] {
 .overlay-content-more-detail {
   position: fixed;
   background-color: transparent;
-}
   
+}
+
 .overlay-content {
   background-color: white;
   padding: 20px;

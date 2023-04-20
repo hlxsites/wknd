@@ -1,7 +1,6 @@
-import { loadScript } from '../../scripts/lib-franklin.js';
+import { loadScript } from "../../scripts/lib-franklin.js";
 export default function decorate(block) {
-    loadScript('/blocks/screenscript.js',{ type: 'text/javascript', charset: 'UTF-8' });
-    [...block.firstElementChild.children][0].textContent="Press here to learn more";
-    [...block.firstElementChild.children][0].setAttribute("onclick","showItemCard()");
-
+    [...block.firstElementChild.children][0].textContent=[...block.firstElementChild.children][0].children[0].textContent;
+    [...block.firstElementChild.children][0].setAttribute("onclick","showKioskCard()");
   }
+loadScript('/blocks/place-order-button/delayed.js',{ type: 'text/javascript', charset: 'UTF-8' });

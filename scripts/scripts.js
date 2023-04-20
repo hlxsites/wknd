@@ -13,6 +13,7 @@ import {
   loadBlocks,
   loadCSS,
   toClassName,
+  loadScript
 } from './lib-franklin.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
@@ -267,17 +268,10 @@ function loadDelayed() {
   window.setTimeout(() => import('./delayed.js'), 3000);
   // load anything that can be postponed to the latest here
 }
-
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   loadDelayed();
-  if(window.location.pathname.includes('screens-demo/wknd-ordering-kiosk')){
-    hideCards();
-    playCarousel(0,true);
-    createQROverLay();
-    createMoreDetailOverLay();
-  }
 }
 
 loadPage();
