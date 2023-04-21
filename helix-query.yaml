@@ -2,7 +2,7 @@ version: 1
 indices:
   channels:
     include:
-      - '/screens-demo/**'
+      - '/screens/**'
     target: '/channels'
     properties:
       title:
@@ -34,7 +34,7 @@ indices:
           attribute(el, 'href')
   channel-manifest:
     include:
-      - '/screens-demo/**'
+      - '/screens/**'
     target: '/manifests'
     properties:
       title:
