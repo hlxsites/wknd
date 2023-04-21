@@ -2,8 +2,8 @@ version: 1
 indices:
   channels:
     include:
-      - '/screens/**'
-    target: '/screens/channels'
+      - '/screens-demo/**'
+    target: '/channels'
     properties:
       title:
         select: head > meta[property="og:title"]
@@ -16,16 +16,36 @@ indices:
         select: none
         value: |
           parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+      lastUpdated:
+        select: none
+        value: |
+          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+      manifestPath:
+        select: head > meta[name="manifestpath"]
+        value:  |
+          attribute(el, 'content')
+      liveUrl:
+        select: head > link[rel="canonical"]
+        value:  |
+          attribute(el, 'href')
+      publishUrl:
+        select: head > link[rel="canonical"]
+        value: |
+          attribute(el, 'href')
   channel-manifest:
     include:
-      - '/screens/**'
-    target: '/screens/manifests'
+      - '/screens-demo/**'
+    target: '/manifests'
     properties:
       title:
         select: head > meta[property="og:title"]
         value: |
           attribute(el, 'content')
       lastModified:
+        select: none
+        value: |
+          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+      lastUpdated:
         select: none
         value: |
           parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
@@ -41,15 +61,7 @@ indices:
         select: head > link[rel*="preload"]
         values: |
           attribute(el, 'href')
-      blocks:
-        select: body div[class]
-        values: |
-          attribute(el, 'className')
-      inline-images:
+      inlineImages:
         select: body img
         values: |
           attribute(el, 'src')
-      media-blocks:
-        select: body div:is([class="embed"],[class="image"],[class="video"])
-        values: |
-          textContent(el)
