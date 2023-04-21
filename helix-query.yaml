@@ -3,7 +3,7 @@ indices:
   channels:
     include:
       - '/screens/**'
-    target: '/channels'
+    target: '/screens/internal/channels'
     properties:
       title:
         select: head > meta[property="og:title"]
@@ -35,7 +35,7 @@ indices:
   channel-manifest:
     include:
       - '/screens/**'
-    target: '/manifests'
+    target: '/screens/internal/manifests'
     properties:
       title:
         select: head > meta[property="og:title"]
