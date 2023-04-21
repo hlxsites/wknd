@@ -1,0 +1,38 @@
+name: Generate Screens offline resources for franklin channels
+
+on:
+  repository_dispatch:
+    types:
+      - resource-published
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          echo "Status: ${{ github.event.client_payload.status }}"
+          echo "Path: ${{ github.event.client_payload.path }}"
+      - name: Sleep for 90 seconds assuming helix index will be updated before
+        run: sleep 90s
+        shell: bash
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - run: npm install
+      - name: Generate Screens Offline Resources
+        run: npm run generate-offlineresources helixManifest="/screens/internal/manifests" helixChannelsList="/screens/internal/channels"
+      - name: Commit files # transfer the generated manifest files back into the repository
+        run: |
+          git config --local user.name  ${{ github.actor }}
+          git config --local user.email "<>"
+          git add .
+          git commit -m "Generating Screens offline resources"
+      - name: Push changes  # push the generated Screens offline resources to your repo
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+          force: true
