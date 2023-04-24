@@ -9,11 +9,11 @@
     ],
     "defaultProvider": "franklin"
   },
-  "timestamp": 1682338491102,
+  "timestamp": 1682365781362,
   "entries": [
     {
       "path": "/screens-demo/wknd-ordering-kiosk",
-      "timestamp": 1682077078000
+      "timestamp": 1682364427000
     },
     {
       "path": "/scripts/scripts.js",
@@ -21,7 +21,7 @@
     },
     {
       "path": "/styles/styles.css",
-      "timestamp": 1681987972000
+      "timestamp": 1682365604000
     },
     {
       "path": "/media_19793eb1b14406684e44cf4e3f66cb83e7fa3d8f0.png?width=750&format=png&optimize=medium",
@@ -89,15 +89,15 @@
     },
     {
       "path": "/blocks/kiosk-cards/kiosk-cards.css",
-      "timestamp": 1681810504000
+      "timestamp": 1682365604000
     },
     {
       "path": "/blocks/kiosk-cards/kiosk-cards.js",
-      "timestamp": 1681987972000
+      "timestamp": 1682365604000
     },
     {
       "path": "/blocks/kiosk-cards/delayed.js",
-      "timestamp": 1682337954000
+      "timestamp": 1682365604000
     },
     {
       "path": "/blocks/home-button/home-button.css",
