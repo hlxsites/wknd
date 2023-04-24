@@ -14,6 +14,7 @@ export default function decorate(block) {
       if(div.querySelector('.button-container')){
         var moreDetailElement=div.querySelector('.button-container').children[0];
         moreDetailUrl=moreDetailElement.getAttribute('href');
+        moreDetailUrl=moreDetailUrl.replace('./','/');
         div.querySelector('.button-container').remove();
       }
       key=div.textContent;
