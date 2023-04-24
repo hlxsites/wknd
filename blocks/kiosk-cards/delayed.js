@@ -1,16 +1,7 @@
 var itemInCard = 0;
 let itemsInCart = [];
-function showMoreDetails(key){
-    let myMap = new Map([
-        ['Bagpack', '/media_1179bfe02cad5dfe335de888f7ea4f233e4d9dfce.mp4'],
-        ['Skiing Helmet', '/media_137760a6e81a9e96e53eadad7d262d7af421b06bc.mp4'],
-        ['Skiing Shoes', '/media_137760a6e81a9e96e53eadad7d262d7af421b06bc.mp4'],
-        ['Surfboard', '/media_1974df0c459b917c90e933519026cae2a4d05c5c9.mp4'],
-        ['Gloves', '/media_137760a6e81a9e96e53eadad7d262d7af421b06bc.mp4'],
-        ['Alpine Skis', '/media_137760a6e81a9e96e53eadad7d262d7af421b06bc.mp4']
-      ]);
-    var src = myMap.get(key); 
-    document.getElementById("moreDetailOverlay").innerHTML='<div class="overlay-content-more-detail"><video src='+src+' autoplay loop "></video> <span class="overlay-close" onclick="hideMoreDetailOverlay()">&#10006;</span></div>';
+function showMoreDetails(moreDetailUrl){
+    document.getElementById("moreDetailOverlay").innerHTML='<div class="overlay-content-more-detail"><video src='+moreDetailUrl+' autoplay loop "></video> <span class="overlay-close" onclick="hideMoreDetailOverlay()">&#10006;</span></div>';
     document.getElementById("moreDetailOverlay").style.display = "flex";
     hideCartOverlay();    
 }

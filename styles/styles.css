@@ -351,8 +351,7 @@ main .section[data-section-status='initialized'] {
 
 .overlay-content-more-detail {
   position: fixed;
-  background-color: transparent;
-  
+  background-color: transparent;  
 }
 
 .overlay-content {
