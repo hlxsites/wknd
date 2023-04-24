@@ -1,9 +1,10 @@
 {
   "channels": [
     {
-      "lastModified": "2023-04-20T11:50:03.000Z",
+      "manifestPath": "/screens-demo/wknd-ordering-kiosk.manifest.json",
+      "lastModified": "2023-04-21T11:37:58.000Z",
       "externalId": "/screens-demo/wknd-ordering-kiosk",
-      "title": "WKND Ordering Kiosk",
+      "title": "WKND Kiosk",
       "liveUrl": "https://main--wknd--ravverma.hlx.live/screens-demo/wknd-ordering-kiosk"
     }
   ],
