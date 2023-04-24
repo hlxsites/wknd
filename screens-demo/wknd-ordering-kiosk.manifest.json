@@ -9,7 +9,7 @@
     ],
     "defaultProvider": "franklin"
   },
-  "timestamp": 1682334952734,
+  "timestamp": 1682336527282,
   "entries": [
     {
       "path": "/screens-demo/wknd-ordering-kiosk",
@@ -134,6 +134,36 @@
     {
       "path": "/scripts/lib-franklin.js",
       "timestamp": 1681531426000
+    },
+    {
+      "path": "/screens-demo/media_19793eb1b14406684e44cf4e3f66cb83e7fa3d8f0.png?width=750&format=png&optimize=medium"
+    },
+    {
+      "path": "/screens-demo/media_1b3f56bbaa3a5e03b1668b837b489d81cb7a24ec2.png?width=750&format=png&optimize=medium"
+    },
+    {
+      "path": "/screens-demo/media_19fe6c9432db2b7896e3ac5343ec6492f95da7701.png?width=750&format=png&optimize=medium"
+    },
+    {
+      "path": "/screens-demo/media_108368dfab46fc944d06065e9a8d762f74df422cd.png?width=750&format=png&optimize=medium"
+    },
+    {
+      "path": "/screens-demo/media_1f2af7d4311c01b45f0f7b08d2dad958389d3a984.jpeg?width=750&format=jpeg&optimize=medium"
+    },
+    {
+      "path": "/screens-demo/media_16c480de2c5c886f09f4ac6f6120dc7a298a2d7a5.jpeg?width=750&format=jpeg&optimize=medium"
+    },
+    {
+      "path": "/screens-demo/media_14c7087ba393c8a6761e1b0ba1bc81a737d6974c7.jpeg?width=750&format=jpeg&optimize=medium"
+    },
+    {
+      "path": "/screens-demo/media_104ff683326723c64bae08da0199cd941208f30bd.jpeg?width=750&format=jpeg&optimize=medium"
+    },
+    {
+      "path": "/screens-demo/media_13ffc5124024d20e18a66b91370259f7265f79c9f.jpeg?width=750&format=jpeg&optimize=medium"
+    },
+    {
+      "path": "/screens-demo/media_1645532634537e79d412bb00a2f98db0d11d6ef13.jpeg?width=750&format=jpeg&optimize=medium"
     }
   ]
 }
