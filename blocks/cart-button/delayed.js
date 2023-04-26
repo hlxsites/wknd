@@ -1,7 +1,7 @@
 function showCart(){
-    var qrCodeUrl = "https://api.qrserver.com/v1/create-qr-code/?data=" + encodeURIComponent(itemsInCart.join(';')) + "&size=200x200";
+    //var qrCodeUrl = "https://api.qrserver.com/v1/create-qr-code/?data=" + encodeURIComponent(itemsInCart.join(';')) + "&size=200x200";
     // Set QR code image URL
-    document.getElementById("qrCode").src = qrCodeUrl;
+    document.getElementById("qrCode").src = "./media_137228a68130147dd12ccbeea36029a54cf65c787.png#width=434&height=444";
     // Show overlay
     document.getElementById("qrOverlay").style.display = "flex";
     hideMoreDetailOverlay();
