@@ -8,6 +8,7 @@ export default function decorate(block) {
     });
     /* buttons */
     const button = document.createElement('button');
+    button.title = 'Carousel Nav';
     if (!i) button.classList.add('selected');
     button.addEventListener('click', () => {
       block.scrollTo({ top: 0, left: row.offsetLeft - row.parentNode.offsetLeft, behavior: 'smooth' });
