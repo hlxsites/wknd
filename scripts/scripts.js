@@ -114,7 +114,7 @@ async function loadDemoConfig() {
   const pathSegments = window.location.pathname.split('/');
   if (window.location.pathname.startsWith('/drafts/') && pathSegments.length > 4) {
     const demoBase = pathSegments.slice(0, 4).join('/');
-    const resp = await fetch(`${demoBase}/theme.json?sheet=default&sheet=blocks`);
+    const resp = await fetch(`${demoBase}/theme.json?sheet=default&sheet=blocks&`);
     if (resp.status === 200) {
       const json = await resp.json();
       const tokens = json.data || json.default.data;
