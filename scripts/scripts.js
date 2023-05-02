@@ -13,7 +13,6 @@ import {
   loadBlocks,
   loadCSS,
   toClassName,
-  loadScript
 } from './lib-franklin.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
@@ -247,16 +246,6 @@ async function loadLazy(doc) {
 
   // Mark customer as having viewed the page once
   localStorage.setItem('franklin-visitor-returning', true);
-  if(window.location.pathname.includes('screens-demo/wknd-cafe-menu')) {
-    main.setAttribute("class","container");
-    main.childNodes.forEach(function(element) {
-      if (element.nodeType === Node.ELEMENT_NODE && !element.classList.contains('banner-container')) {
-        element.classList.add('box'); // Use classList.add() to add a class to an element
-      }
-    });
-}
-
-
 }
 
 /**
