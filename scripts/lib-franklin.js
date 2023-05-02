@@ -286,10 +286,8 @@ export async function loadScript(url, attrs) {
         script.setAttribute(attr, attrs[attr]);
       }
     }
-
     script.onload = () => resolve(script);
     script.onerror = reject;
-
     const head = document.querySelector('head');
     head.append(script);
   });
