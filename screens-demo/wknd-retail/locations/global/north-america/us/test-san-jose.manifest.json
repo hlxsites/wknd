@@ -9,11 +9,11 @@
     ],
     "defaultProvider": "franklin"
   },
-  "timestamp": 1683613461529,
+  "timestamp": 1683613462509,
   "entries": [
     {
-      "path": "/screens-demo/employee-communications/locations/test-global",
-      "timestamp": 1683198653000
+      "path": "/screens-demo/wknd-retail/locations/global/north-america/us/test-san-jose",
+      "timestamp": 1683199474000
     },
     {
       "path": "/scripts/scripts.js",
