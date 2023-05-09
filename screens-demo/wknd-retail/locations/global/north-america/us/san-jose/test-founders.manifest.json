@@ -9,7 +9,7 @@
     ],
     "defaultProvider": "franklin"
   },
-  "timestamp": 1683625269136,
+  "timestamp": 1683625403981,
   "entries": [
     {
       "path": "/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/test-founders",
@@ -45,7 +45,7 @@
     },
     {
       "path": "/screens-demo/schedule.json",
-      "timestamp": 1683544632000
+      "timestamp": 1683622592000
     }
   ]
 }
