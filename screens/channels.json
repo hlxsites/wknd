@@ -16,14 +16,14 @@
     },
     {
       "manifestPath": "/screens-demo/wknd-retail/locations/global/north-america/test-us.manifest.json",
-      "lastModified": "2023-05-09T08:56:32.000Z",
+      "lastModified": "2023-05-09T09:32:52.000Z",
       "externalId": "/screens-demo/wknd-retail/locations/global/north-america/test-us",
       "title": "test-us",
       "liveUrl": "https://main--wknd--ravverma.hlx.live/screens-demo/wknd-retail/locations/global/north-america/test-us"
     },
     {
       "manifestPath": "/screens-demo/wknd-retail/locations/global/test-north-america.manifest.json",
-      "lastModified": "2023-05-09T08:56:32.000Z",
+      "lastModified": "2023-05-09T09:32:52.000Z",
       "externalId": "/screens-demo/wknd-retail/locations/global/test-north-america",
       "title": "test-north-america",
       "liveUrl": "https://main--wknd--ravverma.hlx.live/screens-demo/wknd-retail/locations/global/test-north-america"
@@ -37,7 +37,7 @@
     },
     {
       "manifestPath": "/screens-demo/wknd-retail/locations/global/north-america/us/test-san-jose.manifest.json",
-      "lastModified": "2023-05-09T08:56:32.000Z",
+      "lastModified": "2023-05-09T09:32:52.000Z",
       "externalId": "/screens-demo/wknd-retail/locations/global/north-america/us/test-san-jose",
       "title": "test-san-jose",
       "liveUrl": "https://main--wknd--ravverma.hlx.live/screens-demo/wknd-retail/locations/global/north-america/us/test-san-jose"
@@ -58,7 +58,7 @@
     },
     {
       "manifestPath": "/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/test-west.manifest.json",
-      "lastModified": "2023-05-09T08:56:32.000Z",
+      "lastModified": "2023-05-09T09:32:52.000Z",
       "externalId": "/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/test-west",
       "title": "test-west",
       "liveUrl": "https://main--wknd--ravverma.hlx.live/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/test-west"
