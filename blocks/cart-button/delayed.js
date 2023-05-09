@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars, no-undef */
 function showCart() {
-  document.getElementById('qrCode').src = './media_137228a68130147dd12ccbeea36029a54cf65c787.png#width=434&height=444';
+  document.getElementById('qrCode').src = '/media_137228a68130147dd12ccbeea36029a54cf65c787.png#width=434&height=444';
   // Show overlay
   document.getElementById('qrOverlay').style.display = 'flex';
   hideMoreDetailOverlay();
