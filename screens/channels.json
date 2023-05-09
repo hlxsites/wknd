@@ -2,7 +2,7 @@
   "channels": [
     {
       "manifestPath": "/screens-demo/wknd-ordering-kiosk.manifest.json",
-      "lastModified": "2023-05-02T07:18:10.000Z",
+      "lastModified": "2023-05-09T09:49:57.000Z",
       "externalId": "/screens-demo/wknd-ordering-kiosk",
       "title": "WKND Kiosk",
       "liveUrl": "https://main--wknd--ravverma.hlx.live/screens-demo/wknd-ordering-kiosk"
@@ -51,7 +51,7 @@
     },
     {
       "manifestPath": "/screens-demo/wknd-retail/locations/test-global.manifest.json",
-      "lastModified": "2023-05-09T08:56:32.000Z",
+      "lastModified": "2023-05-09T09:50:21.000Z",
       "externalId": "/screens-demo/wknd-retail/locations/test-global",
       "title": "test-global",
       "liveUrl": "https://main--wknd--ravverma.hlx.live/screens-demo/wknd-retail/locations/test-global"
