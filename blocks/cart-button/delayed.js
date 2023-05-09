@@ -6,7 +6,6 @@ function showCart() {
   hideMoreDetailOverlay();
 }
 function hideCartOverlay() {
-  // Hide overlay
   document.getElementById('qrOverlay').style.display = 'none';
 }
 function createCartOverLay() {
