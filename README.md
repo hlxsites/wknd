@@ -1,9 +1,9 @@
-# Your Project's Title...
-Your project's description...
+# WKND Helix Screens 
+This repo is dedicated for screens usecase for wknd and delivered by franklin
 
 ## Environments
-- Preview: https://main--wknd--hlxsites.hlx.page/
-- Live: https://main--wknd--hlxsites.hlx.live/
+- Preview: https://main--wknd--hlxscreens.hlx.page/
+- Live: https://main--wknd--hlxscreens.hlx.live/
 
 ## Installation
 
