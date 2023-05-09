@@ -1,0 +1,26 @@
+.home-button {
+    position: fixed;
+    left: 20px;
+    bottom: 0;
+    z-index: 9999;
+    background-color:  #ffea00;
+    color: black;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 14px;
+    padding: 1em 2.5em;
+    font-weight: 600;
+    font-family: 'Source Sans Pro', 'helvetica neue', helvetica, ubuntu, roboto, noto, sans-serif;
+    display: inline-block;
+    box-sizing: border-box;
+    text-decoration: none;
+    border: 2px solid transparent;
+    text-align: center;
+    font-style: normal;
+    margin: 16px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: 0;
+    line-height: 1.5;
+  }

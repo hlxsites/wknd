@@ -315,3 +315,58 @@ main .section[data-section-status='loading'],
 main .section[data-section-status='initialized'] {
   display: none;
 }
+
+.container {
+  display: flex; /* Set display property to flex */
+}
+
+.overlay {
+  position: fixed;
+  top: 100px;
+  left: 100px;
+  right: 100px;
+  bottom: 100px;
+  background-color: rgba(0 0 0 / 50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overlay-more-detail {
+  position: fixed;
+  top: 100px;
+  left: 100px;
+  right: 100px;
+  bottom: 100px;
+  background-color: rgba(0 0 0 / 50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overlay-content-more-detail {
+  position: fixed;
+  background-color: transparent;  
+}
+
+.overlay-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 300px;
+  text-align: center;
+}
+
+.overlay-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+/* QR code styles */
+.qr-code {
+  width: 200px;
+  height: 200px;
+}
+

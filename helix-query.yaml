@@ -1,0 +1,67 @@
+version: 1
+indices:
+  channels:
+    include:
+      - '/screens-demo/**'
+    target: '/screens/internal/channels'
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: |
+          attribute(el, 'content')
+      externalId:
+        select: main
+        value: path
+      lastModified:
+        select: none
+        value: |
+          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+      lastUpdated:
+        select: none
+        value: |
+          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+      manifestPath:
+        select: head > meta[name="manifestpath"]
+        value:  |
+          attribute(el, 'content')
+      liveUrl:
+        select: head > link[rel="canonical"]
+        value:  |
+          attribute(el, 'href')
+      publishUrl:
+        select: head > link[rel="canonical"]
+        value: |
+          attribute(el, 'href')
+  channel-manifest:
+    include:
+      - '/screens-demo/**'
+    target: '/screens/internal/manifests'
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: |
+          attribute(el, 'content')
+      lastModified:
+        select: none
+        value: |
+          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+      lastUpdated:
+        select: none
+        value: |
+          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')
+      scripts:
+        select: head > script[src]
+        values: |
+          attribute(el, 'src')
+      styles:
+        select: head > link[rel="stylesheet"]
+        values: |
+          attribute(el, 'href')
+      assets:
+        select: head > link[rel*="preload"]
+        values: |
+          attribute(el, 'href')
+      inlineImages:
+        select: body img
+        values: |
+          attribute(el, 'src')

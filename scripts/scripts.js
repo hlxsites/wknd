@@ -37,7 +37,7 @@ const EXPERIMENTATION_CONFIG = {
  * @returns {boolean} True if we are loading block library content
  */
 export function isBlockLibrary() {
-  return window.location.pathname.includes('block-library');
+  return window.location.pathname.includes('block-library') || window.location.pathname.includes('screens-demo');
 }
 
 /**
@@ -257,7 +257,6 @@ function loadDelayed() {
   window.setTimeout(() => import('./delayed.js'), 3000);
   // load anything that can be postponed to the latest here
 }
-
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
