@@ -9,7 +9,7 @@
     ],
     "defaultProvider": "franklin"
   },
-  "timestamp": 1683702692832,
+  "timestamp": 1683705536965,
   "entries": [
     {
       "path": "/screens-demo/employee-communications/locations/test-global",
@@ -17,31 +17,31 @@
     },
     {
       "path": "/scripts/scripts.js",
-      "timestamp": 1683653973000
+      "timestamp": 1683702706000
     },
     {
       "path": "/styles/styles.css",
-      "timestamp": 1683653973000
+      "timestamp": 1683702706000
     },
     {
       "path": "/blocks/screens-looping-content/screens-looping-content.js",
-      "timestamp": 1683653974000
+      "timestamp": 1683702704000
     },
     {
       "path": "/blocks/screens-looping-content/screens-looping-content.css",
-      "timestamp": 1683653974000
+      "timestamp": 1683702704000
     },
     {
       "path": "/styles/lazy-styles.css",
-      "timestamp": 1683628287000
+      "timestamp": 1683702706000
     },
     {
       "path": "/scripts/delayed.js",
-      "timestamp": 1683653973000
+      "timestamp": 1683702705000
     },
     {
       "path": "/scripts/lib-franklin.js",
-      "timestamp": 1683653973000
+      "timestamp": 1683702705000
     },
     {
       "path": "/screens-demo/schedule.json",
