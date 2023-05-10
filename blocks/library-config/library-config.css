@@ -184,6 +184,10 @@ section.library-config-container {
     box-sizing: border-box;
 }
 
+.con-assets-list li img {
+    width: 100%;
+}
+
 .con-assets-list li:hover {
     cursor: pointer;
     background: #85858545;
