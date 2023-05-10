@@ -18,11 +18,11 @@ export default function decorate(block) {
       }
     });
     const addTocart = document.createElement('div');
-    addTocart.classList = 'kiosk-cart-button';
+    addTocart.classList = 'add-to-cart';
     addTocart.textContent = 'Add to Cart';
     addTocart.setAttribute('onclick', 'addToCart()');
     const moreDetail = document.createElement('div');
-    moreDetail.classList = 'kiosk-cart-button';
+    moreDetail.classList = 'more-details';
     moreDetail.textContent = 'More Details';
     moreDetail.setAttribute('onclick', `showMoreDetails('${moreDetailUrl}')`);
     li.appendChild(addTocart);
