@@ -2,66 +2,66 @@
   "channels": [
     {
       "manifestPath": "/screens-demo/wknd-ordering-kiosk.manifest.json",
-      "lastModified": "2023-05-10T07:48:53.000Z",
+      "lastModified": "2023-05-11T03:14:36.000Z",
       "externalId": "/screens-demo/wknd-ordering-kiosk",
       "title": "WKND Kiosk",
       "liveUrl": "https://main--wknd--hlxscreens.hlx.live/screens-demo/wknd-ordering-kiosk"
     },
     {
       "manifestPath": "/screens-demo/employee-communications/locations/test-global.manifest.json",
-      "lastModified": "2023-05-10T07:11:46.000Z",
+      "lastModified": "2023-05-11T03:14:36.000Z",
       "externalId": "/screens-demo/employee-communications/locations/test-global",
       "title": "test-global",
       "liveUrl": "https://main--wknd--ravverma.hlx.live/screens-demo/employee-communications/locations/test-global"
     },
     {
       "manifestPath": "/screens-demo/wknd-retail/locations/global/north-america/test-us.manifest.json",
-      "lastModified": "2023-05-10T07:11:47.000Z",
+      "lastModified": "2023-05-11T03:14:36.000Z",
       "externalId": "/screens-demo/wknd-retail/locations/global/north-america/test-us",
       "title": "test-us",
       "liveUrl": "https://main--wknd--hlxscreens.hlx.live/screens-demo/wknd-retail/locations/global/north-america/test-us"
     },
     {
       "manifestPath": "/screens-demo/wknd-retail/locations/global/test-north-america.manifest.json",
-      "lastModified": "2023-05-10T07:11:47.000Z",
+      "lastModified": "2023-05-11T03:14:36.000Z",
       "externalId": "/screens-demo/wknd-retail/locations/global/test-north-america",
       "title": "test-north-america",
       "liveUrl": "https://main--wknd--hlxscreens.hlx.live/screens-demo/wknd-retail/locations/global/test-north-america"
     },
     {
       "manifestPath": "/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/test-founders.manifest.json",
-      "lastModified": "2023-05-10T07:11:46.000Z",
+      "lastModified": "2023-05-11T03:14:36.000Z",
       "externalId": "/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/test-founders",
       "title": "test-founder",
       "liveUrl": "https://main--wknd--ravverma.hlx.live/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/test-founders"
     },
     {
       "manifestPath": "/screens-demo/wknd-retail/locations/global/north-america/us/test-san-jose.manifest.json",
-      "lastModified": "2023-05-10T07:11:47.000Z",
+      "lastModified": "2023-05-11T03:14:36.000Z",
       "externalId": "/screens-demo/wknd-retail/locations/global/north-america/us/test-san-jose",
       "title": "test-san-jose",
       "liveUrl": "https://main--wknd--hlxscreens.hlx.live/screens-demo/wknd-retail/locations/global/north-america/us/test-san-jose"
     },
     {
       "manifestPath": "/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/west/test-player0.manifest.json",
-      "lastModified": "2023-05-10T07:11:47.000Z",
+      "lastModified": "2023-05-11T03:14:36.000Z",
       "externalId": "/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/west/test-player0",
       "title": "test-player0",
       "liveUrl": "https://main--wknd--hlxscreens.hlx.live/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/west/test-player0"
     },
     {
       "manifestPath": "/screens-demo/wknd-retail/locations/test-global.manifest.json",
-      "lastModified": "2023-05-10T07:11:47.000Z",
+      "lastModified": "2023-05-11T03:14:36.000Z",
       "externalId": "/screens-demo/wknd-retail/locations/test-global",
       "title": "test-global",
       "liveUrl": "https://main--wknd--hlxscreens.hlx.live/screens-demo/wknd-retail/locations/test-global"
     },
     {
       "manifestPath": "/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/test-west.manifest.json",
-      "lastModified": "2023-05-10T07:11:46.000Z",
+      "lastModified": "2023-05-11T03:14:36.000Z",
       "externalId": "/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/test-west",
       "title": "test-west",
-      "liveUrl": "https://main--wknd--ravverma.hlx.live/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/test-west"
+      "liveUrl": "https://main--wknd--hlxscreens.hlx.live/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/test-west"
     }
   ],
   "metadata": {
