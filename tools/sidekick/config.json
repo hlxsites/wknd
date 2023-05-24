@@ -12,7 +12,7 @@
     },
     {
       "id": "assets",
-      "title": "AEM Assets",
+      "title": "Assets",
       "environments": [ "edit" ],
       "url": "https://wknd.findmy.media/",
       "includePaths": [ "**.docx**" ]
