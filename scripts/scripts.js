@@ -168,12 +168,12 @@ async function loadEager(doc) {
   decorateTemplateAndTheme();
 
   // load experiments
-  const experiment = toClassName(getMetadata('experiment'));
-  const instantExperiment = getMetadata('instant-experiment');
-  if (instantExperiment || experiment) {
-    const { runExperiment } = await import('./experimentation/index.js');
-    await runExperiment(experiment, instantExperiment, EXPERIMENTATION_CONFIG);
-  }
+  // const experiment = toClassName(getMetadata('experiment'));
+  // const instantExperiment = getMetadata('instant-experiment');
+  // if (instantExperiment || experiment) {
+  //   const { runExperiment } = await import('./experimentation/index.js');
+  //   await runExperiment(experiment, instantExperiment, EXPERIMENTATION_CONFIG);
+  // }
 
   // load demo config
   await loadDemoConfig();

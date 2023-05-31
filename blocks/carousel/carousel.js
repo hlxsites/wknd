@@ -20,6 +20,9 @@ async function loadFragment(path) {
 
 export default function decorate(block) {
   const buttons = document.createElement('div');
+  const linkBar = document.createElement('div');
+  linkBar.classList.add('link-bar');
+
   buttons.className = 'carousel-buttons';
   [...block.children].forEach((row, i) => {
     const classes = ['image', 'text'];
@@ -37,6 +40,13 @@ export default function decorate(block) {
     });
     buttons.append(button);
   });
+  
+  var texts = block.querySelectorAll('.carousel-text');
+  texts.forEach((txt) => {
+    linkBar.append(txt);
+  })
+  block.append(linkBar);
+
   block.parentElement.append(buttons);
 }
 

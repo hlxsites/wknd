@@ -11,6 +11,13 @@ main .carousel {
   margin: auto;
 }
 
+main .carousel .link-bar {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  justify-content: space-around;
+}
+
 main .carousel picture {
   position: absolute;
   z-index: -1;
@@ -39,25 +46,37 @@ main .carousel > div {
 }
 
 main .carousel div.carousel-text {
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: white;
-  min-height: 188px;
+  max-width: 240px;
+  margin: 0;
+  background-color: rgba(0,0,0, .7);
+  min-height: 140px;
   padding: 0 28px;
 }
 
 main .carousel div.carousel-text p {
-  margin: 10px 0 16px;
+  /* margin: 10px 0 16px; */
   line-height: 1.2;
+  color: white;
 }
 
 main .carousel div.carousel-text h2 {
   margin: 0;
   margin-top: 16px; 
+  color: white;
 }
 
 main .carousel div.carousel-text .button {
   margin: 0;
+  color: white;
+  white-space: pre-wrap;
+  font-size: 16px;
+  background-color: unset;
+  text-align: left;
+  padding: unset;
+  font-family: "ms_gloriola_ii_std_semibold",sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: #fff;
 }
   
 
@@ -70,7 +89,7 @@ main .carousel-wrapper {
 }
 
 main .carousel-wrapper .carousel-buttons {
-  text-align: center;
+  /* text-align: center; */
   margin-top: 0;
   position: absolute;
   display: flex;
@@ -86,7 +105,7 @@ main .carousel-buttons button {
   padding: 0;
   margin: 5px;
   border-radius: 5px;
-  background-color: var(--highlight-background-color);
+  /* background-color: var(--highlight-background-color); */
 }
 
 main .carousel-buttons button.selected {
