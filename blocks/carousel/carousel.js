@@ -1,3 +1,23 @@
+import {
+  getMetadata,
+} from '../../scripts/lib-franklin.js';
+
+/**
+ * Loads a fragment.
+ * @param {string} path The path to the fragment
+ * @returns {Document} The document
+ */
+async function loadFragment(path) {
+  if (path && path.startsWith('/')) {
+    const resp = await fetch(path);
+    if (resp.ok) {
+      const parser = new DOMParser();
+      return parser.parseFromString(await resp.text(), 'text/html');
+    }
+  }
+  return null;
+}
+
 export default function decorate(block) {
   const buttons = document.createElement('div');
   buttons.className = 'carousel-buttons';
@@ -19,3 +39,4 @@ export default function decorate(block) {
   });
   block.parentElement.append(buttons);
 }
+
