@@ -9,7 +9,7 @@
     ],
     "defaultProvider": "franklin"
   },
-  "timestamp": 1685981623499,
+  "timestamp": 1685991548013,
   "entries": [
     {
       "path": "/screens-demo/employee-communications/locations/test-global",
@@ -45,7 +45,7 @@
     },
     {
       "path": "/screens-demo/schedule.json",
-      "timestamp": 1683655515000
+      "timestamp": 1685981566000
     }
   ]
 }
