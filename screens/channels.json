@@ -62,6 +62,27 @@
       "externalId": "/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/test-west",
       "title": "test-west",
       "liveUrl": "https://main--wknd--hlxscreens.hlx.live/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/test-west"
+    },
+    {
+      "manifestPath": "/screens-demo/.manifest.json",
+      "lastModified": "2023-06-06T07:37:16.000Z",
+      "externalId": "/screens-demo/",
+      "title": "Welcome to WKND Screens demos:",
+      "liveUrl": "https://main--wknd--hlxscreens.hlx.live/screens-demo/"
+    },
+    {
+      "manifestPath": "/screens-demo/wknd-cafe-menu.manifest.json",
+      "lastModified": "2023-06-06T07:32:35.000Z",
+      "externalId": "/screens-demo/wknd-cafe-menu",
+      "title": "Metadata",
+      "liveUrl": "https://main--wknd--hlxscreens.hlx.live/screens-demo/wknd-cafe-menu"
+    },
+    {
+      "manifestPath": "/screens-demo/wknd-cafe-menuboard.manifest.json",
+      "lastModified": "2023-06-06T07:44:16.000Z",
+      "externalId": "/screens-demo/wknd-cafe-menuboard",
+      "title": "Metadata",
+      "liveUrl": "https://main--wknd--hlxscreens.hlx.live/screens-demo/wknd-cafe-menuboard"
     }
   ],
   "metadata": {
