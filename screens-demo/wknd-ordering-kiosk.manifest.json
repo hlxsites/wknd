@@ -9,7 +9,7 @@
     ],
     "defaultProvider": "franklin"
   },
-  "timestamp": 1685991547712,
+  "timestamp": 1686036180048,
   "entries": [
     {
       "path": "/screens-demo/wknd-ordering-kiosk",
@@ -17,11 +17,11 @@
     },
     {
       "path": "/scripts/scripts.js",
-      "timestamp": 1683774876000
+      "timestamp": 1686036139000
     },
     {
       "path": "/styles/styles.css",
-      "timestamp": 1683702706000
+      "timestamp": 1686036139000
     },
     {
       "path": "/media_19793eb1b14406684e44cf4e3f66cb83e7fa3d8f0.png?width=750&format=png&optimize=medium",
