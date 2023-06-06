@@ -370,3 +370,328 @@ main .section[data-section-status='initialized'] {
   height: 200px;
 }
 
+/* CSS for digital menu board*/
+
+
+.menuboardbody {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #DE981F;
+  background-image: url("https://main--wknd--hlxscreens.hlx.page/assets/media_1cd79af0d6f3b192180ade5c63741259bd9869a3c.jpeg");
+}
+.banner {
+  background-color: transparent;
+  color: #DE981F;
+  font-size: 50px;
+  font-weight: bold;
+  padding: 10px;
+  text-align: center;
+  text-decoration: underline;
+}
+.three-zone-menu-board {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+  justify-content: flex-start;
+}
+.menucolumn {
+  flex: 1 1 500px; /* Set a minimum width of 300px for the columns */
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 10px;
+  position: relative;
+  background-image: url("https://main--wknd--hlxscreens.hlx.page/assets/media_1d7d85734faa5587929532b5b479e843483b039d8.png");
+  height: 95vh;
+  overflow-x: hidden;
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 20px; /* Add some bottom margin between the columns */
+  overflow-y: hidden;
+}
+.heading {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.list li {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.price {
+  font-weight: bold;
+  margin-left: 10px;
+}
+.media {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+}
+.video {
+  max-width: 100%;
+  height: auto;
+}
+.menucolumn > div:nth-child(1) {
+  text-align: left;
+  font-size: 2.5em;
+  font-weight: bold;
+  font-family: 'Bungee';
+}
+.menucolumn > div:nth-child(2) {
+  text-align: right;
+  font-size: xx-large;
+  font-weight: bold;
+  font-family: 'Bungee';
+}
+.menucolumn > div:nth-child(3) {
+  text-align: left;
+  font-size: 3em;
+  color: whitesmoke;
+  font-weight: bold;
+  font-family: 'Cabin-Sketch-Bold';
+}
+@font-face {
+  font-family: 'Bungee';
+  src: url('Bungee-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Cabin-Sketch-Bold';
+  src: url('CabinSketch-Bold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Popins-Black';
+  src: url('Poppins-Black.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Popins-Regular';
+  src: url('Poppins-Regular.ttf') format('truetype');
+}
+
+.menucolumn > div:nth-child(4) picture {
+  position: absolute;
+  top: 25%;
+  right: 0;
+  width: 40%;
+  height: 40%;
+}
+
+.menucolumn > div:nth-child(5) picture {
+  position: absolute;
+  left: 0;
+  width: 40%;
+  height: 40%;
+}
+.menu-div {
+  padding-bottom: 20%;
+}
+
+.soup-menu {
+  list-style-type: none;
+  justify-content: space-between;
+  font-family: 'Popins-Black';
+  font-size: large;
+  font-weight: bold;
+
+}
+
+.soup-menu li {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+
+}
+
+.soup-menu li .separator {
+  flex-grow: 0.2;
+  height: 3px;
+  background-color: #DE981F;
+  margin: 0 10px;
+}
+
+.soup-menu li .name,
+.soup-menu li .price {
+  margin-bottom: 0;
+}
+.soup-menu li .description {
+  margin-right: 35%;
+  font-family: 'Popins-Regular';
+  font-size: small;
+  color: white;
+}
+
+
+.soup-menu-right {
+  list-style-type: none;
+  justify-content: space-between;
+  font-family: 'Popins-Black';
+  font-size: large;
+  font-weight: bold;
+  padding-left: 40%;
+
+}
+
+.soup-menu-right li {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+
+}
+.soup-menu-right li .separator {
+  flex-grow: 0.5;
+  height: 3px;
+  background-color: #DE981F;
+  margin: 0 10px;
+}
+
+.soup-menu-right li .name,
+.soup-menu-right li .price {
+  margin-bottom: 0;
+}
+.soup-menu-right li .description {
+  margin-top: 0;
+  font-family: 'Popins-Regular';
+  font-size: small;
+  color: white;
+}
+
+
+/** WKND Theme three zone Menu */
+.wknd-menuboardbody {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: #202020;
+  padding: 0;
+}
+.three-zone-menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+  justify-content: flex-start;
+}
+
+.wknd-menucolumn {
+  flex: 1 1 500px; /* Set a minimum width of 300px for the columns */
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 10px;
+  position: relative;
+  height: 95vh;
+  overflow-x: hidden;
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 20px; /* Add some bottom margin between the columns */
+  overflow-y: hidden;
+}
+.wknd-menucolumn > div:nth-child(1) {
+  text-align: center;
+  font-size: 2.5em;
+  font-weight: bold;
+  font-family: var(--fixed-font-family);
+  border: 10px solid var(--color-yellow);
+}
+.wknd-menucolumn > div:nth-child(2) {
+  text-align: right;
+  font-size: xx-large;
+  font-weight: bold;
+  font-family: var(--body-font-family);
+}
+.wknd-menucolumn > div:nth-child(3) {
+  text-align: left;
+  font-size: 3em;
+  color: var(--text-color);
+  font-weight: bold;
+  font-family: var(--fixed-font-family);
+}
+.wknd-menucolumn > div:nth-child(4) picture {
+  position: absolute;
+  top: 25%;
+  right: 0;
+  width: 40%;
+  height: 40%;
+}
+
+.wknd-menucolumn > div:nth-child(5) picture {
+  position: absolute;
+  left: 0;
+  width: 40%;
+  height: 40%;
+}
+
+.soup-menu-wknd {
+  list-style-type: none;
+  justify-content: space-between;
+  font-family: var(--body-font-family);
+  font-size: large;
+  font-weight: bold;
+
+}
+
+.soup-menu-wknd li {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+
+}
+
+.soup-menu-wknd li .separator {
+  flex-grow: 0.2;
+  height: 3px;
+  background-color: var(--color-yellow);
+  margin: 0 10px;
+}
+
+.soup-menu-wknd li .name,
+.soup-menu-wknd li .price {
+  margin-bottom: 0;
+}
+.soup-menu-wknd li .description {
+  margin-right: 35%;
+  font-family: var(--body-font-family);
+  font-size: small;
+  color: var(--text-color)
+}
+
+
+.soup-menu-wknd-right {
+  list-style-type: none;
+  justify-content: space-between;
+  font-family: var(--body-font-family);
+  font-size: large;
+  font-weight: bold;
+  padding-left: 40%;
+
+}
+
+.soup-menu-wknd-right li {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+
+}
+.soup-menu-wknd-right li .separator {
+  flex-grow: 0.5;
+  height: 3px;
+  background-color: var(--color-yellow);
+  margin: 0 10px;
+}
+
+.soup-menu-wknd-right li .name,
+.soup-menu-wknd-right li .price {
+  margin-bottom: 0;
+}
+.soup-menu-wknd-right li .description {
+  margin-top: 0;
+  font-family: var(--body-font-family);
+  font-size: small;
+  color: var(--text-color)
+}
+
