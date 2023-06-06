@@ -9,11 +9,11 @@
     ],
     "defaultProvider": "franklin"
   },
-  "timestamp": 1686038167669,
+  "timestamp": 1686038169038,
   "entries": [
     {
-      "path": "/screens-demo/employee-communications/locations/test-global",
-      "timestamp": 1686036195000
+      "path": "/screens-demo/",
+      "timestamp": 1686037036000
     },
     {
       "path": "/scripts/scripts.js",
