@@ -5,9 +5,7 @@
       "id": "library",
       "title": "Library",
       "environments": [ "edit" ],
-      "isPalette": true,
-      "paletteRect": "top: auto; bottom: 20px; left: 20px; height: 398px; width: 360px;",
-      "url": "/block-library/library",
+      "url": "https://main--wknd--hlxsites.hlx.live/tools/sidekick/library.html",
       "includePaths": [ "**.docx**" ]
     }
   ]
