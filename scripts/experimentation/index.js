@@ -228,10 +228,15 @@ export async function getConfigForFullExperiment(experimentId, cfg) {
   const engine = toClassName(getMetadata('experiment-engine'));
   if (engine === 'aep') {
     const id = getMetadata('experiment');
+    const bearer = window.localStorage.getItem('aep-bearer');
+    if (!bearer) {
+      console.error('Missing bearer token, Please set "window.localStorage.setItem(\'aep-bearer\', \'Bearer …\')" to fetch the experimentation config.');
+      return null;
+    }
     const response = await fetch(`https://platform-stage.adobe.io/data/core/experimentation/experiments/${id}`, {
       headers: {
         accept: 'application/vnd.adobe.experimentation.v1+json',
-        authorization: window.localStorage.getItem('aep-bearer'),
+        authorization: bearer,
         'x-api-key': 'exc_app',
         'x-gw-ims-org-id': '745F37C35E4B776E0A49421B@AdobeOrg',
         'x-sandbox-name': 'prod',
