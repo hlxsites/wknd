@@ -76,7 +76,7 @@ function getDatastreamConfiguration() {
 function getAlloyConfiguration(document) {
   return {
     // enable while debugging
-    debugEnabled: document.location.hostname.startsWith('localhost'),
+    debugEnabled: true, //document.location.hostname.startsWith('localhost'),
     // disable when clicks are also tracked via sendEvent with additional details
     clickCollectionEnabled: false,
     // adjust default based on customer use case
@@ -420,6 +420,20 @@ export async function getConfig(experiment, instantExperiment = null, config = D
 }
 
 /**
+ * Sites Internal alloy headers
+ * 
+ * @returns {object} the alloy headers
+ */
+function getAlloyHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsIng1dSI6Imltc19uYTEta2V5LWF0LTEuY2VyIiwia2lkIjoiaW1zX25hMS1rZXktYXQtMSIsIml0dCI6ImF0In0.eyJpZCI6IjE2ODY3MzYzNjY4MTdfOTU0MjQ5NjktZGZkZi00ZjNjLTg3Y2MtZGNkYTNlMGFmYWJkX2V3MSIsInR5cGUiOiJhY2Nlc3NfdG9rZW4iLCJjbGllbnRfaWQiOiJleGNfYXBwIiwidXNlcl9pZCI6Ijg1MUIyMEFENjMxQzMzRDQwQTQ5NUZGREA3ZWViMjBmODYzMWMwY2I3NDk1YzA2LmUiLCJzdGF0ZSI6IntcImpzbGlidmVyXCI6XCJ2Mi12MC4zMS4wLTItZzFlOGE4YThcIixcIm5vbmNlXCI6XCIzMTczODA2ODczMzUxNTQ1XCIsXCJzZXNzaW9uXCI6XCJodHRwczovL2ltcy1uYTEuYWRvYmVsb2dpbi5jb20vaW1zL3Nlc3Npb24vdjEvTXpVd09UQTJOV1F0WWpOa1pDMDBOV001TFRnNU9XRXRPVEU0WmpFMU9UWXdObVkyTFMwNE5URkNNakJCUkRZek1VTXpNMFEwTUVFME9UVkdSa1JBTjJWbFlqSXdaamcyTXpGak1HTmlOelE1TldNd05pNWxcIn0iLCJhcyI6Imltcy1uYTEiLCJhYV9pZCI6IkJERUYyQ0E3NTQ4OUQ1OUUwQTRDOThBN0BhZG9iZS5jb20iLCJjdHAiOjAsImZnIjoiWFEySEFHRTdYUFA3TVA0S0dNUVYzWEFBSDQ9PT09PT0iLCJzaWQiOiIxNjg2NzM2MzY2NDQyXzZmZmY0YWZkLWQxYTYtNDMyZS04ZGRiLTlmMDRkZDM0NTA0OF9ldzEiLCJtb2kiOiJjMDc0YzlmYyIsInBiYSI6Ik1lZFNlY05vRVYsTG93U2VjIiwiZXhwaXJlc19pbiI6Ijg2NDAwMDAwIiwic2NvcGUiOiJhYi5tYW5hZ2UsYWRkaXRpb25hbF9pbmZvLGFkZGl0aW9uYWxfaW5mby5qb2JfZnVuY3Rpb24sYWRkaXRpb25hbF9pbmZvLnByb2plY3RlZFByb2R1Y3RDb250ZXh0LGFkZGl0aW9uYWxfaW5mby5yb2xlcyxBZG9iZUlELGFkb2JlaW8uYXBwcmVnaXN0cnkucmVhZCxhZG9iZWlvX2FwaSxhdWRpZW5jZW1hbmFnZXJfYXBpLGNyZWF0aXZlX2Nsb3VkLG1wcyxvcGVuaWQsb3JnLnJlYWQscmVhZF9vcmdhbml6YXRpb25zLHJlYWRfcGMscmVhZF9wYy5hY3AscmVhZF9wYy5kbWFfdGFydGFuLHNlc3Npb24iLCJjcmVhdGVkX2F0IjoiMTY4NjczNjM2NjgxNyJ9.RFxJYkOqPPMdrTHRGFgxPOveuTTjtB71VqTfDyr6CfJNHejB8kUuPX0bwAGHEzfP8y53hK5dpGI8-8VHhJ4CJtNPfYXjpCRxVw_4cKtXjZYbNJiZbN8P5gLzIDMag7haUUPsQlmf-oxgsc5OeSX4dO_179HpjMpgLIZY58IdgnrPnvEEtqbGxHiPa9EpXdaGNGdy-6YQeiUPRBhTuhgjkUiUP2H8MTKFiHRvtQkMEy_J9Sp0mtv3G74RKU3Lj3ErQn5ha0sPlobBqmRD2AJKVKwMp8uEUWDwG2iqgEIplVbGtVNuxSd3IYy4iDzqdMDcz4iCM1vQfIrv_e_qBrxQsA",
+        "x-api-key": "acp_ui_platform",
+        "x-gw-ims-org-id": "908936ED5D35CC220A495CD4@AdobeOrg",
+  }
+}
+
+/**
  * Runs the configured experiments on the current page.
  * @param {string} experiment the experiment id
  * @param {string} instantExperiment the instant experiment config
@@ -438,6 +452,35 @@ export async function runExperiment(experiment, instantExperiment, customOptions
 
   // setup Alloy and use AEP audiences
   setupAlloy(document);
+  // obtain the ECID from the alloy
+  alloy("getIdentity", { namespaces: ["ECID"] }).then(function (identity) {
+    // Extract the ECID (Experience Cloud ID) from the identity
+    const ecid = identity["ECID"];
+    const url = 'https://platform.adobe.io/data/core/ups/identity/namespace';
+    const requestBody = {
+      ids: [
+        {
+          id: ecid,
+          namespace: 'ECID'
+        }
+      ]
+    };
+
+    // Make an API request to retrieve the segments associated with the ECID
+    fetch(url, {
+      method: 'POST',
+      headers: getAlloyHeaders(),
+      body: JSON.stringify(requestBody)
+    }).then(data => {
+        console.log("Segments of the user's identity:", data);
+      })
+      .catch(error => {
+        console.error("Error retrieving segments:", error);
+      });
+  })
+  .catch(function (error) {
+    console.error("Error retrieving identity:", error);
+  });
 
   console.debug(`running experiment (${window.hlx.experiment.id}) -> ${window.hlx.experiment.selectedVariant}`);
 
