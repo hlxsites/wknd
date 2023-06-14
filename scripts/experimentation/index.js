@@ -231,7 +231,7 @@ export async function getConfigForFullExperiment(experimentId, cfg) {
     const response = await fetch(`https://platform-stage.adobe.io/data/core/experimentation/experiments/${id}`, {
       headers: {
         accept: 'application/vnd.adobe.experimentation.v1+json',
-        authorization: window.localStorage.get('aep-bearer'),
+        authorization: window.localStorage.getItem('aep-bearer'),
         'x-api-key': 'exc_app',
         'x-gw-ims-org-id': '745F37C35E4B776E0A49421B@AdobeOrg',
         'x-sandbox-name': 'prod',
