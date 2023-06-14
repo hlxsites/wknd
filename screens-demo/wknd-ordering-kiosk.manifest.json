@@ -9,11 +9,11 @@
     ],
     "defaultProvider": "franklin"
   },
-  "timestamp": 1686039182654,
+  "timestamp": 1686741078492,
   "entries": [
     {
       "path": "/screens-demo/wknd-ordering-kiosk",
-      "timestamp": 1686036195000
+      "timestamp": 1686036755000
     },
     {
       "path": "/scripts/scripts.js",
@@ -133,6 +133,10 @@
     },
     {
       "path": "/scripts/lib-franklin.js",
+      "timestamp": 1686036192000
+    },
+    {
+      "path": "/scripts/lib-polaris.js",
       "timestamp": 1686036192000
     },
     {
