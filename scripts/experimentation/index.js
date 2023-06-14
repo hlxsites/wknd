@@ -30,13 +30,13 @@ function parseAepExperimentConfig(json) {
     audiences: {},
     label: json.name,
     status: json.state,
-    manifest: `https://platform-stage.adobe.io/data/core/experimentation/experiments/${experimentId}`,
+    manifest: `https://platform-stage.adobe.io/data/core/experimentation/experiments/${json.id}`,
     variantNames: json.treatments.map((t) => t.id),
     variants: json.treatments.reduce((res, t) => {
       res[t.id] = {
         label: t.name,
-        percentageSplit: t.percentage,
-        pages: t.assignments.filter((a) => a.parameter === 'url').map((a) => a.value),
+        percentageSplit: t.percentage / 100,
+        pages: t.assignments.filter((a) => a.parameter === 'url').map((a) => new URL(a.value).pathname),
         blocks: [],
       };
       return res;
@@ -227,10 +227,11 @@ export function getConfigForInstantExperiment(experimentId, instantExperiment) {
 export async function getConfigForFullExperiment(experimentId, cfg) {
   const engine = toClassName(getMetadata('experiment-engine'));
   if (engine === 'aep') {
-    const response = await fetch(`https://platform-stage.adobe.io/data/core/experimentation/experiments/${experimentId}`, {
+    const id = getMetadata('experiment');
+    const response = await fetch(`https://platform-stage.adobe.io/data/core/experimentation/experiments/${id}`, {
       headers: {
         accept: 'application/vnd.adobe.experimentation.v1+json',
-        authorization: 'Bearer eyJhbGciOiJSUzI1NiIsIng1dSI6Imltc19uYTEtc3RnMS1rZXktYXQtMS5jZXIiLCJraWQiOiJpbXNfbmExLXN0ZzEta2V5LWF0LTEiLCJpdHQiOiJhdCJ9.eyJpZCI6IjE2ODY2Njg4NDAxODVfNmUyYmMwZjItZWU2OS00YTcwLTgzNWMtMzQ3MDczZTljN2NiX3VlMSIsInR5cGUiOiJhY2Nlc3NfdG9rZW4iLCJjbGllbnRfaWQiOiJleGNfYXBwIiwidXNlcl9pZCI6IjlGRkIxQTdBNjQ4ODg1RDMwQTQ5NDEwNkA2NTg1NTcxMzVmYTEwYjg2MGE0OTQwMTkiLCJzdGF0ZSI6IntcImpzbGlidmVyXCI6XCJ2Mi12MC4zMS4wLTItZzFlOGE4YThcIixcIm5vbmNlXCI6XCIxMjg3NzU5MTEyMzI3Mzc3XCIsXCJzZXNzaW9uXCI6XCJodHRwczovL2ltcy1uYTEtc3RnMS5hZG9iZWxvZ2luLmNvbS9pbXMvc2Vzc2lvbi92MS9NbUU0WVRVNVpEa3RPVGczTkMwME9ESTFMV0kzTVRBdFlXRmhaVEZpWWpReFltUXpMUzAzTXpSRE5UaENOalZEUkRRME9VTXpNRUUwT1RReU1UZEFZell5WmpJMFkyTTFZalZpTjJVd1pUQmhORGswTURBMFwifSIsImFzIjoiaW1zLW5hMS1zdGcxIiwiYWFfaWQiOiI3MzRDNThCNjVDRDQ0OUMzMEE0OTQyMTdAYzYyZjI0Y2M1YjViN2UwZTBhNDk0MDA0IiwiY3RwIjowLCJmZyI6IlhRWUFXRlpDMlIyVkE0QlJVR1pNQUNJQVdJIiwic2lkIjoiMTY4NjY2ODg0MDE3OF83YzY5NjkyZi0zZmQxLTRmNjYtYjRkNS05ZDg0NTFhNjFiMWRfdWUxIiwibW9pIjoiOGY2MTNlOGEiLCJwYmEiOiJNZWRTZWNOb0VWLExvd1NlYyIsImV4cGlyZXNfaW4iOiI4NjQwMDAwMCIsImNyZWF0ZWRfYXQiOiIxNjg2NjY4ODQwMTg1Iiwic2NvcGUiOiJhYi5tYW5hZ2UsYWRkaXRpb25hbF9pbmZvLGFkZGl0aW9uYWxfaW5mby5qb2JfZnVuY3Rpb24sYWRkaXRpb25hbF9pbmZvLnByb2plY3RlZFByb2R1Y3RDb250ZXh0LGFkZGl0aW9uYWxfaW5mby5yb2xlcyxBZG9iZUlELGFkb2JlaW8uYXBwcmVnaXN0cnkucmVhZCxhZG9iZWlvX2FwaSxhdWRpZW5jZW1hbmFnZXJfYXBpLGNyZWF0aXZlX2Nsb3VkLG1wcyxvcGVuaWQsb3JnLnJlYWQscmVhZF9vcmdhbml6YXRpb25zLHJlYWRfcGMscmVhZF9wYy5hY3AscmVhZF9wYy5kbWFfdGFydGFuLHNlc3Npb24ifQ.P4mA52iQBTymqaXi3jOa_8a1mj5dxFCii-Oe4MfrBBHo1qWMGctEu1oViwHRch8_MjU1DIPqcGUqHOXFKdNqNSHdsbZToM-AD1pVCSA9ptpHlxNgEV4ExcEiyLbkWSYSQVZ7yRuLRjwmYrmpfua1wd0sVjp5iDYwQgQgNyzQFYlrIMmmLYX_hoob108_V4sCz-7KCgO9CRFQuWsZdyzJChlqdRaAgYwG1-np9bj9rSjECSqt0xoUvM9ttX0oDmXZnr9j6LEtemUfzvFQL-IN0uNlmuZcsIlXKRW0C2zjkJ3vijkOgfKoUQ7TiCTDzlEURNNflZHXG8ote1UnXoF6Iw',
+        authorization: window.localStorage.get('aep-bearer'),
         'x-api-key': 'exc_app',
         'x-gw-ims-org-id': '745F37C35E4B776E0A49421B@AdobeOrg',
         'x-sandbox-name': 'prod',
