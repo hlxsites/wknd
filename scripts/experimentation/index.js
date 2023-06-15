@@ -62,9 +62,20 @@ function createInlineScript(document, element, innerHTML, type) {
  */
 function getDatastreamConfiguration() {
   // Sites Internal
+  // return {
+  //   edgeConfigId: '732b93f2-41e2-467a-95aa-3336e063418e',
+  //   orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+  // };
+  // Target QA2
+  // return {
+  //   edgeConfigId: '5a7bbd68-56a6-4dd7-87fe-c1c9c002ac7a',
+  //   orgId: '039E5CD253BE29E30A4C86E6@AdobeOrg',
+  // };
+  // Experience Edge early access
+
   return {
-    edgeConfigId: '732b93f2-41e2-467a-95aa-3336e063418e',
-    orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+    edgeConfigId: '0d97c85a-1f52-44a2-8040-c30b7c2259df',
+    orgId: '53A16ACB5CC1D3760A495C99@AdobeOrg',
   };
 }
 
@@ -82,6 +93,10 @@ function getAlloyConfiguration(document) {
     // adjust default based on customer use case
     defaultConsent: 'in',
     ...getDatastreamConfiguration(),
+    // for experience-stage
+    // edgeDomain: 'edge-int.adobedc.net',
+    // idMigrationEnabled: false,
+    // thirdPartyCookiesEnabled: false,
   };
 }
 
@@ -93,10 +108,11 @@ function getAlloyConfiguration(document) {
 export async function setupAlloy(document) {
   createInlineScript(document, document.body, getAlloyInitScript(), 'text/javascript');
 
+  await import('../alloy.js');
+
   // eslint-disable-next-line no-undef
   const configure = alloy('configure', getAlloyConfiguration(document));
 
-  await import('../alloy.js');
   await configure;
 }
 
@@ -251,10 +267,21 @@ export function getConfigForInstantExperiment(experimentId, instantExperiment) {
 
   pages.forEach((page, i) => {
     const vname = `challenger-${i + 1}`;
+    const pageParts = page.split('$');
+    const pagePath = pageParts[0];
+    let segments = [];
+    if (pageParts[1]) {
+      let match = pageParts[1].match(/\((.*?)\)/)
+      segments = match ? match[1].split(',') : [];
+      if (segments.length) {
+        config.segmentation = true;
+      }
+    }
     config.variantNames.push(vname);
     config.variants[vname] = {
       percentageSplit: `${evenSplit.toFixed(2)}`,
-      pages: [page],
+      pages: [pagePath],
+      segments: segments,
       blocks: [],
       label: `Challenger ${i + 1}`,
     };
@@ -380,6 +407,21 @@ async function replaceInner(path, element) {
   return false;
 }
 
+function getFirstMatchedVariant(experimentConfig, userSegments) {
+  if (!experimentConfig || !experimentConfig.variants || !userSegments.length) {
+    return;
+  }
+  const { variants } = experimentConfig;
+  for (let variant in variants) {
+    if (variants[variant].segments && variants[variant].segments.length) {
+      const matched = variants[variant].segments.some((segment) => userSegments.includes(segment));
+      if (matched) {
+        return variant;
+      }
+    }
+  }
+}
+
 /**
  * Gets the experimentation config for the specified experiment
  * @param {string} experiment the experiment id
@@ -408,28 +450,59 @@ export async function getConfig(experiment, instantExperiment = null, config = D
     return null;
   }
 
-  if (forcedVariant && experimentConfig.variantNames.includes(forcedVariant)) {
-    experimentConfig.selectedVariant = forcedVariant;
+  if (experimentConfig.segmentation) {
+    // setup Alloy and use AEP segments
+    await setupAlloy(document);
+
+    const alloyResult = await alloy("sendEvent", {
+      "renderDecisions": true,
+    }).catch(function(error) {
+      console.error("Error sending event to alloy:", error);
+    });
+
+    const userSegments = getSegmentsFromAlloyResponse(alloyResult);
+    if (userSegments.length > 0) {
+      const segmentDefinitions = getSegmentDefinitions();
+      for (let i = 0; i < userSegments.length; i++) {
+        userSegments[i] = segmentDefinitions[userSegments[i]];
+      }
+      experimentConfig.selectedVariant = getFirstMatchedVariant(experimentConfig, userSegments);
+    }
+    if (!experimentConfig.selectedVariant) {
+      experimentConfig.selectedVariant = 'control';
+    }
   } else {
-    // eslint-disable-next-line import/extensions
-    const { ued } = await import('./ued.js');
-    const decision = ued.evaluateDecisionPolicy(getDecisionPolicy(experimentConfig), {});
-    experimentConfig.selectedVariant = decision.items[0].id;
+    if (forcedVariant && experimentConfig.variantNames.includes(forcedVariant)) {
+      experimentConfig.selectedVariant = forcedVariant;
+    } else {
+      // eslint-disable-next-line import/extensions
+      const { ued } = await import('./ued.js');
+      const decision = ued.evaluateDecisionPolicy(getDecisionPolicy(experimentConfig), {});
+      experimentConfig.selectedVariant = decision.items[0].id;
+    }
   }
   return experimentConfig;
 }
 
-/**
- * Sites Internal alloy headers
- * 
- * @returns {object} the alloy headers
- */
-function getAlloyHeaders() {
+function getSegmentsFromAlloyResponse(response) {
+  const segments = [];
+  if (response && response.destinations) {
+    Object.values(response.destinations).forEach((destination) => {
+      // update the below logic to read the id from the segment and add that read id to segments object
+      if (destination.segments) {
+        Object.values(destination.segments).forEach((segment) => {
+          segments.push(segment.id);
+      });
+    }
+    });
+  }
+  return segments;
+}
+
+
+function getSegmentDefinitions() {
   return {
-    'Content-Type': 'application/json',
-    "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsIng1dSI6Imltc19uYTEta2V5LWF0LTEuY2VyIiwia2lkIjoiaW1zX25hMS1rZXktYXQtMSIsIml0dCI6ImF0In0.eyJpZCI6IjE2ODY3MzYzNjY4MTdfOTU0MjQ5NjktZGZkZi00ZjNjLTg3Y2MtZGNkYTNlMGFmYWJkX2V3MSIsInR5cGUiOiJhY2Nlc3NfdG9rZW4iLCJjbGllbnRfaWQiOiJleGNfYXBwIiwidXNlcl9pZCI6Ijg1MUIyMEFENjMxQzMzRDQwQTQ5NUZGREA3ZWViMjBmODYzMWMwY2I3NDk1YzA2LmUiLCJzdGF0ZSI6IntcImpzbGlidmVyXCI6XCJ2Mi12MC4zMS4wLTItZzFlOGE4YThcIixcIm5vbmNlXCI6XCIzMTczODA2ODczMzUxNTQ1XCIsXCJzZXNzaW9uXCI6XCJodHRwczovL2ltcy1uYTEuYWRvYmVsb2dpbi5jb20vaW1zL3Nlc3Npb24vdjEvTXpVd09UQTJOV1F0WWpOa1pDMDBOV001TFRnNU9XRXRPVEU0WmpFMU9UWXdObVkyTFMwNE5URkNNakJCUkRZek1VTXpNMFEwTUVFME9UVkdSa1JBTjJWbFlqSXdaamcyTXpGak1HTmlOelE1TldNd05pNWxcIn0iLCJhcyI6Imltcy1uYTEiLCJhYV9pZCI6IkJERUYyQ0E3NTQ4OUQ1OUUwQTRDOThBN0BhZG9iZS5jb20iLCJjdHAiOjAsImZnIjoiWFEySEFHRTdYUFA3TVA0S0dNUVYzWEFBSDQ9PT09PT0iLCJzaWQiOiIxNjg2NzM2MzY2NDQyXzZmZmY0YWZkLWQxYTYtNDMyZS04ZGRiLTlmMDRkZDM0NTA0OF9ldzEiLCJtb2kiOiJjMDc0YzlmYyIsInBiYSI6Ik1lZFNlY05vRVYsTG93U2VjIiwiZXhwaXJlc19pbiI6Ijg2NDAwMDAwIiwic2NvcGUiOiJhYi5tYW5hZ2UsYWRkaXRpb25hbF9pbmZvLGFkZGl0aW9uYWxfaW5mby5qb2JfZnVuY3Rpb24sYWRkaXRpb25hbF9pbmZvLnByb2plY3RlZFByb2R1Y3RDb250ZXh0LGFkZGl0aW9uYWxfaW5mby5yb2xlcyxBZG9iZUlELGFkb2JlaW8uYXBwcmVnaXN0cnkucmVhZCxhZG9iZWlvX2FwaSxhdWRpZW5jZW1hbmFnZXJfYXBpLGNyZWF0aXZlX2Nsb3VkLG1wcyxvcGVuaWQsb3JnLnJlYWQscmVhZF9vcmdhbml6YXRpb25zLHJlYWRfcGMscmVhZF9wYy5hY3AscmVhZF9wYy5kbWFfdGFydGFuLHNlc3Npb24iLCJjcmVhdGVkX2F0IjoiMTY4NjczNjM2NjgxNyJ9.RFxJYkOqPPMdrTHRGFgxPOveuTTjtB71VqTfDyr6CfJNHejB8kUuPX0bwAGHEzfP8y53hK5dpGI8-8VHhJ4CJtNPfYXjpCRxVw_4cKtXjZYbNJiZbN8P5gLzIDMag7haUUPsQlmf-oxgsc5OeSX4dO_179HpjMpgLIZY58IdgnrPnvEEtqbGxHiPa9EpXdaGNGdy-6YQeiUPRBhTuhgjkUiUP2H8MTKFiHRvtQkMEy_J9Sp0mtv3G74RKU3Lj3ErQn5ha0sPlobBqmRD2AJKVKwMp8uEUWDwG2iqgEIplVbGtVNuxSd3IYy4iDzqdMDcz4iCM1vQfIrv_e_qBrxQsA",
-        "x-api-key": "acp_ui_platform",
-        "x-gw-ims-org-id": "908936ED5D35CC220A495CD4@AdobeOrg",
+    "82cc4339-18cc-448d-82a2-8effb72bbc74": "US",
   }
 }
 
@@ -449,38 +522,6 @@ export async function runExperiment(experiment, instantExperiment, customOptions
   if (!experimentConfig || !isValidConfig(experimentConfig)) {
     return false;
   }
-
-  // setup Alloy and use AEP audiences
-  setupAlloy(document);
-  // obtain the ECID from the alloy
-  alloy("getIdentity", { namespaces: ["ECID"] }).then(function (identity) {
-    // Extract the ECID (Experience Cloud ID) from the identity
-    const ecid = identity["ECID"];
-    const url = 'https://platform.adobe.io/data/core/ups/identity/namespace';
-    const requestBody = {
-      ids: [
-        {
-          id: ecid,
-          namespace: 'ECID'
-        }
-      ]
-    };
-
-    // Make an API request to retrieve the segments associated with the ECID
-    fetch(url, {
-      method: 'POST',
-      headers: getAlloyHeaders(),
-      body: JSON.stringify(requestBody)
-    }).then(data => {
-        console.log("Segments of the user's identity:", data);
-      })
-      .catch(error => {
-        console.error("Error retrieving segments:", error);
-      });
-  })
-  .catch(function (error) {
-    console.error("Error retrieving identity:", error);
-  });
 
   console.debug(`running experiment (${window.hlx.experiment.id}) -> ${window.hlx.experiment.selectedVariant}`);
 
