@@ -470,6 +470,7 @@ export async function getConfig(experiment, instantExperiment = null, config = D
     }
     if (!experimentConfig.selectedVariant) {
       experimentConfig.selectedVariant = 'control';
+      console.log('[Experimentation] No variant matched for user segments. Using control.');
     }
   } else {
     if (forcedVariant && experimentConfig.variantNames.includes(forcedVariant)) {
