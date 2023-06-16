@@ -108,7 +108,7 @@ function getAlloyConfiguration(document) {
 export async function setupAlloy(document) {
   createInlineScript(document, document.body, getAlloyInitScript(), 'text/javascript');
 
-  await import('../alloy.js');
+  await import('../alloy.min.js');
 
   // eslint-disable-next-line no-undef
   const configure = alloy('configure', getAlloyConfiguration(document));
