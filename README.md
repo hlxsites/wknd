@@ -2,8 +2,10 @@
 Your project's description...
 
 ## Environments
-- Preview: https://main--wknd--hlxsites.hlx.page/
-- Live: https://main--wknd--hlxsites.hlx.live/
+- Preview: https://main--franklin-wknd--joannehoadobe.hlx.page/
+## https://main--wknd--hlxsites.hlx.page/
+- Live: https://main--franklin-wknd--joannehoadobe.hlx.live/
+## https://main--wknd--hlxsites.hlx.live/
 
 ## Installation
 
