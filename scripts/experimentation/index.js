@@ -503,7 +503,8 @@ function getSegmentsFromAlloyResponse(response) {
 
 function getSegmentDefinitions() {
   return {
-    "82cc4339-18cc-448d-82a2-8effb72bbc74": "US",
+    '82cc4339-18cc-448d-82a2-8effb72bbc74': 'US',
+    '4f3b0ec6-bc8f-441b-a5fb-56e1b126d355': 'US',
   }
 }
 
