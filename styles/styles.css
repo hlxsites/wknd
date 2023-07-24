@@ -695,3 +695,10 @@ main .section[data-section-status='initialized'] {
   color: var(--text-color)
 }
 
+.section {
+  display: none;
+}
+
+.section.displaySection {
+  display: block;
+}

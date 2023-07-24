@@ -410,6 +410,24 @@ function createMenuItems(menuItems,className,start,end){
     });
   }
 
+// Orchestrator
+
+export function onNavigate(pathName){
+  // window.history.pushState(
+  //   {},
+  //   pathName,
+  //   window.location.origin + pathName
+  // )
+  const allSections = document.getElementsByClassName('section');
+  console.log(allSections);
+  for(let item of allSections){
+    item.classList.remove('displaySection');
+  }
+  const section = document.getElementsByClassName(`section ${pathName}`);
+  console.log(section, pathName);
+  section && section.length > 0 && section[0].classList.add('displaySection');
+}
+
   /*
   // Access and process each JSON object
       for (const key in data) {
