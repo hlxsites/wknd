@@ -1,4 +1,4 @@
-const AS_MFE = 'https://experience.adobe.com/solutions/CQ-assets-selectors/assets/resources/asset-selectors.js';
+const AS_MFE = 'https://experience.adobe.com/solutions/CQ-assets-selectors/assets/resources/assets-selectors.js';
 const IMS_ENV_STAGE = 'stg1';
 const IMS_ENV_PROD = 'prod';
 
@@ -27,7 +27,7 @@ function load(cfg) {
     env: imsEnvironment,
   };
   // eslint-disable-next-line no-undef
-  const registeredTokenService = PureJSSelectors.registerAssetSelectorsIms(imsProps);
+  const registeredTokenService = PureJSSelectors.renderAssetSelectorWithAuthFlow(imsProps);
   imsInstance = registeredTokenService;
 }
 
@@ -130,7 +130,7 @@ export async function renderAssetSelectorWithImsFlow(cfg) {
   };
   const container = document.getElementById('asset-selector');
   // eslint-disable-next-line no-undef
-  PureJSSelectors.renderAssetSelectorWithIms(container, assetSelectorProps, () => {
+  PureJSSelectors.renderAssetSelectorWithAuthFlow(container, assetSelectorProps, () => {
     const assetSelectorDialog = document.getElementById('asset-selector-dialog');
     assetSelectorDialog.showModal();
   });
