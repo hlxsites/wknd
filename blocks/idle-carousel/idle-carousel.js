@@ -17,12 +17,11 @@ export default async function decorate(block) {
     const sequenceElement = document.createElement('div');
     sequenceElement.classList.add('sequence-element', 'fadeIn');
     sequenceElement.setAttribute('duration', carouselElement.children[2].textContent);
-    let media; 
-    if(type === 'img') {
+    let media;
+    if (type === 'img') {
       media = carouselElement.querySelector('img');
       media.classList.add('sequence-element-video');
-    }
-    else {
+    } else {
       const url = carouselElement.children[1].textContent;
       media = createVideoElement(url, type);
     }
@@ -43,7 +42,7 @@ export default async function decorate(block) {
   // svg.appendChild(newElement);
   // tooltip.append(svg);
   const handClick = new Image();
-  handClick.src = "https://main--wknd--hlxscreens.hlx.live/screens-demo/media_13828d4ce2feb1b173bec8680847539ad592ee955.png";
+  handClick.src = 'https://main--wknd--hlxscreens.hlx.live/screens-demo/media_13828d4ce2feb1b173bec8680847539ad592ee955.png';
   tooltip.append(handClick);
   tooltip.append('Touch Me!');
   block.append(tooltip);

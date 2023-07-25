@@ -4,7 +4,7 @@
   padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-gap: 16px;
+  grid-gap: 2rem;
 }
 
 .category > h1 {
@@ -18,23 +18,27 @@
 .category > ul > li {
   background-color: var(--background-color);
   position: relative;
+  animation: pulse 0.5s ease-in 2;
+  height: 100%;
 }
 
 .category > ul > li > h2 {
   position: absolute;
   bottom: 0;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, 0);
   color: white;
   text-shadow: 1px 1px 1px lightblue;
   text-transform: uppercase;
+  margin: 0;
+  margin-bottom: 2rem;
 }
 
 .category .category-image {
   line-height: 0;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   position: relative;
-  border-radius: 1.5rem;
+  /* border-radius: 1.5rem; */
   overflow: hidden;
 }
 
@@ -42,7 +46,7 @@
   content:"";
   position: absolute;
   width: 100%;
-  height: 40%;
+  height: 20%;
   left: 0;
   bottom: 0;
   background: linear-gradient(to bottom, lightgrey 0%, black 100%);
@@ -51,11 +55,16 @@
 
 .category > ul > li img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 4;
   object-fit: cover;
 }
 
 .category.no-crop > ul > li img {
   aspect-ratio: unset;
   object-fit: unset;
+}
+
+@keyframes pulse{
+  25%  {transform: scale(0.99);}
+  75%  {transform: scale(1.01);}
 }

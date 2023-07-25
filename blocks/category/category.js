@@ -1,5 +1,6 @@
 import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
 import { onNavigate } from '../../scripts/scripts.js';
+
 const onCategoryClick = (event) => {
   console.log('clicked');
   console.log(event);
@@ -13,11 +14,11 @@ const onCategoryClick = (event) => {
   productListing.setAttribute('category-name', categoryName);
   productListing.setAttribute('category-id', categoryId);
   onNavigate('product-listing-container');
-}
+};
 
 export default function decorate(block) {
-  const heading = block.closest('.section').dataset.heading;
-  const header = document.createElement("H1");
+  const { heading } = block.closest('.section').dataset;
+  const header = document.createElement('h1');
   const text = document.createTextNode(heading);
   header.appendChild(text);
   const ul = document.createElement('ul');
@@ -37,29 +38,9 @@ export default function decorate(block) {
     li.appendChild(imgdiv);
     li.appendChild(categoryTile);
     ul.append(li);
-  })
+  });
   ul.querySelectorAll('img').forEach((img) => img.closest('picture').replaceWith(createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }])));
   block.textContent = '';
   block.append(header);
   block.append(ul);
-
-  // const buttons = document.createElement('div');
-  // buttons.className = 'carousel-buttons';
-  // [...block.children].forEach((row, i) => {
-  //   const classes = ['image', 'text'];
-  //   classes.forEach((e, j) => {
-  //     row.children[j].classList.add(`carousel-${e}`);
-  //   });
-  //   /* buttons */
-  //   const button = document.createElement('button');
-  //   button.title = 'Carousel Nav';
-  //   if (!i) button.classList.add('selected');
-  //   button.addEventListener('click', () => {
-  //     block.scrollTo({ top: 0, left: row.offsetLeft - row.parentNode.offsetLeft, behavior: 'smooth' });
-  //     [...buttons.children].forEach((r) => r.classList.remove('selected'));
-  //     button.classList.add('selected');
-  //   });
-  //   buttons.append(button);
-  // });
-  // block.parentElement.append(buttons);
 }

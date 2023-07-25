@@ -269,113 +269,7 @@ async function loadPage() {
 
 loadPage();
 
-function decoreateThreeZoneMenuBoard(document,posDataUrl){
-  if(document.querySelector('.three-zone-menu-board')){
-    document.querySelector('body').classList.add('menuboardbody');
-    document.querySelector('header').remove();
-    var columnscontainer = document.querySelector('.columns-container');
-    columnscontainer.className = '';
-    var menuboarddiv = document.querySelector('.three-zone-menu-board');
-    menuboarddiv.className = '';
-    menuboarddiv.classList.add('three-zone-menu-board');
-    var childDivs = menuboarddiv.children;
-    // Iterate over the first-level child div elements and add a class to each
-    for (var i = 0; i < childDivs.length; i++) {
-      var div = childDivs[i];
-      div.classList.add('menucolumn');
-      var menuchildDivs = div.children;
-      // Append the outer <div> element to the document body
-      menuchildDivs[3].className = 'menu-div';
-      menuchildDivs[4].className = 'menu-div';
-    }
-    loadMenuItems(childDivs,'soup-menu','soup-menu-right',posDataUrl);
-  }
-}
-
-function decoreateThreeZoneMenu(document,posDataUrl){
-  if(document.querySelector('.three-zone-menu')){
-    document.querySelector('body').classList.add('wknd-menuboardbody');
-    document.querySelector('header').remove();
-    var columnscontainer = document.querySelector('.columns-container');
-    columnscontainer.className = '';
-    var menuboarddiv = document.querySelector('.three-zone-menu');
-    menuboarddiv.className = '';
-    menuboarddiv.classList.add('three-zone-menu');
-    var childDivs = menuboarddiv.children;
-    // Iterate over the first-level child div elements and add a class to each
-    for (var i = 0; i < childDivs.length; i++) {
-      var div = childDivs[i];
-      div.classList.add('wknd-menucolumn');
-      var menuchildDivs = div.children;
-      // Append the outer <div> element to the document body
-      menuchildDivs[3].className = 'menu-div';
-      menuchildDivs[4].className = 'menu-div';
-    }
-    loadMenuItems(childDivs,'soup-menu-wknd','soup-menu-wknd-right',posDataUrl);
-  }
-}
-
-function createMenuItems(menuItems,className,start,end){
-// Create the outer <div> element
-      var divElement = document.createElement("div");
-
-      // Create the <ul> element with class "soup-menu"
-      var ulElement = document.createElement("ul");
-      ulElement.className = className;
-
-      // Iterate over the soup items array
-      for (var j = start; j < end; j++) {
-
-        if(menuItems[j].availability === "true"){
-
-              var menuItem = menuItems[j];
-
-              // Create the <li> element
-              var liElement = document.createElement("li");
-
-              // Create the <p> element for the soup name
-              var nameElement = document.createElement("p");
-              nameElement.className = "name";
-              nameElement.textContent = menuItem.product_name;
-
-              // Create the <span> element for the seperator
-              var separator = document.createElement("span");
-              separator.className = "separator";
-              
-
-              // Create the <span> element for the soup price
-              var priceElement = document.createElement("span");
-              priceElement.className = "price";
-              priceElement.textContent = '$'+menuItem.price;
-
-              //nameElement.style.display = "inline";
-              //priceElement.style.display = "inline";
-              // Append the name and price elements to the <li> element
-              liElement.appendChild(nameElement);
-              liElement.appendChild(separator);
-              liElement.appendChild(priceElement);
-
-              var liElementDesciption = document.createElement("li");
-              var descriptionElement = document.createElement("span");
-              descriptionElement.className = "description";
-              descriptionElement.textContent = menuItem.description;
-              liElementDesciption.appendChild(descriptionElement);
-
-
-              // Append the <li> element to the <ul> element
-              ulElement.appendChild(liElement);
-              ulElement.appendChild(liElementDesciption);
-        }
-      }
-
-      // Append the <ul> element to the outer <div> element
-      divElement.appendChild(ulElement);
-
-      return divElement;
-}
-
-
-  /*async function getMenuItems(menuName) {
+/* async function getMenuItems(menuName) {
     try {
       const response = await fetch('http://localhost:3000/screens-demo/product-list.json');
       const data = await response.json();
@@ -384,34 +278,11 @@ function createMenuItems(menuItems,className,start,end){
     } catch (error) {
       console.log('Error:', error);
     }
-  }*/
-  
-  
-  function loadMenuItems(childDivs,className,classNameRight,posDataUrl){
-      fetch(posDataUrl)
-      .then(response => response.json())
-      .then(data => {
-        for (var i = 0; i < childDivs.length; i++) {
-          var div = childDivs[i];
-          var menuchildDivs = div.children;
-          var menuName = menuchildDivs[1].innerText.replace(/\s/g, "").toLowerCase();
-          var picturediv = menuchildDivs[3].children[0];
-          var length = data[menuName].data.length;
-          var start = 0;
-          var mid = length/2;
-          var end = length;
-          menuchildDivs[3].insertBefore(createMenuItems(data[menuName].data,className,start,mid),picturediv);
-          menuchildDivs[4].append(createMenuItems(data[menuName].data,classNameRight,mid,end));
-        }
-    })
-    .catch(error => {
-      console.log('Error:', error);
-    });
-  }
+  } */
 
 // Orchestrator
 
-export function onNavigate(pathName){
+export function onNavigate(pathName) {
   // window.history.pushState(
   //   {},
   //   pathName,
@@ -419,15 +290,17 @@ export function onNavigate(pathName){
   // )
   const allSections = document.getElementsByClassName('section');
   console.log(allSections);
-  for(let item of allSections){
+  // eslint-disable-next-line no-restricted-syntax
+  for (const item of allSections) {
     item.classList.remove('displaySection');
   }
   const section = document.getElementsByClassName(`section ${pathName}`);
   console.log(section, pathName);
+  // eslint-disable-next-line no-unused-expressions
   section && section.length > 0 && section[0].classList.add('displaySection');
 }
 
-  /*
+/*
   // Access and process each JSON object
       for (const key in data) {
         console.log(key);
@@ -438,4 +311,4 @@ export function onNavigate(pathName){
             console.log('------------------');
           });
         }
-      }*/
+      } */
