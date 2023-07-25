@@ -69,7 +69,7 @@
     },
     {
       "manifestPath": "/screens-demo/wknd-retail/locations/global/north-america/us/test-san-jose.manifest.json",
-      "lastModified": "2023-07-25T11:07:43.864Z",
+      "lastModified": "2023-07-25T11:07:52.000Z",
       "hierarchy": [
         {
           "title": "screens-demo",
@@ -102,7 +102,7 @@
     },
     {
       "manifestPath": "/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/west/test-player0.manifest.json",
-      "lastModified": "2023-07-25T11:07:44.210Z",
+      "lastModified": "2023-07-25T11:07:52.000Z",
       "hierarchy": [
         {
           "title": "screens-demo",
@@ -143,7 +143,7 @@
     },
     {
       "manifestPath": "/screens-demo/wknd-retail/locations/test-global.manifest.json",
-      "lastModified": "2023-07-25T11:07:44.543Z",
+      "lastModified": "2023-07-25T11:07:52.000Z",
       "hierarchy": [
         {
           "title": "screens-demo",
@@ -164,7 +164,7 @@
     },
     {
       "manifestPath": "/screens-demo/wknd-retail/locations/global/north-america/us/san-jose/test-west.manifest.json",
-      "lastModified": "2023-07-25T11:07:44.866Z",
+      "lastModified": "2023-07-25T11:07:52.000Z",
       "hierarchy": [
         {
           "title": "screens-demo",
@@ -201,7 +201,7 @@
     },
     {
       "manifestPath": "/screens-demo/.manifest.json",
-      "lastModified": "2023-07-25T11:07:45.202Z",
+      "lastModified": "2023-07-25T10:49:08.000Z",
       "hierarchy": [
         {
           "title": "screens-demo",
@@ -214,7 +214,7 @@
     },
     {
       "manifestPath": "/screens-demo/wknd-cafe-menu.manifest.json",
-      "lastModified": "2023-07-25T11:07:45.709Z",
+      "lastModified": "2023-07-25T11:07:52.000Z",
       "hierarchy": [
         {
           "title": "screens-demo",
@@ -227,7 +227,7 @@
     },
     {
       "manifestPath": "/screens-demo/wknd-cafe-menuboard.manifest.json",
-      "lastModified": "2023-07-25T11:07:46.215Z",
+      "lastModified": "2023-07-25T11:07:52.000Z",
       "hierarchy": [
         {
           "title": "screens-demo",
@@ -240,7 +240,7 @@
     },
     {
       "manifestPath": "/screens-demo/wknd-kiosk-commerce.manifest.json",
-      "lastModified": "2023-07-25T11:07:46.762Z",
+      "lastModified": "2023-07-25T11:07:52.000Z",
       "hierarchy": [
         {
           "title": "screens-demo",
