@@ -11,6 +11,8 @@
   text-align: center;
   font-size: bold;
   text-transform: uppercase;
+  margin-bottom: 5rem;
+  margin-top: 5rem;
 }
 
 .category > ul > li {
