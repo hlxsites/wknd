@@ -263,8 +263,7 @@ function loadDelayed() {
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
-  await decoreateThreeZoneMenuBoard(document,getMetadata('pos-data'));
-  await decoreateThreeZoneMenu(document,getMetadata('pos-data'));
+  document.querySelector('header').remove();
   loadDelayed();
 }
 
