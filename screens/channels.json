@@ -83,6 +83,13 @@
       "externalId": "/screens-demo/wknd-cafe-menuboard",
       "title": "WKND Cafe",
       "liveUrl": "https://main--wknd--hlxscreens.hlx.live/screens-demo/wknd-cafe-menuboard"
+    },
+    {
+      "manifestPath": "/screens-demo/wknd-kiosk-commerce.manifest.json",
+      "lastModified": "2023-07-25T09:29:10.000Z",
+      "externalId": "/screens-demo/wknd-kiosk-commerce",
+      "title": "Idle-carousel",
+      "liveUrl": "https://main--wknd--hlxscreens.hlx.live/screens-demo/wknd-kiosk-commerce"
     }
   ],
   "metadata": {
