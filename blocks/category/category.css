@@ -14,7 +14,6 @@
 }
 
 .category > ul > li {
-  border: 1px solid var(--highlight-background-color);
   background-color: var(--background-color);
   position: relative;
 }
@@ -32,7 +31,20 @@
 .category .category-image {
   line-height: 0;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  position: relative;
+  border-radius: 1.5rem;
   overflow: hidden;
+}
+
+.category .category-image::after {
+  content:"";
+  position: absolute;
+  width: 100%;
+  height: 40%;
+  left: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, lightgrey 0%, black 100%);
+  opacity: 30%;
 }
 
 .category > ul > li img {
