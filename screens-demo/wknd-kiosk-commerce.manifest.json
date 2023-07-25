@@ -9,7 +9,7 @@
     ],
     "defaultProvider": "franklin"
   },
-  "timestamp": 1690284743345,
+  "timestamp": 1690285816043,
   "entries": [
     {
       "path": "/screens-demo/wknd-kiosk-commerce.html",
@@ -54,6 +54,10 @@
     {
       "path": "/scripts/delayed.js",
       "timestamp": 1690277350000
+    },
+    {
+      "path": "/scripts/lib-polaris.js",
+      "timestamp": 1686036192000
     },
     {
       "path": "/scripts/lib-franklin.js",
