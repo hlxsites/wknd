@@ -1,0 +1,238 @@
+{
+  "data": {
+    "products": {
+      "items": [
+        {
+          "name": "Rios Shirt",
+          "sku": "wohisurit",
+          "url_key": "rios-shirt",
+          "is_returnable": "2",
+          "description": {
+            "html": "<style>#html-body [data-pb-style=GPPNLG3]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"GPPNLG3\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><ul>\r\n<li>Lightweight, super soft textured fabric</li>\r\n<li>Moisture wicking</li>\r\n<li>Fast drying</li>\r\n<li>Machine wash and dry</li>\r\n</ul></div></div></div>"
+          },
+          "image": {
+            "label": "Rios Shirt",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/r/i/rios.jpg"
+          },
+          "small_image": {
+            "label": "Rios Shirt",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/r/i/rios.jpg"
+          },
+          "swatch_image": "/r/i/rios.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 39
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 39
+              }
+            }
+          }
+        },
+        {
+          "name": "Expedition Tech Long-Sleeved Shirt",
+          "sku": "mehiwiext",
+          "url_key": "expedition-tech-long-sleeved-shirt",
+          "is_returnable": "2",
+          "description": {
+            "html": "<style>#html-body [data-pb-style=MGI5OVI]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"MGI5OVI\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><ul>\r\n<li>Lightweight nylon fabric wicks moisture, dries quickly and breathes easily for great comfort</li>\r\n<li>Integrated mesh ventilation at the back yoke and under the arms helps keep you cool while traveling in warm climates</li>\r\n<li>Cargo-style chest pockets provide ample space for travel essentials</li>\r\n<li>Button-close chest pockets keep small items secure</li>\r\n</ul></div></div></div>"
+          },
+          "image": {
+            "label": "Expedition Tech Long-Sleeved Shirt",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/e/x/expedition.jpg"
+          },
+          "small_image": {
+            "label": "Expedition Tech Long-Sleeved Shirt",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/e/x/expedition.jpg"
+          },
+          "swatch_image": "/e/x/expedition.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 54
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 54
+              }
+            }
+          }
+        },
+        {
+          "name": "Trail Model Pants",
+          "sku": "mehisutrs",
+          "url_key": "trail-model-pants",
+          "is_returnable": "2",
+          "description": {
+            "html": "<style>#html-body [data-pb-style=UX0OPD1]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"UX0OPD1\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><ul>\r\n<li>Nylon/spandex fabric resists abrasion and has an all-weather finish to help shed moisture; fabric dries quickly when wet</li>\r\n<li>Double-thick panels on the knees and rear hem ensure long-lasting wear in the outdoors</li>\r\n<li>Feature 2 front hand pockets and 2 rear pockets (right rear pocket has a flap for added security); zippered cargo pocket on the left secures trail essentials</li>\r\n<li>Pant legs roll up and secure in place with snaps</li>\r\n</ul></div></div></div>"
+          },
+          "image": {
+            "label": "Trail Model Pants",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/t/r/trail.jpg"
+          },
+          "small_image": {
+            "label": "Trail Model Pants",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/t/r/trail.jpg"
+          },
+          "swatch_image": "/t/r/trail.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 69
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 69
+              }
+            }
+          }
+        },
+        {
+          "name": "Candide Trail Short",
+          "sku": "wohisucat",
+          "url_key": "candide-trail-short",
+          "is_returnable": "2",
+          "description": {
+            "html": "<style>#html-body [data-pb-style=OGDY1D0]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"OGDY1D0\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><ul>\r\n<li>Combines the comfort of cotton with the fast drying time of polyester; some stretch is added to enhance easy motion, and fabric is washed for softness</li>\r\n<li>Waistband lining wicks moisture; zip fly, button closure and belt loops</li>\r\n<li>Inseam gusset and curved back hems enhance freedom of movement</li>\r\n</ul></div></div></div>"
+          },
+          "image": {
+            "label": "Candide Trail Short",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/c/a/candide.jpg"
+          },
+          "small_image": {
+            "label": "Candide Trail Short",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/c/a/candide.jpg"
+          },
+          "swatch_image": "/c/a/candide.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 48
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 48
+              }
+            }
+          }
+        },
+        {
+          "name": "Slot Canyon Active Shorts",
+          "sku": "mehisusls",
+          "url_key": "slot-canyon-active-shorts",
+          "is_returnable": "2",
+          "description": {
+            "html": "<style>#html-body [data-pb-style=WNORT3F]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"WNORT3F\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><ul>\r\n<li>Lightweight nylon fabric dries quickly, resists pilling and is easy to pack away in a backpack</li>\r\n<li>With a UPF 50+ rating, fabric provides excellent protection against harmful ultraviolet rays</li>\r\n<li>Fabric is treated with a Durable Water Repellent? finish to repel moisture and stains</li>\r\n<li>Included webbing belt can be completely removed if desired; waist features a snap and a zippered fly</li>\r\n</ul></div></div></div>"
+          },
+          "image": {
+            "label": "Slot Canyon Active Shorts",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/c/a/canyon.jpg"
+          },
+          "small_image": {
+            "label": "Slot Canyon Active Shorts",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/c/a/canyon.jpg"
+          },
+          "swatch_image": "/c/a/canyon.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 39
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 39
+              }
+            }
+          }
+        },
+        {
+          "name": "Hiking Poles",
+          "sku": "eqsmhp",
+          "url_key": "hiking-poles",
+          "is_returnable": null,
+          "description": {
+            "html": "<style>#html-body [data-pb-style=UHN1SVL]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"UHN1SVL\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><p>Increase your hiking time with the ease and comfort of hiking poles. &nbsp;Rust proof and added traction make this a versatile essential for any hiker.</p></div></div></div>"
+          },
+          "image": {
+            "label": "Hiking Poles",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/1/7/170227049.jpg"
+          },
+          "small_image": {
+            "label": "Hiking Poles",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/1/7/170227049.jpg"
+          },
+          "swatch_image": "/1/7/170227049.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 80
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 80
+              }
+            }
+          }
+        },
+        {
+          "name": "Cuzco",
+          "sku": "eqsmcz",
+          "url_key": "cuzco",
+          "is_returnable": "2",
+          "description": {
+            "html": "<style>#html-body [data-pb-style=P70BN6Y]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"P70BN6Y\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><p>Comfort features include a padded back panel that is built for optimal airflow. Waist and shoulder straps help carring the load. Adjust the torso, waist, chest and shoulders to fit everyone.</p></div></div></div>"
+          },
+          "image": {
+            "label": "Cuzco",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/b/a/backpack_j_1.jpg"
+          },
+          "small_image": {
+            "label": "Cuzco",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/b/a/backpack_j_1.jpg"
+          },
+          "swatch_image": "/b/a/backpack_j_1.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 210
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 210
+              }
+            }
+          }
+        }
+      ],
+      "page_info": {
+        "current_page": 1,
+        "page_size": 20,
+        "total_pages": 1
+      },
+      "total_count": 7
+    }
+  }
+}

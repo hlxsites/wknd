@@ -1,0 +1,206 @@
+{
+  "data": {
+    "products": {
+      "items": [
+        {
+          "name": "Seastar Flip Flops",
+          "sku": "eqswsuses",
+          "url_key": "seastar-flip-flops",
+          "is_returnable": "2",
+          "description": {
+            "html": "<style>#html-body [data-pb-style=QN6P5KN]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"QN6P5KN\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><p>Water resistant and durable, Seastar is known for its great non-slip tread.</p>\r\n<ul>\r\n<li>Neoprene jersey strap linings are soft against bare skin</li>\r\n<li>Toe posts are made of soft, flexible nylon for comfort between toes</li>\r\n<li>Compression molded EVA midsoles feature anatomic footbeds to give a supportive fit and long-lasting cushioning</li>\r\n</ul></div></div></div>"
+          },
+          "image": {
+            "label": "Seastar Flip Flops",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/s/e/seastar_red_2.jpg"
+          },
+          "small_image": {
+            "label": "Seastar Flip Flops",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/s/e/seastar_red_2.jpg"
+          },
+          "swatch_image": "/s/e/seastar_red_2.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 28
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 28
+              }
+            }
+          }
+        },
+        {
+          "name": "Pipeline Board Shorts",
+          "sku": "mesusupis",
+          "url_key": "pipeline-board-shorts",
+          "is_returnable": "2",
+          "description": {
+            "html": "<style>#html-body [data-pb-style=HGVKL5K]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"HGVKL5K\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><ul>\r\n<li>Lightweight Supplex nylon fabric has a Durable Water Repellent? finish to help shed moisture and speed drying times</li>\r\n<li>Zippered pocket on right side secures small essentials; plastic zipper pull won't corrode</li>\r\n<li>Pocket includes an internal key clip</li>\r\n</ul></div></div></div>"
+          },
+          "image": {
+            "label": "Pipeline Board Shorts",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/p/i/pipeline_blue.jpg"
+          },
+          "small_image": {
+            "label": "Pipeline Board Shorts",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/p/i/pipeline_blue.jpg"
+          },
+          "swatch_image": null,
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 24
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 24
+              }
+            }
+          }
+        },
+        {
+          "name": "Pufferfish Snorkeling Fins",
+          "sku": "eqswsupus",
+          "url_key": "pufferfish-snorkeling-fins",
+          "is_returnable": "2",
+          "description": {
+            "html": "<style>#html-body [data-pb-style=QJO6K0L]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"QJO6K0L\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><p>Pufferfish Snorkeling Fins make it easy to explore tropical reefs and freshwater aquatic life with minimal effort and maximum comfort.</p></div></div></div>"
+          },
+          "image": {
+            "label": "Pufferfish Snorkeling Fins",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/p/u/pufferfish_blue.jpg"
+          },
+          "small_image": {
+            "label": "Pufferfish Snorkeling Fins",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/p/u/pufferfish_blue.jpg"
+          },
+          "swatch_image": "/p/u/pufferfish_blue.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 25
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 25
+              }
+            }
+          }
+        },
+        {
+          "name": "Pro Series Swim Goggles",
+          "sku": "eqswsuprs",
+          "url_key": "pro-series-swim-goggles",
+          "is_returnable": "2",
+          "description": {
+            "html": "<style>#html-body [data-pb-style=DDWKDJH]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"DDWKDJH\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><ul>\r\n<li>Thermoplastic rubber gaskets and a multiple nosepiece system personalize the fit (includes 5 nosepieces)</li>\r\n<li><span style=\"color: #333333;\">Antifog, optical-grade polycarbonate lenses allow excellent peripheral vision</span></li>\r\n<li><span style=\"color: #333333;\">Double silicone headstrap features a top-slotted clip to allow easy adjustment and prevent strap slippage</span></li>\r\n</ul></div></div></div>"
+          },
+          "image": {
+            "label": "Pro Series Swim Goggles",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/s/w/swim_goggles_yellow.jpg"
+          },
+          "small_image": {
+            "label": "Pro Series Swim Goggles",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/s/w/swim_goggles_yellow.jpg"
+          },
+          "swatch_image": "/s/w/swim_goggles_yellow.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 25
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 25
+              }
+            }
+          }
+        },
+        {
+          "name": "El Greco 8' Shorty",
+          "sku": "eqsusuely",
+          "url_key": "el-greco-8-shorty",
+          "is_returnable": null,
+          "description": {
+            "html": "<style>#html-body [data-pb-style=E1ERVN3]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"E1ERVN3\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><p>The El Greco has blended the nose riding capabilities of a longboard together with the maneuverability and speed of a shortboard. It's not a long short board, it's a short longboard.</p></div></div></div>"
+          },
+          "image": {
+            "label": "El Greco 8' Shorty",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/e/l/el_greco_front.jpg"
+          },
+          "small_image": {
+            "label": "El Greco 8' Shorty",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/e/l/el_greco_front.jpg"
+          },
+          "swatch_image": "/e/l/el_greco_front.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 750
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 750
+              }
+            }
+          }
+        },
+        {
+          "name": "Rusty Parrot Shortboad",
+          "sku": "eqsusurud",
+          "url_key": "rusty-parrot-shortboad",
+          "is_returnable": null,
+          "description": {
+            "html": "<style>#html-body [data-pb-style=LQPA7M0]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"LQPA7M0\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><p>Currently our most popular high performance all around shortboard, the Rusty Parrot offers the same characteristics as what a pro would ride (fast, loose performance) but is made with slightly fuller dimensions to appeal to everyone.</p></div></div></div>"
+          },
+          "image": {
+            "label": "Rusty Parrot Shortboad",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/r/u/rusty_parrot.jpg"
+          },
+          "small_image": {
+            "label": "Rusty Parrot Shortboad",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/r/u/rusty_parrot.jpg"
+          },
+          "swatch_image": "/r/u/rusty_parrot.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 895
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 895
+              }
+            }
+          }
+        }
+      ],
+      "page_info": {
+        "current_page": 1,
+        "page_size": 20,
+        "total_pages": 1
+      },
+      "total_count": 6
+    }
+  }
+}
