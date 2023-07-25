@@ -1,4 +1,4 @@
-const AS_MFE = 'https://experience.adobe.com/solutions/CQ-assets-selectors/static-assets/resources/assets-selectors.js';
+const AS_MFE = 'https://experience.adobe.com/solutions/CQ-assets-selectors/assets/resources/assets-selectors.js';
 const IMS_ENV_STAGE = 'stg1';
 const IMS_ENV_PROD = 'prod';
 
@@ -24,7 +24,7 @@ function load(cfg) {
     redirectUrl: window.location.href,
     modalMode: true,
     imsEnvironment,
-    env: imsEnvironment,
+    env: imsEnvironment.toUpperCase(),
   };
   // eslint-disable-next-line no-undef
   const registeredTokenService = PureJSSelectors.registerAssetsSelectorsAuthService(imsProps);
