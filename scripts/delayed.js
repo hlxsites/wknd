@@ -93,7 +93,7 @@ let activityDetector = () => {
     const resetTimer = () => {
         interactionEventHandler();
         clearTimeout(idleTimer);
-        idleTimer = setTimeout(idleHandler,5000);
+        idleTimer = setTimeout(idleHandler,80000);
     }
     let idleTimer;
     window.onload = resetTimer;
