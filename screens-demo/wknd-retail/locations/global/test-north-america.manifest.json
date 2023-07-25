@@ -9,15 +9,15 @@
     ],
     "defaultProvider": "franklin"
   },
-  "timestamp": 1690280566805,
+  "timestamp": 1690287269013,
   "entries": [
     {
-      "path": "/screens-demo/wknd-retail/locations/global/test-north-america",
-      "timestamp": 1686036755000
+      "path": "/screens-demo/wknd-retail/locations/global/test-north-america.html",
+      "timestamp": 1690282777000
     },
     {
       "path": "/scripts/scripts.js",
-      "timestamp": 1690275726000
+      "timestamp": 1690282148000
     },
     {
       "path": "/styles/styles.css",
@@ -38,6 +38,10 @@
     {
       "path": "/scripts/delayed.js",
       "timestamp": 1690277350000
+    },
+    {
+      "path": "/scripts/lib-polaris.js",
+      "timestamp": 1686036192000
     },
     {
       "path": "/scripts/lib-franklin.js",
