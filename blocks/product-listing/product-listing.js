@@ -6,6 +6,23 @@ const homeButtonClick = () => {
   onNavigate('category-container');
 };
 
+const onProductClick = (event) => {
+  console.log(event.currentTarget);
+  const selectedProductSKU = event.currentTarget.getAttribute('sku');
+  if (!selectedProductSKU) {
+    return;
+  }
+  const selectedProduct = event.currentTarget.dataset?.object
+    && JSON.parse(event.currentTarget.dataset.object);
+  console.log(selectedProductSKU, selectedProduct);
+  if (!selectedProduct) return;
+  const productDetail = document.getElementsByClassName('product-detail')[0];
+  productDetail.textContent = '';
+  productDetail.setAttribute('sku', selectedProductSKU);
+  productDetail.setAttribute('data-object', JSON.stringify(selectedProduct));
+  onNavigate('product-detail-container');
+};
+
 const getHeaderAndSearch = (heading) => {
   const headerDiv = document.createElement('div');
   headerDiv.className = 'header-search';
@@ -75,6 +92,9 @@ const getDetails = (product) => {
 const getItem = (product) => {
   const productDiv = document.createElement('div');
   productDiv.className = 'product';
+  productDiv.setAttribute('sku', product.sku);
+  productDiv.setAttribute('data-object', JSON.stringify(product));
+  productDiv.addEventListener('click', onProductClick);
   const imgDiv = document.createElement('div');
   imgDiv.className = 'product-img';
   imgDiv.setAttribute('id', product.sku);
