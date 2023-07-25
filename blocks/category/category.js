@@ -10,8 +10,8 @@ const onCategoryClick = (event) => {
   // navigate and fetch data and update the blocks
   const productListing = document.getElementsByClassName('product-listing')[0];
   productListing.textContent = '';
-  productListing.setAttribute('category-id', categoryId);
   productListing.setAttribute('category-name', categoryName);
+  productListing.setAttribute('category-id', categoryId);
   onNavigate('product-listing-container');
 }
 

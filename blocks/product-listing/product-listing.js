@@ -1,4 +1,6 @@
 import { onNavigate } from '../../scripts/scripts.js';
+import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
+let isLoading = false;
 
 const getHeaderAndSearch = (heading) => {
   const headerDiv = document.createElement('div');
@@ -43,6 +45,29 @@ const renderSkeleton = (target) => {
   target.append(getSkeleton());
 }
 
+const getItem = (product) => {
+  const imgDiv = document.createElement('div');
+  const img = new Image();
+  img.src = product.image.url;
+  img.alt = product.image.label;
+  imgDiv.append(img);
+  return imgDiv;
+}
+
+const renderItems = (target, products) => {
+  const heading = target.getAttribute('category-name');
+  target.textContent = '';
+  target.append(getHeaderAndSearch(heading));
+  const productGrid = document.createElement('div');
+  productGrid.className = 'skeleton-grid';
+  console.log(products);
+  products.forEach((product) => {
+    productGrid.append(getItem(product))
+  })
+  target.append(productGrid);
+  return;
+}
+
 const observer = new MutationObserver(function(mutations) {
   Promise.all(mutations.map(async (mutation) => {
     if (mutation.type === "attributes") {
@@ -50,6 +75,21 @@ const observer = new MutationObserver(function(mutations) {
       console.log('Mutation target', mutation.target);
       renderSkeleton(mutation.target);
       // fetch data
+      const categoryId = mutation.target.getAttribute('category-id');
+      if(!categoryId) return;
+      if(isLoading) {
+        console.log('returning subsequent calls');
+        return;
+      }
+      isLoading = true;
+      const rawResponse = await fetch(`https://main--wknd--hlxscreens.hlx.page/defaultData/${categoryId}.json`);
+      isLoading = false;
+      if(!rawResponse.ok) {
+        return;
+      }
+      const response = await rawResponse.json();
+      console.log(response);
+      renderItems(mutation.target, response.data.products.items);
       // execute dom change
     }
   }));

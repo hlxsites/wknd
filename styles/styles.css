@@ -258,7 +258,7 @@ img {
 
 @media (min-width: 600px) {
   main .section {
-    padding: 64px 32px;
+    padding: 1rem 1rem;
   }
 }
 
@@ -273,7 +273,7 @@ img {
   }
 
   .section > div {
-    max-width: 1200px;
+    max-width: 90%;
     margin: auto;
   }
 }
