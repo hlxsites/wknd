@@ -9,7 +9,7 @@
     ],
     "defaultProvider": "franklin"
   },
-  "timestamp": 1690285816043,
+  "timestamp": 1690287271714,
   "entries": [
     {
       "path": "/screens-demo/wknd-kiosk-commerce.html",
@@ -48,6 +48,30 @@
       "timestamp": 1686036191000
     },
     {
+      "path": "/blocks/idle-carousel/idle-carousel.js",
+      "timestamp": 1690275726000
+    },
+    {
+      "path": "/blocks/idle-carousel/idle-carousel.css",
+      "timestamp": 1690275726000
+    },
+    {
+      "path": "/blocks/category/category.js",
+      "timestamp": 1690277350000
+    },
+    {
+      "path": "/blocks/category/category.css",
+      "timestamp": 1690282148000
+    },
+    {
+      "path": "/blocks/product-listing/product-listing.css",
+      "timestamp": 1690277350000
+    },
+    {
+      "path": "/blocks/product-listing/product-listing.js",
+      "timestamp": 1690277350000
+    },
+    {
       "path": "/styles/lazy-styles.css",
       "timestamp": 1686036193000
     },
@@ -62,6 +86,10 @@
     {
       "path": "/scripts/lib-franklin.js",
       "timestamp": 1686036192000
+    },
+    {
+      "path": "/tools/preview/preview.js",
+      "timestamp": 1686036193000
     },
     {
       "path": "/screens-demo/schedule.json",
