@@ -27,7 +27,7 @@ function load(cfg) {
     env: imsEnvironment,
   };
   // eslint-disable-next-line no-undef
-  const registeredTokenService = PureJSSelectors.renderAssetSelectorWithAuthFlow(imsProps);
+  const registeredTokenService = PureJSSelectors.registerAssetsSelectorsAuthService(imsProps);
   imsInstance = registeredTokenService;
 }
 
@@ -130,7 +130,7 @@ export async function renderAssetSelectorWithImsFlow(cfg) {
   };
   const container = document.getElementById('asset-selector');
   // eslint-disable-next-line no-undef
-  PureJSSelectors.renderAssetSelectorWithAuthFlow(container, assetSelectorProps, () => {
+  PureJSSelectors.registerAssetsSelectorsAuthService(container, assetSelectorProps, () => {
     const assetSelectorDialog = document.getElementById('asset-selector-dialog');
     assetSelectorDialog.showModal();
   });
