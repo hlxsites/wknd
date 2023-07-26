@@ -8,9 +8,9 @@ import getProductsInCategory from './queries/products.graphql.js';
 
 import './styles.css';
 
-const endpoint = 'https://franklin.maidenform.com/graphql';
-const rootCategoryKey = 'MTI4OQ=='; // UID
-const storeView = 'maidenform_store_view';
+const endpoint = 'https://venia.magento.com/graphql';
+const rootCategoryKey = 'MTA0'; // UID
+const storeView = 'wknd';
 
 /**
  * List of blocks to be available in the picker.
