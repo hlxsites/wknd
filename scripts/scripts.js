@@ -300,6 +300,29 @@ export function onNavigate(pathName) {
   section && section.length > 0 && section[0].classList.add('displaySection');
 }
 
+// export function sendAnalyticsEvent() {
+//   const data = {
+//     'event.type': 'play',
+//     'event.coll_dts': '2023-07-26T08:04:21.759Z',
+//     'event.dts_start': '2023-07-26T08:04:21.759Z',
+//     'content.type': 'IMAGE',
+//     'content.action': '/content/dam/6thfloor-do-not-delete/Recognitions-3.png',
+//     'trn.product': '/content/dam/6thfloor-do-not-delete/Recognitions-3.png',
+//     'trn.amount': 0,
+//     'event.dts_end': '2023-07-26T08:08:47.495Z',
+//     'event.count': 265736,
+// eslint-disable-next-line max-len
+//     'event.value': 'Started Wed Jul 26 2023 13:34:21 GMT+0530 (India Standard Time) ended Wed Jul 26 2023 13:38:47 GMT+0530 (India Standard Time) Duration 265 seconds',
+//     'trn.quantity': 265736,
+//     'event.subtype': 'end',
+//   };
+//   window.parent.postMessage(JSON.stringify({
+//     namespace: 'screens-player',
+//     type: 'analytics-tracking-event',
+//     data,
+//   }));
+// }
+
 /*
   // Access and process each JSON object
       for (const key in data) {

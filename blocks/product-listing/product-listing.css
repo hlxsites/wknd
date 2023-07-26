@@ -49,7 +49,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   grid-gap: 1rem;
-  margin: auto;
+  /* margin: auto; */
 }
 
 .skeleton-grid > div {
@@ -132,4 +132,28 @@
 
 .header-search {
   margin-bottom: 3rem;
+}
+
+.product-view {
+  display: grid;
+  grid-template-columns: 0.5fr 10fr 0.5fr;
+  gap: 1rem;;
+}
+
+.left-rail {
+  display: flex;
+  align-items: center;
+}
+
+.right-rail {
+  display: flex;
+  align-items: center;
+}
+
+.left-rail.disable-button {
+  opacity: 30%;
+}
+
+.right-rail.disable-button {
+  opacity: 30%;
 }

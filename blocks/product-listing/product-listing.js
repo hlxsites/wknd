@@ -1,9 +1,33 @@
 import { onNavigate } from '../../scripts/scripts.js';
 
 let isLoading = false;
-
+const perPage = 6;
+let totalPages = 2;
+let currentPage = 1;
+let items;
 const homeButtonClick = () => {
   onNavigate('category-container');
+};
+
+const railStatus = () => {
+  const leftRail = document.getElementsByClassName('left-rail');
+  const rightRail = document.getElementsByClassName('right-rail');
+  console.log('status', currentPage, totalPages);
+  if (leftRail && rightRail) {
+    if (currentPage === 1 && currentPage === totalPages) {
+      leftRail[0].classList.add('disable-button');
+      rightRail[0].classList.add('disable-button');
+    } else if (currentPage === 1) {
+      leftRail[0].classList.add('disable-button');
+      rightRail[0].classList.remove('disable-button');
+    } else if (currentPage === totalPages) {
+      leftRail[0].classList.remove('disable-button');
+      rightRail[0].classList.add('disable-button');
+    } else {
+      leftRail[0].classList.remove('disable-button');
+      rightRail[0].classList.remove('disable-button');
+    }
+  }
 };
 
 const onProductClick = (event) => {
@@ -107,17 +131,82 @@ const getItem = (product) => {
   return productDiv;
 };
 
-const renderItems = (target, products) => {
+const leftButtonClick = (event) => {
+  console.log(event.currentTarget);
+  if (currentPage !== 1) {
+    console.log(currentPage);
+    currentPage -= 1;
+    railStatus();
+    const productGrid = document.getElementsByClassName('product-grid');
+    // eslint-disable-next-line no-use-before-define
+    if (productGrid) renderProductsGrid(productGrid[0]);
+    // eslint-disable-next-line no-use-before-define
+  }
+};
+const rightButtonClick = (event) => {
+  console.log(event.currentTarget);
+  if (currentPage !== totalPages) {
+    currentPage += 1;
+    railStatus();
+    const productListing = document.getElementsByClassName('product-listing')[0];
+    // eslint-disable-next-line no-use-before-define
+    renderProductsPage(productListing, items);
+  }
+};
+
+const getRail = (className, url, callback, alt) => {
+  const rail = document.createElement('div');
+  rail.classList.add(className);
+  const btnSVG = new Image();
+  btnSVG.src = url;
+  btnSVG.alt = alt || 'btn';
+  rail.append(btnSVG);
+  rail.addEventListener('click', callback);
+  return rail;
+};
+
+const renderProductsGrid = (productGrid) => {
+  console.log(currentPage, totalPages, perPage);
+  if (!items) return;
+  console.log('rendering productGrid');
+  productGrid.textContent = '';
+  const totalItems = items.length;
+  const startIdx = (currentPage - 1) * perPage;
+  const renderProducts = items.slice(startIdx, Math.min(startIdx + perPage, totalItems));
+  renderProducts.forEach((product) => {
+    productGrid.append(getItem(product));
+  });
+};
+
+const renderItems = () => {
+  const productView = document.createElement('div');
+  productView.className = 'product-view';
+  const leftArrowURL = 'https://main--wknd--hlxscreens.hlx.live/screens-demo/left-arrow-svgrepo-com-1.svg';
+  const rightArrowURL = 'https://main--wknd--hlxscreens.hlx.live/screens-demo/right-arrow-backup-2-svgrepo-com.svg';
+  const leftRail = getRail('left-rail', leftArrowURL, leftButtonClick, 'left-rail');
+  const rightRail = getRail('right-rail', rightArrowURL, rightButtonClick, 'right-rail');
+  if (currentPage === 1) {
+    leftRail.classList.add('disable-button');
+  }
+  if (currentPage === totalPages) {
+    rightRail.classList.add('disable-button');
+  }
+  const productGrid = document.createElement('div');
+  productGrid.className = 'product-grid';
+  console.log(productGrid);
+  renderProductsGrid(productGrid);
+  productView.append(leftRail);
+  productView.append(productGrid);
+  productView.append(rightRail);
+  return productView;
+};
+
+const renderProductsPage = (target, products) => {
   const heading = target.getAttribute('category-name');
   target.textContent = '';
   target.append(getHeaderAndSearch(heading));
-  const productGrid = document.createElement('div');
-  productGrid.className = 'product-grid';
-  console.log(products);
-  products.forEach((product) => {
-    productGrid.append(getItem(product));
-  });
-  target.append(productGrid);
+  const itemsPage = renderItems(products);
+  target.append(itemsPage);
 };
 
 const observer = new MutationObserver((mutations) => {
@@ -141,8 +230,10 @@ const observer = new MutationObserver((mutations) => {
         console.log('ok response');
         // execute dom change
         const response = await rawResponse.json();
-        console.log(response);
-        renderItems(mutation.target, response.data.products.items);
+        items = response.data.products.items;
+        totalPages = Math.ceil(items.length / perPage);
+        console.log(response.data.products.items);
+        renderProductsPage(mutation.target, response.data.products.items);
       } catch (err) {
         console.log('loading failed');
       }
