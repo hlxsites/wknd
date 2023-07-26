@@ -14,6 +14,10 @@ import {
   loadCSS,
   toClassName,
 } from './lib-franklin.js';
+import {
+  initAnalyticsTrackingQueue,
+  setupAnalyticsTrackingWithAlloy,
+} from './analytics/lib-analytics.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
@@ -180,6 +184,7 @@ async function loadEager(doc) {
 
   const main = doc.querySelector('main');
   if (main) {
+    await initAnalyticsTrackingQueue();
     decorateMain(main);
     await waitForLCP(LCP_BLOCKS);
   }
@@ -261,7 +266,9 @@ function loadDelayed() {
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
+  const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
   loadDelayed();
+  await setupAnalytics;
 }
 
 loadPage();
