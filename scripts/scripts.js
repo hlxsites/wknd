@@ -16,7 +16,7 @@ import {
 } from './lib-franklin.js';
 
 import decoratePolarisAssets from './lib-polaris.js';
-
+import { request as graphqlRequest } from 'graphql-request';
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
@@ -439,3 +439,65 @@ export function onNavigate(pathName){
           });
         }
       }*/
+
+export function getItems(categoryId){
+  const url = 'https://venia.magento.com/graphql'; // Replace with your GraphQL endpoint
+  const headers = {
+    // Add any custom headers you need, like authorization headers, etc.
+    'Authority': 'venia.magento.com',
+    'Store': 'wknd',
+    'Content-type': 'application/json'
+  };
+  const dataRaw = `
+  query{   
+    products(filter: { category_uid: { eq: ${categoryId}} }) {
+      items {
+        name
+        sku
+        url_key
+        is_returnable
+        image {
+          label
+          url
+        }
+        small_image{
+          label
+          url
+        }
+        swatch_image
+        price_range{
+        maximum_price{
+          final_price{
+            currency
+            value
+          }
+        }
+        minimum_price{
+          final_price{
+            currency
+            value
+          }
+        }
+        }
+      }
+        page_info {
+          current_page
+          page_size
+          total_pages
+        }
+        total_count
+      }
+    }
+  `;
+  return graphqlRequest(url, dataRaw,null,headers)
+    .then(response => {
+      if (!response) {
+        throw new Error('Network response was not ok');
+      }
+      return response;
+    })
+    .catch(error => {
+      console.error('Error making the GraphQL request:', error.message);
+    });
+}
+      
