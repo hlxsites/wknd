@@ -16,7 +16,6 @@ import {
 } from './lib-franklin.js';
 
 import decoratePolarisAssets from './lib-polaris.js';
-import { request as graphqlRequest } from 'graphql-request';
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
@@ -499,5 +498,4 @@ export function getItems(categoryId){
     .catch(error => {
       console.error('Error making the GraphQL request:', error.message);
     });
-}
-      
+}      
