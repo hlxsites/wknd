@@ -1,0 +1,10 @@
+{
+  "name": "product-image-importer",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "product-image-importer.js",
+  "author": "",
+  "license": "Apache-2.0"
+}
