@@ -1,7 +1,7 @@
 import { onNavigate } from '../../scripts/scripts.js';
 
 let isLoading = false;
-const perPage = 6;
+let perPage = 10;
 let totalPages = 2;
 let currentPage = 1;
 let items;
@@ -73,9 +73,12 @@ const getHeaderAndSearch = (heading) => {
   const imgDiv = document.createElement('div');
   imgDiv.className = 'home';
   const backSvg = new Image();
-  backSvg.src = 'https://main--wknd--hlxscreens.hlx.live/screens-demo/left-arrow-svgrepo-com.svg';
+  backSvg.src = 'https://main--wknd--hlxscreens.hlx.live/screens-demo/home-icon-silhouette-svgrepo-com.svg';
   backSvg.alt = 'Go Back';
   imgDiv.append(backSvg);
+  const btnText = document.createElement('div');
+  btnText.textContent = 'HOME';
+  imgDiv.append(btnText);
   imgDiv.addEventListener('click', homeButtonClick);
   headerDiv.append(imgDiv);
   return headerDiv;
@@ -84,7 +87,7 @@ const getHeaderAndSearch = (heading) => {
 const getSkeleton = () => {
   const skeletonGrid = document.createElement('div');
   skeletonGrid.className = 'skeleton-grid';
-  const times = 8;
+  const times = 4;
   for (let id = 0; id < times; id += 1) {
     const skeletonDiv = document.createElement('div');
     skeletonDiv.className = 'skeleton';
@@ -224,6 +227,7 @@ const observer = new MutationObserver((mutations) => {
       isLoading = true;
       try {
         const rawResponse = await fetch(`https://main--wknd--hlxscreens.hlx.page/defaultData/${categoryId}.json`);
+        // const rawResponse = await fetch(`https://graphqlfunction-p7pabzploq-uc.a.run.app?categoryId=${categoryId}`);
         if (!rawResponse.ok) {
           return;
         }
@@ -231,6 +235,16 @@ const observer = new MutationObserver((mutations) => {
         // execute dom change
         const response = await rawResponse.json();
         items = response.data.products.items;
+        const width = window.innerWidth;
+        if (width > 1500) {
+          perPage = 10;
+        } else if (width > 1250) {
+          perPage = 8;
+        } else if (width > 1000) {
+          perPage = 6;
+        } else {
+          perPage = 4;
+        }
         totalPages = Math.ceil(items.length / perPage);
         console.log(response.data.products.items);
         renderProductsPage(mutation.target, response.data.products.items);

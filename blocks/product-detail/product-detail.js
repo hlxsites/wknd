@@ -19,9 +19,9 @@ const navigationButton = (className, url, callback, alt) => {
   btnSVG.src = url;
   btnSVG.alt = alt || 'btn';
   navigationBtn.append(btnSVG);
-  const btnTitle = document.createElement('span');
-  btnTitle.textContent = alt;
-  navigationBtn.append(btnTitle);
+  const btnText = document.createElement('div');
+  btnText.textContent = alt;
+  navigationBtn.append(btnText);
   navigationBtn.addEventListener('click', callback);
   return navigationBtn;
 };
@@ -40,8 +40,8 @@ const renderProduct = (target, product) => {
   productInfo.append(productTitle);
   productInfo.append(productImgDiv);
   target.textContent = '';
-  const backButtonDiv = navigationButton('back-btn', 'https://main--wknd--hlxscreens.hlx.live/screens-demo/left-arrow-svgrepo-com.svg', backButtonClick, 'GO BACK');
-  const homeButtonDiv = navigationButton('home-btn', 'https://main--wknd--hlxscreens.hlx.live/screens-demo/home-icon-silhouette-svgrepo-com.svg', homeButtonClick, 'GO HOME');
+  const backButtonDiv = navigationButton('back-btn', 'https://main--wknd--hlxscreens.hlx.live/screens-demo/left-arrow-svgrepo-com.svg', backButtonClick, 'BACK');
+  const homeButtonDiv = navigationButton('home-btn', 'https://main--wknd--hlxscreens.hlx.live/screens-demo/home-icon-silhouette-svgrepo-com.svg', homeButtonClick, 'HOME');
   target.append(backButtonDiv);
   target.append(homeButtonDiv);
   target.append(productInfo);

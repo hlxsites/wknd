@@ -1,31 +1,62 @@
 
 .home-btn {
   position: fixed;
+  width: 9rem;
+	height: 3rem;
+  left: 40%;
+  bottom: 10%;
+  transform: translate(-50%, 0);
+  border-radius: 100px;
+  overflow: hidden;
   display: flex;
-  width: 2.5rem;
-	height: 2.5rem;
-	top: 8rem;
-	left: 3rem;
-  border-radius: 50%;
-  white-space: nowrap;
+  align-items: center;
+  background-color: black;
+  justify-content: space-around;
+  padding: 0.5rem 0;
 }
 
-.home-btn span {
+.home-btn > div {
+  /* background-color: black; */
+  height: 80%;
+  color: white;
+  margin-right: 0.5rem;
+}
+
+.home-btn > img {
+  background-color: white;
+  height: 80%;
+  filter: invert(1);
   margin-left: 0.5rem;
 }
 
+
 .back-btn {
   position: fixed;
+  width: 9rem;
+	height: 3rem;
+  left: 60%;
+  bottom: 10%;
+  transform: translate(-50%, 0);
+  border-radius: 100px;
+  overflow: hidden;
   display: flex;
-  width: 2.5rem;
-	height: 2.5rem;
-	top: 3rem;
-	left: 3rem;
-  border-radius: 50%;
-  white-space: nowrap;
+  align-items: center;
+  background-color: black;
+  justify-content: space-around;
+  padding: 0.5rem 0;
 }
 
-.back-btn span {
+.back-btn > div {
+  /* background-color: black; */
+  height: 80%;
+  color: white;
+  margin-right: 0.5rem;
+}
+
+.back-btn > img {
+  background-color: white;
+  height: 80%;
+  filter: invert(1);
   margin-left: 0.5rem;
 }
 
