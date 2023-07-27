@@ -1,0 +1,206 @@
+{
+  "data": {
+    "products": {
+      "items": [
+        {
+          "name": "Marin Mountain Bike Shoes",
+          "sku": "eqbisumas",
+          "url_key": "marin-mountain-bike-shoes",
+          "is_returnable": "2",
+          "description": {
+            "html": "<style>#html-body [data-pb-style=QQRLOXT]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"QQRLOXT\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><p>Marin mountain bike shoes offer a supportive fit with a supple upper and a stiff, lugged sole to enhance pedal efficiency when grinding uphill and through the dirt.</p>\r\n<ul>\r\n<li>Microfiber synthetic leather and nylon mesh uppers give a glovelike fit with excellent breathability</li>\r\n<li>Carbon composite road soles offer more rigidity than a nylon sole, providing a direct connection with the pedal, solid power transfer and excellent aerodynamics</li>\r\n<li>High traction lugs on outsoles enhance grip and durability in muddy conditions</li>\r\n</ul></div></div></div>"
+          },
+          "image": {
+            "label": "Marin Mountain Bike Shoes",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/m/a/marin.jpg"
+          },
+          "small_image": {
+            "label": "Marin Mountain Bike Shoes",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/m/a/marin.jpg"
+          },
+          "swatch_image": "/m/a/marin.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 110
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 110
+              }
+            }
+          }
+        },
+        {
+          "name": "Comfort Gel Gloves",
+          "sku": "eqbisucos",
+          "url_key": "comfort-gel-gloves",
+          "is_returnable": null,
+          "description": {
+            "html": "<style>#html-body [data-pb-style=JOLTCCM]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"JOLTCCM\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><p>Comfort Gel bike gloves offer cooling comfort, UV protection and bump-damping support. Just what you need for a long day on the road.</p>\r\n<ul>\r\n<li>Anatomically positioned gel pads on palms absorb shock, protecting nerves in wrists</li>\r\n<li>Mesh palms help reduce overheating and perspiraton</li>\r\n<li>Polyester stretch fabric on back of hands wicks moisture and enhances ventilation</li>\r\n</ul></div></div></div>"
+          },
+          "image": {
+            "label": "Comfort Gel Gloves",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/c/o/comfort_gel.jpg"
+          },
+          "small_image": {
+            "label": "Comfort Gel Gloves",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/c/o/comfort_gel.jpg"
+          },
+          "swatch_image": "/c/o/comfort_gel.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 30
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 30
+              }
+            }
+          }
+        },
+        {
+          "name": "Blast Mini Pump",
+          "sku": "eqbisublp",
+          "url_key": "blast-mini-pump",
+          "is_returnable": null,
+          "description": {
+            "html": "<style>#html-body [data-pb-style=DCHKE3R]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"DCHKE3R\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><p>The Blast mini pump features an efficient single-stroke pumping action that inflates tires up to 90 psi.</p>\r\n<ul>\r\n<li>T-handle provides solid grip and comfort while pumping</li>\r\n<li>Works with both Presta and Schrader valves</li>\r\n<li>Dust cap keeps internal pump head free from debris<br>&nbsp;</li>\r\n</ul></div></div></div>"
+          },
+          "image": {
+            "label": "Blast Mini Pump",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/b/l/blast.jpg"
+          },
+          "small_image": {
+            "label": "Blast Mini Pump",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/b/l/blast.jpg"
+          },
+          "swatch_image": "/b/l/blast.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 15
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 15
+              }
+            }
+          }
+        },
+        {
+          "name": "Compact Chain Tool",
+          "sku": "eqbisucol",
+          "url_key": "compact-chain-tool",
+          "is_returnable": null,
+          "description": {
+            "html": "<style>#html-body [data-pb-style=IT44XT8]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"IT44XT8\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><p>This lightweight, compact chain tool is built to travel! Fits into any pocket or bike bag, yet performs like a shop-quality instrument.</p>\r\n<ul>\r\n<li>Works on any chain, including Hyperglide</li>\r\n<li>Has a built-in shelf for loosening tight links</li>\r\n</ul></div></div></div>"
+          },
+          "image": {
+            "label": "Compact Chain Tool",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/c/h/chain_tool_in_action_1.jpg"
+          },
+          "small_image": {
+            "label": "Compact Chain Tool",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/c/h/chain_tool_in_action_1.jpg"
+          },
+          "swatch_image": "/c/h/chain_tool_in_action_1.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 15
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 15
+              }
+            }
+          }
+        },
+        {
+          "name": "MX121 Sport Pedals",
+          "sku": "eqbisumxs",
+          "url_key": "mx121-sport-pedals",
+          "is_returnable": null,
+          "description": {
+            "html": "<style>#html-body [data-pb-style=ERRAD3P]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"ERRAD3P\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><p>MX121 Sport Pedals work with cleats and without you decide whether to clip in or to flip pedals and crank on the wide platform.</p></div></div></div>"
+          },
+          "image": {
+            "label": "MX121 Sport Pedals",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/m/x/mx121_detail.jpg"
+          },
+          "small_image": {
+            "label": "MX121 Sport Pedals",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/m/x/mx121_detail.jpg"
+          },
+          "swatch_image": "/m/x/mx121_detail.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 65
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 65
+              }
+            }
+          }
+        },
+        {
+          "name": "Sequoia Bike Helmet",
+          "sku": "eqbisuset",
+          "url_key": "sequoia-bike-helmet",
+          "is_returnable": "2",
+          "description": {
+            "html": "<style>#html-body [data-pb-style=GC7P5L9]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}</style><div data-content-type=\"row\" data-appearance=\"contained\" data-element=\"main\"><div data-enable-parallax=\"0\" data-parallax-speed=\"0.5\" data-background-images=\"{}\" data-background-type=\"image\" data-video-loop=\"true\" data-video-play-only-visible=\"true\" data-video-lazy-load=\"true\" data-video-fallback-src=\"\" data-element=\"inner\" data-pb-style=\"GC7P5L9\"><div data-content-type=\"text\" data-appearance=\"default\" data-element=\"main\"><p>As close as you can get to air-conditioned head protection on the single track--and top-of-the-line performance features too!</p></div></div></div>"
+          },
+          "image": {
+            "label": "Sequoia Bike Helmet",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/s/e/sequoia.jpg"
+          },
+          "small_image": {
+            "label": "Sequoia Bike Helmet",
+            "url": "https://jnz3dtiuj77ca.dummycachetest.com/media/catalog/product/cache/6e1cf7b8bcbe772e1a0e2f5447e60359/s/e/sequoia.jpg"
+          },
+          "swatch_image": "/s/e/sequoia.jpg",
+          "price_range": {
+            "maximum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 75
+              }
+            },
+            "minimum_price": {
+              "final_price": {
+                "currency": "USD",
+                "value": 75
+              }
+            }
+          }
+        }
+      ],
+      "page_info": {
+        "current_page": 1,
+        "page_size": 20,
+        "total_pages": 1
+      },
+      "total_count": 6
+    }
+  }
+}

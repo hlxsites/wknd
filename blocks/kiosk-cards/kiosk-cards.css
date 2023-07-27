@@ -1,0 +1,123 @@
+.kiosk-cards > ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-gap: 16px;
+}
+
+.add-to-cart{
+  color:  #202020;
+  background-color:  #ffea00;
+  text-transform: uppercase;
+  font-size: 14px;
+  padding: 1em 2.5em;
+  font-weight: 600;
+  font-family: 'Source Sans Pro', 'helvetica neue', helvetica, ubuntu, roboto, noto, sans-serif;
+  display: inline-block;
+  box-sizing: border-box;
+  text-decoration: none;
+  border: 2px solid transparent;
+  text-align: center;
+  font-style: normal;
+  cursor: pointer;
+  margin: 16px 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: 0;
+  line-height: 0.5;
+  position: relative;
+}
+
+.more-details{
+    color:  #202020;
+    background-color:  #ffea00;
+    text-transform: uppercase;
+    font-size: 14px;
+    padding: 1em 2.5em;
+    font-weight: 600;
+    font-family: 'Source Sans Pro', 'helvetica neue', helvetica, ubuntu, roboto, noto, sans-serif;
+    display: inline-block;
+    box-sizing: border-box;
+    text-decoration: none;
+    border: 2px solid transparent;
+    text-align: center;
+    font-style: normal;
+    cursor: pointer;
+    margin: 16px 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: 0;
+    line-height: 0.5;
+    position: relative;
+  }
+
+.kiosk-cards > ul > li {
+    border: 1px solid var(--highlight-background-color);
+    background-color: var(--background-color)
+}
+
+.kiosk-cards .kiosk-cards-card-body {
+    margin: 16px;
+}
+
+.kiosk-cards .kiosk-cards-card-image {
+    line-height: 0;
+}
+
+.kiosk-cards .kiosk-cards-card-body > *:first-child {
+    margin-top: 0;
+}
+
+.kiosk-cards > ul > li img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+
+.kiosk-kiosk-cards.no-crop > ul > li img {
+    aspect-ratio: unset;
+    object-fit: unset;
+}
+
+
+.kiosk-cards.scroll > ul {
+    scroll-snap-type: x mandatory;
+    overflow-x: scroll;
+    scroll-behavior: smooth;
+    display: flex;
+    padding-bottom: 16px;
+}
+
+.kiosk-cards.scroll > ul > li{
+    width: 50%;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    position: relative;
+}
+
+.kiosk-cards.scroll > ul::-webkit-scrollbar {
+    width: 5px;
+    height: 8px;
+    background-color: #eee; /* or add it to the track */
+}
+
+.kiosk-cards.scroll > ul::-webkit-scrollbar-thumb {
+  background: #999;
+}
+
+
+@media (min-width: 900px) {
+    .kiosk-cards.scroll > ul > li {
+        width: calc(100%/3);
+    }
+}
+
+@media (min-width: 1200px) {
+    .kiosk-cards.scroll > ul > li {
+        width: calc(100%/4);
+    }
+}

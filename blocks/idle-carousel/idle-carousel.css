@@ -1,0 +1,66 @@
+.sequence-element {
+  display: none;
+}
+
+.sequence-element.active {
+  display: block;
+}
+
+.sequence.idle {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  display: block;
+}
+
+.sequence {
+  display: none;
+  z-index: 100;
+  background-color: black;
+}
+
+.sequence-element-video {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  background-size: cover;
+  overflow: hidden;
+}
+
+.sequence-element.fadeIn {
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.tooltip {
+  align-items: center;
+  background-color: #282731;
+  border-radius: 10px;
+  bottom: 2.5vw;
+  display: flex;
+  flex-direction: column;
+  font-size: 32px;
+  justify-content: center;
+  padding: 2%;
+  position: absolute;
+  right: 2.5vw;
+  z-index: 1030;
+  color: white;
+  opacity: 0.8;
+}
+
+.tooltip > img {
+  display: block;
+  height: 8vw;
+  width: 6vw;
+}

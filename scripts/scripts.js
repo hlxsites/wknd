@@ -1,3 +1,4 @@
+// import { request as graphqlRequest } from 'graphql-request';
 import {
   sampleRUM,
   buildBlock,
@@ -15,6 +16,7 @@ import {
   toClassName,
 } from './lib-franklin.js';
 
+import decoratePolarisAssets from './lib-polaris.js';
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
@@ -37,7 +39,7 @@ const EXPERIMENTATION_CONFIG = {
  * @returns {boolean} True if we are loading block library content
  */
 export function isBlockLibrary() {
-  return window.location.pathname.includes('block-library');
+  return window.location.pathname.includes('block-library') || window.location.pathname.includes('screens-demo');
 }
 
 /**
@@ -158,6 +160,7 @@ export function decorateMain(main) {
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
+  decoratePolarisAssets(main);
 }
 
 /**
@@ -257,11 +260,139 @@ function loadDelayed() {
   window.setTimeout(() => import('./delayed.js'), 3000);
   // load anything that can be postponed to the latest here
 }
-
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
+  document.querySelector('header').remove();
   loadDelayed();
 }
 
 loadPage();
+
+/* async function getMenuItems(menuName) {
+    try {
+      const response = await fetch('http://localhost:3000/screens-demo/product-list.json');
+      const data = await response.json();
+      const menuData = data[menuName].data;
+      return menuData;
+    } catch (error) {
+      console.log('Error:', error);
+    }
+  } */
+
+// Orchestrator
+
+export function onNavigate(pathName) {
+  // window.history.pushState(
+  //   {},
+  //   pathName,
+  //   window.location.origin + pathName
+  // )
+  const allSections = document.getElementsByClassName('section');
+  console.log(allSections);
+  // eslint-disable-next-line no-restricted-syntax
+  for (const item of allSections) {
+    item.classList.remove('displaySection');
+  }
+  const section = document.getElementsByClassName(`section ${pathName}`);
+  console.log(section, pathName);
+  // eslint-disable-next-line no-unused-expressions
+  section && section.length > 0 && section[0].classList.add('displaySection');
+}
+
+// export function sendAnalyticsEvent() {
+//   const data = {
+//     'event.type': 'play',
+//     'event.coll_dts': '2023-07-26T08:04:21.759Z',
+//     'event.dts_start': '2023-07-26T08:04:21.759Z',
+//     'content.type': 'IMAGE',
+//     'content.action': '/content/dam/6thfloor-do-not-delete/Recognitions-3.png',
+//     'trn.product': '/content/dam/6thfloor-do-not-delete/Recognitions-3.png',
+//     'trn.amount': 0,
+//     'event.dts_end': '2023-07-26T08:08:47.495Z',
+//     'event.count': 265736,
+// eslint-disable-next-line max-len
+//     'event.value': 'Started Wed Jul 26 2023 13:34:21 GMT+0530 (India Standard Time) ended Wed Jul 26 2023 13:38:47 GMT+0530 (India Standard Time) Duration 265 seconds',
+//     'trn.quantity': 265736,
+//     'event.subtype': 'end',
+//   };
+//   window.parent.postMessage(JSON.stringify({
+//     namespace: 'screens-player',
+//     type: 'analytics-tracking-event',
+//     data,
+//   }));
+// }
+
+/*
+  // Access and process each JSON object
+      for (const key in data) {
+        console.log(key);
+        if (typeof data[key] === 'object' && Array.isArray(data[key].data)) {
+          data[key].data.forEach(obj => {
+            console.log('Product Name:', obj.product_name);
+            console.log('Price:', obj.price);
+            console.log('------------------');
+          });
+        }
+      } */
+
+// export function getItems(categoryId) {
+//   const url = 'https://venia.magento.com/graphql'; // Replace with your GraphQL endpoint
+//   const headers = {
+//     // Add any custom headers you need, like authorization headers, etc.
+//     Authority: 'venia.magento.com',
+//     Store: 'wknd',
+//     'Content-type': 'application/json',
+//   };
+//   const dataRaw = `
+//   query{
+//     products(filter: { category_uid: { eq: ${categoryId}} }) {
+//       items {
+//         name
+//         sku
+//         url_key
+//         is_returnable
+//         image {
+//           label
+//           url
+//         }
+//         small_image{
+//           label
+//           url
+//         }
+//         swatch_image
+//         price_range{
+//         maximum_price{
+//           final_price{
+//             currency
+//             value
+//           }
+//         }
+//         minimum_price{
+//           final_price{
+//             currency
+//             value
+//           }
+//         }
+//         }
+//       }
+//         page_info {
+//           current_page
+//           page_size
+//           total_pages
+//         }
+//         total_count
+//       }
+//     }
+//   `;
+//   return graphqlRequest(url, dataRaw, null, headers)
+//     .then((response) => {
+//       if (!response) {
+//         throw new Error('Network response was not ok');
+//       }
+//       return response;
+//     })
+//     .catch((error) => {
+//       console.error('Error making the GraphQL request:', error.message);
+//     });
+// }
