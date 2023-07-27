@@ -234,7 +234,7 @@ const observer = new MutationObserver((mutations) => {
         console.log('ok response');
         // execute dom change
         const response = await rawResponse.json();
-        items = response.data.products.items;
+        items = response.products.items;
         const width = window.innerWidth;
         if (width > 1500) {
           perPage = 10;
@@ -246,8 +246,8 @@ const observer = new MutationObserver((mutations) => {
           perPage = 4;
         }
         totalPages = Math.ceil(items.length / perPage);
-        console.log(response.data.products.items);
-        renderProductsPage(mutation.target, response.data.products.items);
+        console.log(response.products.items);
+        renderProductsPage(mutation.target, response.products.items);
       } catch (err) {
         console.log('loading failed');
       }
