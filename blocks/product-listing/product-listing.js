@@ -226,8 +226,8 @@ const observer = new MutationObserver((mutations) => {
       // fetch data
       isLoading = true;
       try {
-        const rawResponse = await fetch(`https://main--wknd--hlxscreens.hlx.page/defaultData/${categoryId}.json`);
-        // const rawResponse = await fetch(`https://graphqlfunction-p7pabzploq-uc.a.run.app?categoryId=${categoryId}`);
+        // const rawResponse = await fetch(`https://main--wknd--hlxscreens.hlx.page/defaultData/${categoryId}.json`);
+        const rawResponse = await fetch(`https://graphqlfunction-p7pabzploq-uc.a.run.app?categoryId=${categoryId}`);
         if (!rawResponse.ok) {
           return;
         }

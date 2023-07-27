@@ -75,7 +75,7 @@ header {
 
 main {
   text-align: var(--default-text-align);
-  background: linear-gradient(to right bottom, #007185, lightblue, white);
+  background: linear-gradient(to right bottom, lightgrey, white);
   min-height: 100vh;
 }
 
