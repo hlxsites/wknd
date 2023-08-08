@@ -15,6 +15,7 @@ import {
   toClassName,
 } from './lib-franklin.js';
 import {
+  analyticsTrackCWV,
   initAnalyticsTrackingQueue,
   setupAnalyticsTrackingWithAlloy,
 } from './analytics/lib-analytics.js';
@@ -270,5 +271,24 @@ async function loadPage() {
   loadDelayed();
   await setupAnalytics;
 }
+
+let cwv = {};
+
+// Forward the RUM CWV cached measurements to edge using WebSDK before the page unloads
+window.addEventListener('beforeunload', () => {
+  if (Object.keys(cwv).length > 0) {
+    analyticsTrackCWV(cwv);
+  }
+});
+
+// Callback to RUM CWV checkpoint in order to cache the measurements
+sampleRUM.always.on('cwv', async (data) => {
+  if (data.cwv) {
+    cwv = {
+      ...cwv,
+      ...data.cwv,
+    };
+  }
+});
 
 loadPage();

@@ -211,6 +211,24 @@ export async function analyticsTrackLinkClicks(element, linkType = 'other', addi
 }
 
 /**
+ * Basic tracking for CWV events with alloy
+ * @param cwv
+ * @returns {Promise<*>}
+ */
+export async function analyticsTrackCWV(cwv) {
+  // eslint-disable-next-line no-undef
+  return alloy('sendEvent', {
+    documentUnloading: true,
+    xdm: {
+      eventType: 'web.performance.measurements',
+      [CUSTOM_SCHEMA_NAMESPACE]: {
+        cwv,
+      },
+    },
+  });
+}
+
+/**
  * Basic tracking for form submissions with alloy
  * @param element
  * @param additionalXdmFields
