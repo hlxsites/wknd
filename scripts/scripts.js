@@ -15,7 +15,8 @@ import {
   toClassName,
 } from './lib-franklin.js';
 import {
-  analyticsTrackCWV,
+  analyticsTrack404,
+  analyticsTrackCWV, analyticsTrackError,
   initAnalyticsTrackingQueue,
   setupAnalyticsTrackingWithAlloy,
 } from './analytics/lib-analytics.js';
@@ -289,6 +290,13 @@ sampleRUM.always.on('cwv', async (data) => {
       ...data.cwv,
     };
   }
+});
+
+sampleRUM.always.on('404', async (data) => {
+  analyticsTrack404(data);
+});
+sampleRUM.always.on('error', async (data) => {
+  analyticsTrackError(data);
 });
 
 loadPage();

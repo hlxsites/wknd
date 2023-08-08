@@ -229,6 +229,54 @@ export async function analyticsTrackCWV(cwv) {
 }
 
 /**
+ * Basic tracking for 404 errors with alloy
+ * @param data
+ * @param additionalXdmFields
+ * @returns {Promise<*>}
+ */
+export async function analyticsTrack404(data, additionalXdmFields = {}) {
+  // eslint-disable-next-line no-undef
+  return alloy('sendEvent', {
+    documentUnloading: true,
+    xdm: {
+      eventType: 'web.webpagedetails.pageViews',
+      web: {
+        webPageDetails: {
+          pageViews: {
+            value: 0,
+          },
+        },
+      },
+      [CUSTOM_SCHEMA_NAMESPACE]: {
+        ...additionalXdmFields,
+        isPageNotFound: true,
+      },
+    },
+  });
+}
+
+export async function analyticsTrackError(data, additionalXdmFields = {}) {
+  // eslint-disable-next-line no-undef
+  return alloy('sendEvent', {
+    documentUnloading: true,
+    xdm: {
+      eventType: 'web.webpagedetails.pageViews',
+      web: {
+        webPageDetails: {
+          pageViews: {
+            value: 0,
+          },
+          isErrorPage: true,
+        },
+      },
+      [CUSTOM_SCHEMA_NAMESPACE]: {
+        ...additionalXdmFields,
+      },
+    },
+  });
+}
+
+/**
  * Basic tracking for form submissions with alloy
  * @param element
  * @param additionalXdmFields
