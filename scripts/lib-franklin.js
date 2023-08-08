@@ -172,6 +172,11 @@ export async function fetchPlaceholders(prefix = 'default') {
             });
             window.placeholders[prefix] = placeholders;
             resolve();
+          })
+          .catch((error) => {
+            // error loading placeholders
+            window.placeholders[prefix] = {};
+            reject(error);
           });
       } catch (error) {
         // error loading placeholders
@@ -182,6 +187,14 @@ export async function fetchPlaceholders(prefix = 'default') {
   }
   await window.placeholders[`${prefix}-loaded`];
   return window.placeholders[prefix];
+}
+
+export function getPlaceholderOrDefault(key, defaultText) {
+  if (!key) {
+    return defaultText || '';
+  }
+
+  return window.placeholders?.[`/${document.documentElement.lang}`]?.[key] || defaultText || '';
 }
 
 /**
