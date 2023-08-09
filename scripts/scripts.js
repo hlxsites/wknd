@@ -273,30 +273,21 @@ async function loadPage() {
   await setupAnalytics;
 }
 
-let cwv = {};
+const cwv = {};
 
 // Forward the RUM CWV cached measurements to edge using WebSDK before the page unloads
 window.addEventListener('beforeunload', () => {
-  if (Object.keys(cwv).length > 0) {
-    analyticsTrackCWV(cwv);
-  }
+  if (!Object.keys(cwv).length) return;
+  analyticsTrackCWV(cwv);
 });
 
 // Callback to RUM CWV checkpoint in order to cache the measurements
 sampleRUM.always.on('cwv', async (data) => {
-  if (data.cwv) {
-    cwv = {
-      ...cwv,
-      ...data.cwv,
-    };
-  }
+  if (!data.cwv) return;
+  Object.assign(cwv, data.cwv);
 });
 
-sampleRUM.always.on('404', async (data) => {
-  analyticsTrack404(data);
-});
-sampleRUM.always.on('error', async (data) => {
-  analyticsTrackError(data);
-});
+sampleRUM.always.on('404', analyticsTrack404);
+sampleRUM.always.on('error', analyticsTrackError);
 
 loadPage();
