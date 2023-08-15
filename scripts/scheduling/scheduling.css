@@ -1,0 +1,18 @@
+div.hlx-sk .date-preview > input {
+    color-scheme: dark;
+    background-color: transparent;
+    border: var(--hlx-sk-button-border);
+    border-radius: var(--hlx-sk-button-border-radius);
+    color: var(--hlx-sk-button-color);
+    font-size: var(--hlx-sk-button-font-size);
+    line-height: var(--hlx-sk-button-line-height);
+    font-family: var(--hlx-sk-font-family);
+    font-weight: var(--hlx-sk-button-font-weight);
+    padding: 0px 8px;
+    cursor: pointer;
+    outline: none;
+    min-width: 28px;
+    min-height: 26px;
+    max-height: 26px;
+    margin: 0 8px 0 0;
+}

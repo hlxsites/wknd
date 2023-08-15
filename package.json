@@ -8,7 +8,8 @@
     "test:watch": "npm test -- --watch",
     "lint:js": "eslint .",
     "lint:css": "stylelint 'blocks/**/*.css' 'styles/*.css'",
-    "lint": "npm run lint:js && npm run lint:css"
+    "lint": "npm run lint:js && npm run lint:css",
+    "start": "hlx up --print-index"
   },
   "repository": {
     "type": "git",
@@ -21,15 +22,16 @@
   },
   "homepage": "https://github.com/adobe/helix-project-boilerplate#readme",
   "devDependencies": {
+    "@adobe/helix-cli": "^14.24.10",
     "@babel/core": "7.18.10",
     "@babel/eslint-parser": "7.18.9",
+    "@esm-bundle/chai": "4.3.4-fix.0",
+    "@web/test-runner": "0.14.0",
+    "@web/test-runner-commands": "0.6.4",
     "chai": "4.3.6",
     "eslint": "8.22.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.26.0",
-    "@esm-bundle/chai": "4.3.4-fix.0",
-    "@web/test-runner": "0.14.0",
-    "@web/test-runner-commands": "0.6.4",
     "sinon": "14.0.0",
     "stylelint": "14.10.0",
     "stylelint-config-prettier": "9.0.3",

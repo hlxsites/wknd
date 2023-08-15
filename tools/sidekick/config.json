@@ -14,6 +14,12 @@
       "environments": [ "edit" ],
       "url": "https://wknd.findmy.media/",
       "includePaths": [ "**.docx**" ]
+    },
+    {
+      "id": "date-preview",
+      "title": "Preview with Date",
+      "environments": [ "dev", "preview" ],
+      "event": "date-preview"
     }
   ]
 }
