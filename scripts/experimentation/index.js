@@ -36,6 +36,28 @@ function getAlloyInitScript() {
   function(){var u=arguments;return new Promise(function(i,l){n[o].q.push([i,l,u])})},n[o].q=[])})}(window,["alloy"]);`;
 }
 
+async function getCJAAlloy() {
+  if (window.cjaAlloy) {
+    return;
+  }
+  await import('../alloy-2.6.4.min.js');
+	
+	!function(n,o){o.forEach(function(o){n[o]||((n.__alloyNS=n.__alloyNS||
+    []).push(o),n[o]=function(){var u=arguments;return new Promise(
+    function(i,l){n[o].q.push([i,l,u])})},n[o].q=[])})}
+    (window,["cjaAlloy"]);
+
+  cjaAlloy("configure", {
+    defaultConsent: "in",
+    edgeDomain: "edge-int.adobedc.net",
+    edgeConfigId: "61fc53d6-a96c-4c70-9a53-6a5a147d360b",
+    orgId: "745F37C35E4B776E0A49421B@AdobeOrg",
+    debugEnabled: false,
+    idMigrationEnabled: false,
+    thirdPartyCookiesEnabled: false
+  });
+}
+
 
 /**
  * Create inline script
@@ -423,6 +445,59 @@ function getFirstMatchedVariant(experimentConfig, userSegments) {
 }
 
 /**
+ * Log alloy event for the experiment
+ * @param {*} eventType 
+ * @param {*} experimentId 
+ * @param {*} treatmentId 
+ */
+async function logEventAlloy(eventType, experimentId, treatmentId) {
+  console.log("logEventAlloy " + eventType);
+  await getCJAAlloy();
+  //get ECID from alloy sdk
+  const cjaAlloyResult = window.cjaAlloyEvent || await cjaAlloy("getIdentity");
+  if (!window.cjaAlloyEvent) {
+    window.cjaAlloyEvent = cjaAlloyResult;
+  }
+  const context = {
+    "identityMap": {
+      "ECID": [
+        {
+          "id": cjaAlloyResult.identity.ECID,
+          "primary": true
+        }
+      ]
+    }
+  }
+
+  const alloyEvent = {
+		"xdm": {
+			"eventType": 'propositionInteraction',
+			"identityMap": context.identityMap,
+			"_experience": {
+				"decisioning": {
+        "propositionEventType": eventType,
+				"propositions": [
+					{
+					"scopeDetails": {
+						"strategies": [
+							{
+								"strategyID": experimentId,
+								"step": "experimentation",
+								"treatmentID": treatmentId
+							}
+						]
+					}
+					}
+				]
+				}
+			}
+		}
+	};
+  console.log(alloyEvent);
+	cjaAlloy("sendEvent", alloyEvent);
+}
+
+/**
  * Gets the experimentation config for the specified experiment
  * @param {string} experiment the experiment id
  * @param {string} [instantExperiment] the instant experiment config
@@ -467,6 +542,7 @@ export async function getConfig(experiment, instantExperiment = null, config = D
         userSegments[i] = segmentDefinitions[userSegments[i]];
       }
       experimentConfig.selectedVariant = getFirstMatchedVariant(experimentConfig, userSegments);
+
     }
     if (!experimentConfig.selectedVariant) {
       experimentConfig.selectedVariant = 'control';
@@ -506,6 +582,15 @@ function getSegmentDefinitions() {
     '82cc4339-18cc-448d-82a2-8effb72bbc74': 'US',
     '4f3b0ec6-bc8f-441b-a5fb-56e1b126d355': 'US',
   }
+}
+
+function registerPageEventListener(experimentId, variantId) {
+
+  console.log("registerPageEventListener");
+
+  document.addEventListener('click', (ev) => {
+    logEventAlloy({ interact: 1 }, experimentId, variantId);
+  });
 }
 
 /**
@@ -550,6 +635,8 @@ export async function runExperiment(experiment, instantExperiment, customOptions
     console.debug(`failed to serve variant ${window.hlx.experiment.selectedVariant}. Falling back to ${experimentConfig.variantNames[0]}.`);
   }
   document.body.classList.add(`variant-${result ? experimentConfig.selectedVariant : experimentConfig.variantNames[0]}`);
+  logEventAlloy( { display: 1 }, experimentConfig.id, experimentConfig.selectedVariant);
+  registerPageEventListener(experimentConfig.id, experimentConfig.selectedVariant);
   sampleRUM('experiment', {
     source: experimentConfig.id,
     target: result ? experimentConfig.selectedVariant : experimentConfig.variantNames[0],
