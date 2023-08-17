@@ -253,6 +253,14 @@ async function loadLazy(doc) {
 
   // Mark customer as having viewed the page once
   localStorage.setItem('franklin-visitor-returning', true);
+
+  const context = {
+    getMetadata,
+    toClassName,
+  };
+  // eslint-disable-next-line import/no-relative-packages
+  const { initConversionTracking } = await import('../plugins/rum-conversion/src/index.js');
+  await initConversionTracking.call(context, document);
 }
 
 /**
