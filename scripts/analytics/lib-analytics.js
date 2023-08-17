@@ -248,8 +248,8 @@ export async function analyticsTrack404(data, additionalXdmFields = {}) {
       },
     },
     [CUSTOM_SCHEMA_NAMESPACE]: {
-      ...additionalXdmFields,
       isPageNotFound: true,
+      ...additionalXdmFields,
     },
   };
 
@@ -271,6 +271,48 @@ export async function analyticsTrackError(data, additionalXdmFields = {}) {
       ...additionalXdmFields,
     },
   };
+
+  return sendAnalyticsEvent(xdmData);
+}
+
+export async function analyticsTrackConversion(data, additionalXdmFields = {}) {
+  const { source: conversionName, target: conversionValue, element } = data;
+  const xdmData = {
+    eventType: 'web.webinteraction.conversion',
+    [CUSTOM_SCHEMA_NAMESPACE]: {
+      conversion: {
+        conversionComplete: 1,
+        conversionName,
+        conversionValue,
+      },
+      ...additionalXdmFields,
+    },
+  };
+
+  if (element.tagName === 'FORM') {
+    xdmData[CUSTOM_SCHEMA_NAMESPACE].form = {
+      formId: `${element.id}`,
+      // don't count as form complete, as this event should be tracked separately,
+      // track only the details of the form together with the conversion
+      formComplete: 0,
+    };
+    xdmData.eventType = 'web.formFilledOut';
+  } else if (element.tagName === 'A') {
+    xdmData.web = {
+      webInteraction: {
+        linkURL: `${element.href}`,
+        // eslint-disable-next-line no-nested-ternary
+        name: `${element.text ? element.text.trim() : (element.innerHTML ? element.innerHTML.trim() : '')}`,
+        linkClicks: {
+          // don't count as link click, as this event should be tracked separately,
+          // track only the details of the link with the conversion
+          value: 0,
+        },
+        type: 'other',
+      },
+    };
+    xdmData.eventType = 'web.webinteraction.linkClicks';
+  }
 
   return sendAnalyticsEvent(xdmData);
 }
