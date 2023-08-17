@@ -110,6 +110,11 @@ function createInlineScript(document, element, innerHTML, type) {
  */
 async function sendAnalyticsEvent(xdmData) {
   // eslint-disable-next-line no-undef
+  if (!alloy) {
+    console.warn('alloy not initialized, cannot send analytics event');
+    return Promise.resolve();
+  }
+  // eslint-disable-next-line no-undef
   return alloy('sendEvent', {
     documentUnloading: true,
     xdm: xdmData,
@@ -123,6 +128,11 @@ async function sendAnalyticsEvent(xdmData) {
  * @returns {Promise<*>}
  */
 export async function analyticsSetConsent(approved) {
+  // eslint-disable-next-line no-undef
+  if (!alloy) {
+    console.warn('alloy not initialized, cannot set consent');
+    return Promise.resolve();
+  }
   // eslint-disable-next-line no-undef
   return alloy('setConsent', {
     consent: [{
@@ -174,6 +184,11 @@ export async function initAnalyticsTrackingQueue() {
  * @returns {Promise<void>}
  */
 export async function setupAnalyticsTrackingWithAlloy(document) {
+  // eslint-disable-next-line no-undef
+  if (!alloy) {
+    console.warn('alloy not initialized, cannot configure');
+    return;
+  }
   // eslint-disable-next-line no-undef
   const configurePromise = alloy('configure', getAlloyConfiguration(document));
 
@@ -277,6 +292,7 @@ export async function analyticsTrackError(data, additionalXdmFields = {}) {
 
 export async function analyticsTrackConversion(data, additionalXdmFields = {}) {
   const { source: conversionName, target: conversionValue, element } = data;
+
   const xdmData = {
     eventType: 'web.webinteraction.conversion',
     [CUSTOM_SCHEMA_NAMESPACE]: {
@@ -290,14 +306,15 @@ export async function analyticsTrackConversion(data, additionalXdmFields = {}) {
   };
 
   if (element.tagName === 'FORM') {
+    xdmData.eventType = 'web.formFilledOut';
     xdmData[CUSTOM_SCHEMA_NAMESPACE].form = {
       formId: `${element.id}`,
       // don't count as form complete, as this event should be tracked separately,
       // track only the details of the form together with the conversion
       formComplete: 0,
     };
-    xdmData.eventType = 'web.formFilledOut';
   } else if (element.tagName === 'A') {
+    xdmData.eventType = 'web.webinteraction.linkClicks';
     xdmData.web = {
       webInteraction: {
         linkURL: `${element.href}`,
@@ -311,7 +328,6 @@ export async function analyticsTrackConversion(data, additionalXdmFields = {}) {
         type: 'other',
       },
     };
-    xdmData.eventType = 'web.webinteraction.linkClicks';
   }
 
   return sendAnalyticsEvent(xdmData);
