@@ -17,6 +17,63 @@ sampleRUM.always = sampleRUM.always || [];
 sampleRUM.always.on = (chkpnt, fn) => {
   sampleRUM.always[chkpnt] = fn;
 };
+
+/**
+* Registers the 'convert' function to `sampleRUM` which sends
+* variant and convert events upon conversion.
+* The function will register a listener for an element if listenTo parameter is provided.
+* listenTo supports 'submit' and 'click'.
+* If listenTo is not provided, the information is used to track a conversion event.
+*/
+sampleRUM.drain('convert', (cevent, cvalueThunk, element, listenTo = []) => {
+  async function trackConversion(celement) {
+    const MAX_SESSION_LENGTH = 1000 * 60 * 60 * 24 * 30; // 30 days
+    try {
+      // get all stored experiments from local storage (unified-decisioning-experiments)
+      const experiments = JSON.parse(localStorage.getItem('unified-decisioning-experiments'));
+      if (experiments) {
+        Object.entries(experiments)
+          .map(([experiment, { treatment, date }]) => ({ experiment, treatment, date }))
+          .filter(({ date }) => Date.now() - new Date(date) < MAX_SESSION_LENGTH)
+          .forEach(({ experiment, treatment }) => {
+            // send conversion event for each experiment that has been seen by this visitor
+            sampleRUM('variant', { source: experiment, target: treatment });
+          });
+      }
+      // send conversion event
+      const cvalue = typeof cvalueThunk === 'function' ? await cvalueThunk(element) : cvalueThunk;
+
+      const data = { source: cevent, target: cvalue, element: celement };
+      sampleRUM('convert', data);
+      // Following if statement must be removed once always mechanism is present in the boilerplate
+      if (sampleRUM.always && sampleRUM.always.convert) {
+        sampleRUM.always.convert(data);
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log('error reading experiments', e);
+    }
+  }
+
+  function registerConversionListener(elements) {
+    // if elements is an array or nodelist, register a conversion event for each element
+    if (Array.isArray(elements) || elements instanceof NodeList) {
+      elements.forEach((e) => registerConversionListener(e, listenTo, cevent, cvalueThunk));
+    } else {
+      listenTo.forEach((eventName) => element.addEventListener(
+        eventName,
+        (e) => trackConversion(e.target),
+      ));
+    }
+  }
+
+  if (element && listenTo.length) {
+    registerConversionListener(element, listenTo, cevent, cvalueThunk);
+  } else {
+    trackConversion(element, cevent, cvalueThunk);
+  }
+});
+
 /**
  * Returns the label used for tracking link clicks
  * @param {Element} element link element
@@ -24,6 +81,11 @@ sampleRUM.always.on = (chkpnt, fn) => {
  */
 function getLinkLabel(element) {
   return element.title ? this.toClassName(element.title) : this.toClassName(element.textContent);
+}
+
+function getConversionNameMetadata(element) {
+  const text = element.title || element.textContent;
+  return this.getMetadata(`conversion-name--${text.toLowerCase().replace(/[^0-9a-z]/gi, '-')}-`);
 }
 
 function findConversionValue(parent, fieldName) {
@@ -81,7 +143,7 @@ export async function initConversionTracking(parent = document, defaultFormConve
       Array.from(parent.querySelectorAll('a[href]'))
         .map((element) => ({
           element,
-          cevent: this.getMetadata(`conversion-name--${getLinkLabel.call(this, element)}-`) || this.getMetadata('conversion-name') || getLinkLabel.call(this, element),
+          cevent: getConversionNameMetadata.call(this, element) || this.getMetadata('conversion-name') || getLinkLabel.call(this, element),
         }))
         .forEach(({ element, cevent }) => {
           sampleRUM.convert(cevent, undefined, element, ['click']);
@@ -98,7 +160,7 @@ export async function initConversionTracking(parent = document, defaultFormConve
         .filter((element) => trackedLabels.includes(getLinkLabel.call(this, element)))
         .map((element) => ({
           element,
-          cevent: this.getMetadata(`conversion-name--${getLinkLabel.call(this, element)}-`) || this.getMetadata('conversion-name') || getLinkLabel.call(this, element),
+          cevent: getConversionNameMetadata.call(this, element) || this.getMetadata('conversion-name') || getLinkLabel.call(this, element),
         }))
         .forEach(({ element, cevent }) => {
           sampleRUM.convert(cevent, undefined, element, ['click']);
@@ -112,59 +174,3 @@ export async function initConversionTracking(parent = document, defaultFormConve
     .filter((ce) => declaredConversionElements.includes(ce))
     .forEach((cefn) => conversionElements[cefn]());
 }
-
-/**
-* Registers the 'convert' function to `sampleRUM` which sends
-* variant and convert events upon conversion.
-* The function will register a listener for an element if listenTo parameter is provided.
-* listenTo supports 'submit' and 'click'.
-* If listenTo is not provided, the information is used to track a conversion event.
-*/
-sampleRUM.drain('convert', (cevent, cvalueThunk, element, listenTo = []) => {
-  async function trackConversion(celement) {
-    const MAX_SESSION_LENGTH = 1000 * 60 * 60 * 24 * 30; // 30 days
-    try {
-      // get all stored experiments from local storage (unified-decisioning-experiments)
-      const experiments = JSON.parse(localStorage.getItem('unified-decisioning-experiments'));
-      if (experiments) {
-        Object.entries(experiments)
-          .map(([experiment, { treatment, date }]) => ({ experiment, treatment, date }))
-          .filter(({ date }) => Date.now() - new Date(date) < MAX_SESSION_LENGTH)
-          .forEach(({ experiment, treatment }) => {
-            // send conversion event for each experiment that has been seen by this visitor
-            sampleRUM('variant', { source: experiment, target: treatment });
-          });
-      }
-      // send conversion event
-      const cvalue = typeof cvalueThunk === 'function' ? await cvalueThunk(element) : cvalueThunk;
-
-      const data = { source: cevent, target: cvalue, element: celement };
-      sampleRUM('convert', data);
-      // Following if statement must be removed once always mechanism is present in the boilerplate
-      if (sampleRUM.always && sampleRUM.always.convert) {
-        sampleRUM.always.convert(data);
-      }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log('error reading experiments', e);
-    }
-  }
-
-  function registerConversionListener(elements) {
-    // if elements is an array or nodelist, register a conversion event for each element
-    if (Array.isArray(elements) || elements instanceof NodeList) {
-      elements.forEach((e) => registerConversionListener(e, listenTo, cevent, cvalueThunk));
-    } else {
-      listenTo.forEach((eventName) => element.addEventListener(
-        eventName,
-        (e) => trackConversion(e.target),
-      ));
-    }
-  }
-
-  if (element && listenTo.length) {
-    registerConversionListener(element, listenTo, cevent, cvalueThunk);
-  } else {
-    trackConversion(element, cevent, cvalueThunk);
-  }
-});

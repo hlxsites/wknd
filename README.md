@@ -100,6 +100,8 @@ The conversion value is defined with another section metadata property called `C
 
 ![form-conversion-metadata](https://user-images.githubusercontent.com/43381734/218726040-81fb4d04-9a91-495e-a23b-50fcafd86a75.png)
 
+:warning: the form element needs to be submitted, i.e. the `submit` event for the form must be triggered. If forms are submitted using a `click` listener on the button, and then doing a `fetch` request with the form information, the submission won't be detected by the conversion tracking framework.
+
 ### Developer defined conversions
 For more specific requirements it is also possible for developers to invoke the conversion API using the following method:
 
