@@ -63,7 +63,7 @@ function enhanceAnalyticsEvent(options) {
   const experiment = getExperimentDetails();
   options.xdm[CUSTOM_SCHEMA_NAMESPACE] = {
     ...options.xdm[CUSTOM_SCHEMA_NAMESPACE],
-    ...(experiment ? { experiment } : {}), // add experiment details, if existing, to all events
+    ...(experiment && { experiment }), // add experiment details, if existing, to all events
   };
   console.debug(`enhanceAnalyticsEvent complete: ${JSON.stringify(options)}`);
 }
@@ -307,8 +307,9 @@ export async function analyticsTrackConversion(data, additionalXdmFields = {}) {
 
   if (element.tagName === 'FORM') {
     xdmData.eventType = 'web.formFilledOut';
+    const formId = element?.id || element?.dataset?.action;
     xdmData[CUSTOM_SCHEMA_NAMESPACE].form = {
-      formId: `${element.id}`,
+      ...(formId && { formId }),
       // don't count as form complete, as this event should be tracked separately,
       // track only the details of the form together with the conversion
       formComplete: 0,
@@ -340,11 +341,12 @@ export async function analyticsTrackConversion(data, additionalXdmFields = {}) {
  * @returns {Promise<*>}
  */
 export async function analyticsTrackFormSubmission(element, additionalXdmFields = {}) {
+  const formId = element?.id || element?.dataset?.action;
   const xdmData = {
     eventType: 'web.formFilledOut',
     [CUSTOM_SCHEMA_NAMESPACE]: {
       form: {
-        formId: `${element.id}`,
+        ...(formId && { formId }),
         formComplete: 1,
       },
       ...additionalXdmFields,
