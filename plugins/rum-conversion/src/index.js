@@ -60,6 +60,10 @@ sampleRUM.drain('convert', (cevent, cvalueThunk, element, listenTo = []) => {
     if (Array.isArray(elements) || elements instanceof NodeList) {
       elements.forEach((e) => registerConversionListener(e, listenTo, cevent, cvalueThunk));
     } else {
+      // add data attribute to elements tracked in preview
+      if (window.location.hostname === 'localhost' || window.location.hostname.endsWith('.hlx.page')) {
+        element.dataset.conversionTracking = true;
+      }
       listenTo.forEach((eventName) => element.addEventListener(
         eventName,
         (e) => trackConversion(e.target),

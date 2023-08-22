@@ -4,13 +4,30 @@ Adds conversion tracking functionality to Helix RUM Collection (client-side)
 
 ## Installation
 
+###### SSH
+
 ```bash
 git subtree add --squash --prefix plugins/rum-conversion git@github.com:adobe/franklin-rum-conversion.git main
 ```
 
+###### HTTPS
+
+```bash
+git subtree add --squash --prefix plugins/rum-conversion https://github.com/adobe/franklin-rum-conversion.git main
+```
+
 You can then later update it from the source again via:
+
+###### SSH
+
 ```bash
 git subtree pull --squash --prefix plugins/rum-conversion git@github.com:adobe/franklin-rum-conversion.git main
+```
+
+###### HTTPS
+
+```bash
+git subtree pull --squash --prefix plugins/rum-conversion https://github.com/adobe/franklin-rum-conversion.git main
 ```
 
 :warning: If you are using a folder as a franklin docroot/codeBasePath: you must add that folder in the `prefix` argument in the commands above.
