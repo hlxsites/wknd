@@ -1,3 +1,5 @@
+import { analyticsTrackFormSubmission } from '../../scripts/analytics/lib-analytics.js';
+
 function createSelect(fd) {
   const select = document.createElement('select');
   select.id = fd.Field;
@@ -46,17 +48,17 @@ async function submitForm(form) {
   return payload;
 }
 
-function createButton(fd) {
+function createButton(fd, form = '') {
   const button = document.createElement('button');
   button.textContent = fd.Label;
   button.classList.add('button');
-  if (fd.Type === 'submit') {
-    button.addEventListener('click', async (event) => {
-      const form = button.closest('form');
+  if (fd.Type === 'submit' && form) {
+    form.addEventListener('submit', async (event) => {
       if (form.checkValidity()) {
         event.preventDefault();
         button.setAttribute('disabled', '');
         await submitForm(form);
+        await analyticsTrackFormSubmission(form);
         const redirectTo = fd.Extra;
         window.location.href = redirectTo;
       }
@@ -150,7 +152,7 @@ async function createForm(formURL) {
         fieldWrapper.append(createTextArea(fd));
         break;
       case 'submit':
-        fieldWrapper.append(createButton(fd));
+        fieldWrapper.append(createButton(fd, form));
         break;
       default:
         fieldWrapper.append(createLabel(fd));

@@ -315,3 +315,27 @@ main .section[data-section-status='loading'],
 main .section[data-section-status='initialized'] {
   display: none;
 }
+
+/* cookie consent styles */
+.cc-window.cc-banner.cc-theme-block {
+  padding: 12px 10px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+}
+
+.cc-highlight .cc-btn.cc-customize, .cc-policies-links.cc-link {
+  color: var(--highlight-text-color);
+}
+
+.cc-highlight .cc-btn+.cc-btn {
+  padding: 13px 29px;
+  background-color: var(--highlight-background-color);
+  color: var(--highlight-text-color);
+  text-transform: uppercase;
+  border-style: none;
+}
+
+.cc-btn.cc-save {
+  padding: 13px 29px;
+}

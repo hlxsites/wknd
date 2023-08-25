@@ -28,6 +28,8 @@ export function sampleRUM(checkpoint, data = {}) {
         .filter(({ fnname }) => dfnname === fnname)
         .forEach(({ fnname, args }) => sampleRUM[fnname](...args));
     });
+  sampleRUM.always = sampleRUM.always || [];
+  sampleRUM.always.on = (chkpnt, fn) => { sampleRUM.always[chkpnt] = fn; };
   sampleRUM.on = (chkpnt, fn) => { sampleRUM.cases[chkpnt] = fn; };
   defer('observe');
   defer('cwv');
@@ -68,6 +70,7 @@ export function sampleRUM(checkpoint, data = {}) {
       sendPing(data);
       if (sampleRUM.cases[checkpoint]) { sampleRUM.cases[checkpoint](); }
     }
+    if (sampleRUM.always[checkpoint]) { sampleRUM.always[checkpoint](data); }
   } catch (error) {
     // something went wrong
   }
@@ -169,6 +172,11 @@ export async function fetchPlaceholders(prefix = 'default') {
             });
             window.placeholders[prefix] = placeholders;
             resolve();
+          })
+          .catch((error) => {
+            // error loading placeholders
+            window.placeholders[prefix] = {};
+            reject(error);
           });
       } catch (error) {
         // error loading placeholders
@@ -179,6 +187,14 @@ export async function fetchPlaceholders(prefix = 'default') {
   }
   await window.placeholders[`${prefix}-loaded`];
   return window.placeholders[prefix];
+}
+
+export function getPlaceholderOrDefault(key, defaultText) {
+  if (!key) {
+    return defaultText || '';
+  }
+
+  return window.placeholders?.[`/${document.documentElement.lang}`]?.[key] || defaultText || '';
 }
 
 /**
