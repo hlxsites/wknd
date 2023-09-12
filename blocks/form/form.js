@@ -94,7 +94,7 @@ function createTextArea(fd) {
   return input;
 }
 
-function createLabel(fd) {
+function createLabel(fd ,tagName = 'label') {
   const label = document.createElement(tagName);
   label.setAttribute('for', fd.Id);
   label.className = 'field-label';
