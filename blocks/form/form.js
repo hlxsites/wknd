@@ -94,17 +94,12 @@ function createTextArea(fd) {
   return input;
 }
 
-function createLabel(fd ,tagName = 'label') {
-  const label = document.createElement(tagName);
-  label.setAttribute('for', fd.Id);
-  label.className = 'field-label';
-  label.textContent = fd.Label || '';
-  if (fd.Type !== 'radio') {
-    label.setAttribute('itemprop', 'Label');
-    label.setAttribute('itemtype', 'text');
-  }
-  if (fd.Tooltip) {
-    label.title = fd.Tooltip;
+function createLabel(fd) {
+  const label = document.createElement('label');
+  label.setAttribute('for', fd.Field);
+  label.textContent = fd.Label;
+  if (fd.Mandatory === 'x') {
+    label.classList.add('required');
   }
   return label;
 }
@@ -127,7 +122,6 @@ function applyRules(form, rules) {
 
 async function createForm(formURL) {
   const { pathname } = new URL(formURL);
-  window.formPath = pathname;
   const resp = await fetch(pathname);
   const json = await resp.json();
   const form = document.createElement('form');
@@ -141,13 +135,6 @@ async function createForm(formURL) {
     const fieldId = `form-${fd.Type}-wrapper${style}`;
     fieldWrapper.className = fieldId;
     fieldWrapper.classList.add('field-wrapper');
-    if (fd.Type != 'radio') {
-    fieldWrapper.setAttribute('itemtype', 'component');
-    fieldWrapper.setAttribute('itemid', generateItemId(fd.Id));
-    fieldWrapper.setAttribute('itemscope', '');
-    fieldWrapper.setAttribute('data-editor-itemlabel', fd.Label || fd.Name);
-    fieldWrapper.setAttribute('data-editor-itemmodel', fd.Type);
-    }
     switch (fd.Type) {
       case 'select':
         fieldWrapper.append(createLabel(fd));
@@ -189,22 +176,9 @@ async function createForm(formURL) {
   return (form);
 }
 
-function generateItemId(id) {
-  if (id) {
-    return `urn:fnkconnection:${window.formPath}:default:Id:${id}`;
-  } else {
-    return `urn:fnkconnection:${window.formPath}:default`;
-  }
-}
-
 export default async function decorate(block) {
-  const formLink = block.querySelector('a[href$=".json"]');
-  if (formLink) {
-    const form = await createForm(formLink.href);
-    form.setAttribute('itemid', generateItemId());
-    form.setAttribute('itemtype', 'container');
-    form.setAttribute('itemscope', '');
-    form.setAttribute('data-editor-itemlabel', "Form Container");
-    formLink.replaceWith(form);
+  const form = block.querySelector('a[href$=".json"]');
+  if (form) {
+    form.replaceWith(await createForm(form.href));
   }
 }
