@@ -41,6 +41,6 @@ if (!TEST_URL) {
 
   }
 
-  console.log('Done! Ran ' + ITERATIONS + " times."); //"%s".', fullTitle);
+  console.log('Done! Ran ' + ITERATIONS + " times.");
   await browser.close();
 })();
