@@ -141,6 +141,13 @@ async function createForm(formURL) {
     const fieldId = `form-${fd.Type}-wrapper${style}`;
     fieldWrapper.className = fieldId;
     fieldWrapper.classList.add('field-wrapper');
+    if (fd.Type != 'radio') {
+    fieldWrapper.setAttribute('itemtype', 'component');
+    fieldWrapper.setAttribute('itemid', generateItemId(fd.Id));
+    fieldWrapper.setAttribute('itemscope', '');
+    fieldWrapper.setAttribute('data-editor-itemlabel', fd.Label || fd.Name);
+    fieldWrapper.setAttribute('data-editor-itemmodel', fd.Type);
+    }
     switch (fd.Type) {
       case 'select':
         fieldWrapper.append(createLabel(fd));
