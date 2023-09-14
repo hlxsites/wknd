@@ -47,7 +47,8 @@ Before you begin, ensure you have the [AEM Sidekick Chrome extension](https://ch
 [RUM docs](https://www.hlx.live/developer/rum)
 
 - You will need to fork this repository in order to access "Real User Monitoring" (RUM) data, including conversion data, via the Slack Bot
-- In your fork, point fstab.yaml to a SharePoint or Google Drive folder that you own. Extract and upload documents.zip to seed this folder with content
+- In your fork, point fstab.yaml to a SharePoint or Google Drive folder that you own, and is shared with `helix@adobe.com`
+- Extract and upload the contents of `/docs/authoring` to seed this folder with content. Publish the content to your forked site using the AEM Sidekick
 - Install the Github bot on your forked repository using this link: https://github.com/apps/helix-bot/installations/new
 - Using the AEM sidekick, publish the content that you would like to track conversions for (at minimum, the index and adventures documents)
 - For details on project setup, reference the [Developer Tutorial](https://www.hlx.live/developer/tutorial)
@@ -58,8 +59,8 @@ Before you begin, ensure you have the [AEM Sidekick Chrome extension](https://ch
 # Set the value of TEST_URL to your forked site's Preview URL
 WKND_URL=https://main--wknd--<YOUR-GITHUB-USERNAME-OR-ORG>.hlx.live npm run generate-traffic
 
-# For example, using the WKND Demo repository, and running 100 iterations:
-WKND_URL=https://main--wknd--hlxsites.hlx.live ITERATIONS=100 npm run generate-traffic
+# For example, using the WKND Demo repository, and running 1000 iterations:
+WKND_URL=https://main--wknd--hlxsites.hlx.live ITERATIONS=1000 npm run generate-traffic
 ```
 
 ### Slack Bot
