@@ -56,10 +56,10 @@ Before you begin, ensure you have the [AEM Sidekick Chrome extension](https://ch
 
 ```sh
 # Set the value of TEST_URL to your forked site's Preview URL
-TEST_URL=https://main--wknd--<YOUR-GITHUB-USERNAME-OR-ORG>.hlx.page npm run generate-traffic
+WKND_URL=https://main--wknd--<YOUR-GITHUB-USERNAME-OR-ORG>.hlx.live npm run generate-traffic
 
 # For example, using the WKND Demo repository, and running 100 iterations:
-TEST_URL=https://main--wknd--hlxsites.hlx.page ITERATIONS=100 npm run generate-traffic
+WKND_URL=https://main--wknd--hlxsites.hlx.live ITERATIONS=100 npm run generate-traffic
 ```
 
 ### Slack Bot
