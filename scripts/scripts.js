@@ -12,6 +12,8 @@ import {
   waitForLCP,
   loadBlocks,
   loadCSS,
+  loadScript,
+  toCamelCase,
   toClassName,
 } from './lib-franklin.js';
 import {
@@ -26,18 +28,39 @@ import {
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
-// Define the custom audiences mapping for experimentation
-const EXPERIMENTATION_CONFIG = {
-  audiences: {
-    device: {
-      mobile: () => window.innerWidth < 600,
-      desktop: () => window.innerWidth >= 600,
-    },
-    visitor: {
-      new: () => !localStorage.getItem('franklin-visitor-returning'),
-      returning: () => !!localStorage.getItem('franklin-visitor-returning'),
-    },
-  },
+// Define the custom audiences mapping for experience decisioning
+const AUDIENCES = {
+  mobile: () => window.innerWidth < 600,
+  desktop: () => window.innerWidth >= 600,
+  'new-visitor': () => !localStorage.getItem('franklin-visitor-returning'),
+  'returning-visitor': () => !!localStorage.getItem('franklin-visitor-returning'),
+};
+
+/**
+ * Gets all the metadata elements that are in the given scope.
+ * @param {String} scope The scope/prefix for the metadata
+ * @returns an array of HTMLElement nodes that match the given scope
+ */
+export function getAllMetadata(scope) {
+  return [...document.head.querySelectorAll(`meta[property^="${scope}:"],meta[name^="${scope}-"]`)]
+    .reduce((res, meta) => {
+      const id = toClassName(meta.name
+        ? meta.name.substring(scope.length + 1)
+        : meta.getAttribute('property').split(':')[1]);
+      res[id] = meta.getAttribute('content');
+      return res;
+    }, {});
+}
+
+// Define an execution context
+const pluginContext = {
+  getAllMetadata,
+  getMetadata,
+  loadCSS,
+  loadScript,
+  sampleRUM,
+  toCamelCase,
+  toClassName,
 };
 
 /**
@@ -175,12 +198,13 @@ async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
 
-  // load experiments
-  const experiment = toClassName(getMetadata('experiment'));
-  const instantExperiment = getMetadata('instant-experiment');
-  if (instantExperiment || experiment) {
-    const { runExperiment } = await import('./experimentation/index.js');
-    await runExperiment(experiment, instantExperiment, EXPERIMENTATION_CONFIG);
+  // Run experience decisioning plugin
+  if (getMetadata('experiment')
+    || Object.keys(getAllMetadata('campaign')).length
+    || Object.keys(getAllMetadata('audience')).length) {
+    // eslint-disable-next-line import/no-relative-packages
+    const { loadEager: runEager } = await import('../plugins/experience-decisioning/src/index.js');
+    await runEager.call(pluginContext, { audiences: AUDIENCES });
   }
 
   // load demo config
@@ -263,6 +287,16 @@ async function loadLazy(doc) {
   // eslint-disable-next-line import/no-relative-packages
   const { initConversionTracking } = await import('../plugins/rum-conversion/src/index.js');
   await initConversionTracking.call(context, document);
+
+  // Load experience decisioning overlay logic
+  if ((getMetadata('experiment')
+    || Object.keys(getAllMetadata('campaign')).length
+    || Object.keys(getAllMetadata('audience')).length)
+    && (window.location.hostname === 'localhost' || window.location.hostname.endsWith('.hlx.page'))) {
+    // eslint-disable-next-line import/no-relative-packages
+    const { loadLazy: runLazy } = await import('../plugins/experience-decisioning/src/index.js');
+    await runLazy.call(pluginContext, { audiences: AUDIENCES });
+  }
 }
 
 /**

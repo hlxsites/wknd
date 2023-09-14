@@ -96,6 +96,32 @@ export function loadCSS(href, callback) {
 }
 
 /**
+ * Loads a non module JS file.
+ * @param {string} src URL to the JS file
+ * @param {Object} attrs additional optional attributes
+ */
+
+export async function loadScript(src, attrs) {
+  return new Promise((resolve, reject) => {
+    if (!document.querySelector(`head > script[src="${src}"]`)) {
+      const script = document.createElement('script');
+      script.src = src;
+      if (attrs) {
+      // eslint-disable-next-line no-restricted-syntax, guard-for-in
+        for (const attr in attrs) {
+          script.setAttribute(attr, attrs[attr]);
+        }
+      }
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.append(script);
+    } else {
+      resolve();
+    }
+  });
+}
+
+/**
  * Retrieves the content of metadata tags.
  * @param {string} name The metadata name (or property)
  * @returns {string} The metadata value(s)
@@ -358,25 +384,23 @@ export function buildBlock(blockName, content) {
 }
 
 /**
- * Gets the configuration for the given glock, and also passes
- * the config to the `patchBlockConfig` methods in the plugins.
+ * Gets the configuration for the given block, and also passes
+ * the config through all custom patching helpers added to the project.
  *
  * @param {Element} block The block element
- * @returns {object} The block config (blockName, cssPath and jsPath)
+ * @returns {Object} The block config (blockName, cssPath and jsPath)
  */
 function getBlockConfig(block) {
-  const blockName = block.getAttribute('data-block-name');
+  const { blockName } = block.dataset;
   const cssPath = `${window.hlx.codeBasePath}/blocks/${blockName}/${blockName}.css`;
   const jsPath = `${window.hlx.codeBasePath}/blocks/${blockName}/${blockName}.js`;
-
-  if (!window.hlx.patchBlockConfig) {
-    return { blockName, cssPath, jsPath };
-  }
-
-  return window.hlx.patchBlockConfig.reduce(
-    (config, fn) => (typeof fn === 'function' ? fn(config) : config),
-    { blockName, cssPath, jsPath },
-  );
+  const original = { blockName, cssPath, jsPath };
+  return window.hlx.patchBlockConfig
+    .filter((fn) => typeof fn === 'function')
+    .reduce(
+      (config, fn) => fn(config, original),
+      { blockName, cssPath, jsPath },
+    );
 }
 
 /**
