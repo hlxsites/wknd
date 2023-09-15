@@ -44,7 +44,7 @@ Before you begin, ensure you have the [AEM Sidekick Chrome extension](https://ch
 <img src="/docs/images/experiment-metadata.png" width="500" alt="The document source which configures the experiments">
 
 ### Conversion Tracking
-[RUM docs](https://www.hlx.live/developer/rum)
+[Franklin RUM Conversion tracking usage docs](https://github.com/adobe/franklin-rum-conversion#usage)
 
 - You will need to fork this repository in order to access "Real User Monitoring" (RUM) data, including conversion data, via the Slack Bot
 - In your fork, point fstab.yaml to a SharePoint or Google Drive folder that you own, and is shared with `helix@adobe.com`
