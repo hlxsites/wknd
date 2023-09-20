@@ -324,11 +324,10 @@ async function applyTransformation(formDef, form) {
       );
     }
 
-    const transformRequest = async (request, form) => requestTransformers?.reduce(
-      (promise, transformer) => promise.then((modifiedRequest) => transformer(modifiedRequest, form)),
+    const transformRequest = async (request, fd) => requestTransformers?.reduce(
+      (promise, transformer) => promise.then((modifiedRequest) => transformer(modifiedRequest, fd)),
       Promise.resolve(request),
-    )
-    
+    );
     return transformRequest;
   } catch (e) {
     // eslint-disable-next-line no-console
