@@ -1,0 +1,636 @@
+{
+    "groups": [
+        {
+            "title": "Form Components",
+            "id": "form-general",
+            "components": [
+                {
+                    "title": "Text Input",
+                    "id": "text",
+                    "plugins": {
+                        "fnk": {
+                            "form": {
+                                "Type": "text",
+                                "Label": "Text Input"
+                            }
+                        }
+                    },
+                    "model": {
+                        "id": "text",
+                        "fields": [
+                            {
+                                "component": "text-input",
+                                "name": "Name",
+                                "label": "Name",
+                                "valueType": "string",
+                                "required": true
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Label",
+                                "label": "Label",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Description",
+                                "label": "Description",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Placeholder",
+                                "label": "Placeholder",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Hidden",
+                                "label": "Hidden",
+                                "valueType": "boolean"
+                            },
+                            {
+
+                                "component": "boolean",
+                                "name": "Read Only",
+                                "label": "Read Only",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Mandatory",
+                                "label": "Required",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Value",
+                                "label": "Default Value",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "number",
+                                "name": "Min",
+                                "label": "Minimum Value",
+                                "valueType": "number",
+                                "description": "Minimum length of the text in the field"
+                            },
+                            {
+                                "component": "number",
+                                "name": "Max",
+                                "label": "Maximum Value",
+                                "valueType": "number",
+                                "description": "Maximum length of the text in the field"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "title": "Number Input",
+                    "id": "numberinput",
+                    "plugins": {
+                        "fnk": {
+                            "form": {
+                                "Type": "number",
+                                "Label": "Number Input"
+                            }
+                        }
+                    },
+                    "model": {
+                        "id": "number",
+                        "fields": [
+                            {
+                                "component": "text-input",
+                                "name": "Name",
+                                "label": "Name",
+                                "valueType": "string",
+                                "required": true
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Label",
+                                "label": "Label",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Description",
+                                "label": "Description",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Placeholder",
+                                "label": "Placeholder",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Hidden",
+                                "label": "Hidden",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Read Only",
+                                "label": "Read Only",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Mandatory",
+                                "label": "Required",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "number",
+                                "name": "Value",
+                                "label": "Default Value",
+                                "valueType": "number"
+                            },
+                            {
+                                "component": "number",
+                                "name": "Min",
+                                "label": "Minimum Value",
+                                "valueType": "number",
+                                "description": "Minimum value of the number allowed in the field"
+                            },
+                            {
+                                "component": "number",
+                                "name": "Max",
+                                "label": "Maximum Value",
+                                "valueType": "number",
+                                "description": "Maximum value of the number allowed in the field"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "title": "Date Input",
+                    "id": "dateinput",
+                    "plugins": {
+                        "fnk": {
+                            "form": {
+                                "Type": "date",
+                                "Label": "Date Input"
+                            }
+                        }
+                    },
+                    "model": {
+                        "id": "date",
+                        "fields": [
+                            {
+                                "component": "text-input",
+                                "name": "Name",
+                                "label": "Name",
+                                "valueType": "string",
+                                "required": true
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Label",
+                                "label": "Label",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Description",
+                                "label": "Description",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Placeholder",
+                                "label": "Placeholder",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Hidden",
+                                "label": "Hidden",
+                                "valueType": "boolean"
+                            },
+                            {
+
+                                "component": "boolean",
+                                "name": "Read Only",
+                                "label": "Read Only",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Mandatory",
+                                "label": "Required",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "number",
+                                "name": "Value",
+                                "label": "Default Value",
+                                "valueType": "number"
+                            },
+                            {
+                                "component": "date-time",
+                                "name": "Min",
+                                "label": "Minimum Value",
+                                "valueType": "date",
+                                "description": "Minimum value of the number allowed in the field"
+                            },
+                            {
+                                "component": "date-time",
+                                "name": "Max",
+                                "label": "Maximum Value",
+                                "valueType": "date",
+                                "description": "Maximum value of the number allowed in the field"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "title": "Drop Down",
+                    "id": "dropdown",
+                    "plugins": {
+                        "fnk": {
+                            "form": {
+                                "Type": "select",
+                                "Label": "Drop Down List",
+                                "Options": ["Option 1", "Option 2"]
+                            }
+                        }
+                    },
+                    "model": {
+                        "id": "select",
+                        "fields": [
+                            {
+                                "component": "text-input",
+                                "name": "Name",
+                                "label": "Name",
+                                "valueType": "string",
+                                "required": true
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Label",
+                                "label": "Label",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Description",
+                                "label": "Description",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Placeholder",
+                                "label": "Placeholder",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Hidden",
+                                "label": "Hidden",
+                                "valueType": "boolean"
+                            },
+                            {
+
+                                "component": "boolean",
+                                "name": "Read Only",
+                                "label": "Read Only",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Mandatory",
+                                "label": "Required",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Options",
+                                "label": "Options",
+                                "valueType": "string",
+                                "multi": true
+                            }
+                        ]
+                    }
+                },
+                {
+                    "title": "Check Box",
+                    "id": "checkbox",
+                    "plugins": {
+                        "fnk": {
+                            "form": {
+                                "Type": "checkbox",
+                                "Label": "Check Box",
+                                "Value": "Checkbox Value"
+                            }
+                        }
+                    },
+                    "model": {
+                        "id": "checkbox",
+                        "fields": [
+                            {
+                                "component": "text-input",
+                                "name": "Name",
+                                "label": "Name",
+                                "valueType": "string",
+                                "required": true
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Label",
+                                "label": "Label",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Description",
+                                "label": "Description",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Placeholder",
+                                "label": "Placeholder",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Hidden",
+                                "label": "Hidden",
+                                "valueType": "boolean"
+                            },
+                            {
+
+                                "component": "boolean",
+                                "name": "Read Only",
+                                "label": "Read Only",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Mandatory",
+                                "label": "Required",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Value",
+                                "label": "Value",
+                                "valueType": "string"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "title": "Radio Button",
+                    "id": "radiobutton",
+                    "plugins": {
+                        "fnk": {
+                            "form": {
+                                "Type": "radio",
+                                "Label": "Radio Button",
+                                "Value": "Radio Button Value"
+                            }
+                        }
+                    },
+                    "model": {
+                        "id": "radio",
+                        "fields": [
+                            {
+                                "component": "text-input",
+                                "name": "Name",
+                                "label": "Name",
+                                "valueType": "string",
+                                "required": true
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Label",
+                                "label": "Label",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Description",
+                                "label": "Description",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Placeholder",
+                                "label": "Placeholder",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Hidden",
+                                "label": "Hidden",
+                                "valueType": "boolean"
+                            },
+                            {
+
+                                "component": "boolean",
+                                "name": "Read Only",
+                                "label": "Read Only",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Mandatory",
+                                "label": "Required",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Value",
+                                "label": "Value",
+                                "valueType": "string"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "title": "Button",
+                    "id": "button",
+                    "plugins": {
+                        "fnk": {
+                            "form": {
+                                "Type": "button",
+                                "Label": "Button"
+                            }
+                        }
+                    },
+                    "model": {
+                        "id": "button",
+                        "fields": [
+                            {
+                                "component": "text-input",
+                                "name": "Name",
+                                "label": "Name",
+                                "valueType": "string",
+                                "required": true
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Label",
+                                "label": "Label",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Description",
+                                "label": "Description",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Placeholder",
+                                "label": "Placeholder",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Hidden",
+                                "label": "Hidden",
+                                "valueType": "boolean"
+                            },
+                            {
+
+                                "component": "boolean",
+                                "name": "Read Only",
+                                "label": "Read Only",
+                                "valueType": "boolean"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "title": "File Attachment",
+                    "id": "fileinput",
+                    "plugins": {
+                        "fnk": {
+                            "form": {
+                                "Type": "file",
+                                "Label": "File Attachment",
+                                "Accept": ["audio/*", "video/*", "image/*", "text/*", "application/pdf"]
+                            }
+                        }
+                    },
+                    "model": {
+                        "id": "file",
+                        "fields": [
+                            {
+                                "component": "text-input",
+                                "name": "Name",
+                                "label": "Name",
+                                "valueType": "string",
+                                "required": true
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Label",
+                                "label": "Label",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Description",
+                                "label": "Description",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Placeholder",
+                                "label": "Placeholder",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Hidden",
+                                "label": "Hidden",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Read Only",
+                                "label": "Read Only",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Mandatory",
+                                "label": "Required",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Multiple",
+                                "label": "Multiple",
+                                "valueType": "boolean"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Accept",
+                                "label": "Accept",
+                                "valueType": "string",
+                                "multi": true,
+                                "value": ["audio/*", "video/*", "image/*", "text/*", "application/pdf"]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "title": "Panel",
+                    "id": "panel",
+                    "plugins": {
+                        "fnk": {
+                            "form": {
+                                "Type": "fieldset",
+                                "Label": "Panel"
+                            }
+                        }
+                    },
+                    "model": {
+                        "id": "fieldset",
+                        "fields": [
+                            {
+                                "component": "text-input",
+                                "name": "Name",
+                                "label": "Name",
+                                "valueType": "string",
+                                "required": true
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Label",
+                                "label": "Label",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "text-input",
+                                "name": "Description",
+                                "label": "Description",
+                                "valueType": "string"
+                            },
+                            {
+                                "component": "boolean",
+                                "name": "Hidden",
+                                "label": "Hidden",
+                                "valueType": "boolean"
+                            },
+                            {
+
+                                "component": "boolean",
+                                "name": "Read Only",
+                                "label": "Read Only",
+                                "valueType": "boolean"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
