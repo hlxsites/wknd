@@ -2,8 +2,8 @@
     --background-color-primary: #fff;
     --label-color: #666;
     --border-color: #818a91;
-    --button-primary-color: #5F8DDA;
-    --button-primary-hover-color: #035fe6;
+    --button-primary-color: var(--color-yellow);
+    --button-primary-hover-color: var(--color-yellow);
     --form-font-size-m: 22px;
     --form-font-size-s: 18px;
     --form-font-size-xs: 16px;
@@ -34,12 +34,12 @@
     --form-fieldset-legend-font-weight: var(--form-title-font-weight);
     --form-fieldset-legend-border: none;
     --form-fieldset-legend-padding: 0;
-    --form-button-color: var(--background-color-primary);
-    --form-button-font-size: var(--form-font-size-s);
+    --form-button-color: var(--text-color);
+    --form-button-font-size: var(--form-font-size-xs);
     --form-button-background-color: var(--button-primary-color);
     --form-button-background-hover-color: var(--button-primary-hover-color);
     --form-button-border: 2px solid transparent;
-    --form-button-padding:15px 50px;
+    --form-button-padding: var(--button-padding);
     --form-upload-color: var(--background-color-primary);
     --form-upload-font-size: var(--form-font-size-xs);
     --form-upload-background-color: var(--mt-global-color-base-primary);
