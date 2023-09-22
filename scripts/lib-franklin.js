@@ -79,7 +79,6 @@ export function sampleRUM(checkpoint, data = {}) {
 /**
  * Loads a CSS file.
  * @param {string} href The path to the CSS file
- * @param {(value: *) => void} callback Function to call onload or onerror
  */
 export function loadCSS(href, callback) {
   if (!document.querySelector(`head > link[href="${href}"]`)) {
@@ -99,12 +98,11 @@ export function loadCSS(href, callback) {
 /**
  * Retrieves the content of metadata tags.
  * @param {string} name The metadata name (or property)
- * @param doc Document object to query for the metadata. Defaults to the window's document
  * @returns {string} The metadata value(s)
  */
-export function getMetadata(name, doc = document) {
+export function getMetadata(name) {
   const attr = name && name.includes(':') ? 'property' : 'name';
-  const meta = [...doc.head.querySelectorAll(`meta[${attr}="${name}"]`)].map((m) => m.content).join(', ');
+  const meta = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)].map((m) => m.content).join(', ');
   return meta || '';
 }
 
@@ -261,7 +259,7 @@ export function readBlockConfig(block) {
 
 /**
  * Decorates all sections in a container element.
- * @param {Element} main The container element
+ * @param {Element} $main The container element
  */
 export function decorateSections(main) {
   main.querySelectorAll(':scope > div').forEach((section) => {
@@ -434,7 +432,6 @@ export async function loadBlocks(main) {
 /**
  * Returns a picture element with webp and fallbacks
  * @param {string} src The image URL
- * @param {string} alt Alternative text to describe the image
  * @param {boolean} eager load image eager
  * @param {Array} breakpoints breakpoints and corresponding params (eg. width)
  */
