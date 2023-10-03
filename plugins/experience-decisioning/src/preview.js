@@ -269,7 +269,7 @@ function populatePerformanceMetrics(div, config, {
 }
 
 /**
- * Create Badge if a Page is enlisted in a Helix Experiment
+ * Create Badge if a Page is enlisted in a AEM Experiment
  * @return {Object} returns a badge or empty string
  */
 async function decorateExperimentPill(overlay, options) {
@@ -325,7 +325,7 @@ function createCampaign(campaign, isSelected, options) {
 }
 
 /**
- * Create Badge if a Page is enlisted in a Franklin Campign
+ * Create Badge if a Page is enlisted in a AEM Campaign
  * @return {Object} returns a badge or empty string
  */
 async function decorateCampaignPill(overlay, options) {
@@ -384,7 +384,7 @@ function createAudience(audience, isSelected, options) {
 }
 
 /**
- * Create Badge if a Page is enlisted in a Franklin Campign
+ * Create Badge if a Page is enlisted in a AEM Audiences
  * @return {Object} returns a badge or empty string
  */
 async function decorateAudiencesPill(overlay, options) {
@@ -422,7 +422,7 @@ async function decorateAudiencesPill(overlay, options) {
  */
 export default async function decoratePreviewMode(options) {
   try {
-    this.loadCSS('/plugins/experience-decisioning/src/preview.css');
+    this.loadCSS(`${window.hlx.codeBasePath}/plugins/experience-decisioning/src/preview.css`);
     const overlay = getOverlay(options);
     await decorateAudiencesPill.call(this, overlay, options);
     await decorateCampaignPill.call(this, overlay, options);
