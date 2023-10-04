@@ -10,6 +10,10 @@ Codebase for the fictional WKND site, showcasing the capabilities of Adobe's Edg
 - Preview: https://main--wknd--hlxsites.hlx.page/
 - Live: https://main--wknd--hlxsites.hlx.live/
 
+## Cloning this repository
+
+This repository uses [Git Large File Storage](https://git-lfs.com/) for `/docs/authoring/documents.zip`. Git-LFS should be installed locally before the repository is cloned.
+
 ## Installation
 
 ```sh
