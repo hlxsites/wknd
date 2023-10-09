@@ -424,7 +424,7 @@ function registerPageEventListener(experimentId, variantId) {
   console.log("registerPageEventListener");
 
   document.addEventListener('click', (ev) => {
-    sendAlloyEvent({ interact: 1 }, experimentId, variantId, alloy);
+    // sendAlloyEvent({ interact: 1 }, experimentId, variantId, alloy);
   });
 }
 
@@ -470,7 +470,7 @@ export async function runExperiment(experiment, instantExperiment, customOptions
     console.debug(`failed to serve variant ${window.hlx.experiment.selectedVariant}. Falling back to ${experimentConfig.variantNames[0]}.`);
   }
   document.body.classList.add(`variant-${result ? experimentConfig.selectedVariant : experimentConfig.variantNames[0]}`);
-  sendAlloyEvent( { display: 1 }, experimentConfig.id, experimentConfig.selectedVariant, alloy);
+  // sendAlloyEvent( { display: 1 }, experimentConfig.id, experimentConfig.selectedVariant, alloy);
   registerPageEventListener(experimentConfig.id, experimentConfig.selectedVariant);
   sampleRUM('experiment', {
     source: experimentConfig.id,
