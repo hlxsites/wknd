@@ -33,6 +33,168 @@ const EXPERIMENTATION_CONFIG = {
 };
 
 /**
+ * Returns script that initializes a queue for each alloy instance,
+ * in order to be ready to receive events before the alloy library is loaded
+ * Documentation
+ * https://experienceleague.adobe.com/docs/experience-platform/edge/fundamentals/installing-the-sdk.html?lang=en#adding-the-code
+ * @type {string}
+ */
+function getAlloyInitScript() {
+  return `!function(n,o){o.forEach(function(o){n[o]||((n.__alloyNS=n.__alloyNS||[]).push(o),n[o]=
+  function(){var u=arguments;return new Promise(function(i,l){n[o].q.push([i,l,u])})},n[o].q=[])})}(window,["alloy"]);`;
+}
+
+/**
+ * Create inline script
+ * @param document
+ * @param element where to create the script element
+ * @param innerHTML the script
+ * @param type the type of the script element
+ * @returns {HTMLScriptElement}
+ */
+function createInlineScript(document, element, innerHTML, type) {
+  const script = document.createElement('script');
+  if (type) {
+    script.type = type;
+  }
+  script.innerHTML = innerHTML;
+  element.appendChild(script);
+  return script;
+}
+
+/**
+ * Returns datastream id to use as edge configuration id
+ * 
+ * @returns {{edgeConfigId: string, orgId: string}}
+ */
+function getDatastreamConfiguration() {
+  // Sites Internal
+  return {
+    edgeConfigId: '2324184b-260b-4d66-a8ca-897ab9374fb3',
+    orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+  };
+  // Target QA2
+  // return {
+  //   edgeConfigId: '5a7bbd68-56a6-4dd7-87fe-c1c9c002ac7a',
+  //   orgId: '039E5CD253BE29E30A4C86E6@AdobeOrg',
+  // };
+  // Experience Edge early access
+
+  // return {
+  //   edgeConfigId: '0d97c85a-1f52-44a2-8040-c30b7c2259df',
+  //   orgId: '53A16ACB5CC1D3760A495C99@AdobeOrg',
+  // };
+}
+
+/**
+ * Returns alloy configuration
+ * Documentation https://experienceleague.adobe.com/docs/experience-platform/edge/fundamentals/configuring-the-sdk.html
+ */
+// eslint-disable-next-line no-unused-vars
+function getAlloyConfiguration(document) {
+  return {
+    // enable while debugging
+    debugEnabled: true, //document.location.hostname.startsWith('localhost'),
+    // disable when clicks are also tracked via sendEvent with additional details
+    clickCollectionEnabled: false,
+    // adjust default based on customer use case
+    defaultConsent: 'in',
+    ...getDatastreamConfiguration(),
+    // for experience-stage
+    // edgeDomain: 'edge-int.adobedc.net',
+    // idMigrationEnabled: false,
+    // thirdPartyCookiesEnabled: false,
+  };
+}
+
+/**
+ * Sets up alloy (initializes and configures alloy)
+ * @param document
+ * @returns {Promise<void>}
+ */
+export async function setupAlloy(document) {
+  createInlineScript(document, document.body, getAlloyInitScript(), 'text/javascript');
+
+  await import('/scripts/alloy.min.js');
+
+  // eslint-disable-next-line no-undef
+  const configure = alloy('configure', getAlloyConfiguration(document));
+
+  await configure;
+}
+
+function getEntitlement() {
+  const entitlements = ['photoshop', 'illustrator', 'acrobat', 'premier', 'unknown'];
+  const index = Math.floor(Math.random() * entitlements.length);
+  return entitlements[index];
+}
+
+function getCountry() {
+  let country = 'us';
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      country = position.coords.country; 
+    });
+  }
+  return country;
+}
+
+/**
+ * Log alloy event for the experiment
+ * @param {*} eventType 
+ * @param {*} experimentId 
+ * @param {*} treatmentId 
+ */
+export async function sendAlloyEvent(eventType, ecid) {
+  console.log("logEventAlloy " + eventType);
+  const context = {
+    "identityMap": {
+      "ECID": [
+        {
+          "id": ecid,
+          "primary": true
+        }
+      ]
+    }
+  }
+
+  const alloyEvent = {
+		"xdm": {
+			"eventType": eventType,
+			"identityMap": context.identityMap,
+      "_sitesinternal": {
+        "Interests": "Sports",
+        "Entitlements": getEntitlement(),
+      },
+			"person": {
+        country: getCountry(),
+      },
+		}
+	};
+  console.log(alloyEvent);
+  alloy('sendEvent', alloyEvent);
+}
+
+async function getAlloyRenderDecisions() {
+  const alloyResult = window.alloyResult || await alloy("sendEvent", {
+    "renderDecisions": true,
+  }).catch(function(error) {
+    console.error("Error sending event to alloy:", error);
+  }); 
+  window.alloyResult = alloyResult;
+  return alloyResult;
+}
+
+async function getEcid() {
+  if (window.ecid) {
+    return window.ecid;
+  }
+  const alloyResult = await alloy("getIdentity");
+  window.ecid = alloyResult.identity.ECID;
+  return window.ecid;
+}
+
+/**
  * Determine if we are serving content for the block-library, if so don't load the header or footer
  * @returns {boolean} True if we are loading block library content
  */
@@ -243,6 +405,11 @@ async function loadLazy(doc) {
       experimentation.default();
     }
   }
+
+  // setup alloy
+  await setupAlloy(document);
+  const ecid = await getEcid();
+  sendAlloyEvent('interaction', ecid);
 
   // Mark customer as having viewed the page once
   localStorage.setItem('franklin-visitor-returning', true);
