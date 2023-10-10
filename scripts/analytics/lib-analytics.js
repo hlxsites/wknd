@@ -110,7 +110,7 @@ function createInlineScript(document, element, innerHTML, type) {
  */
 async function sendAnalyticsEvent(xdmData) {
   // eslint-disable-next-line no-undef
-  if (!alloy) {
+  if (!window.alloy) {
     console.warn('alloy not initialized, cannot send analytics event');
     return Promise.resolve();
   }
