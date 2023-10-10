@@ -139,6 +139,12 @@ function getCountry() {
   return country;
 }
 
+function getInterests() {
+  const interests = ['sports', 'news', 'entertainment', 'unknown'];
+  const index = Math.floor(Math.random() * interests.length);
+  return interests[index];
+}
+
 /**
  * Log alloy event for the experiment
  * @param {*} eventType 
@@ -163,7 +169,7 @@ export async function sendAlloyEvent(eventType, ecid) {
 			"eventType": eventType,
 			"identityMap": context.identityMap,
       "_sitesinternal": {
-        "Interests": "Sports",
+        "Interests": getInterests(),
         "Entitlements": getEntitlement(),
       },
 			"person": {
