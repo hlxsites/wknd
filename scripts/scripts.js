@@ -40,6 +40,7 @@ function getSegmentsFromAlloyResponse(response) {
       }
     });
   }
+  console.log('segments', segments);
   return segments;
 }
 
