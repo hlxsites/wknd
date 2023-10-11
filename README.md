@@ -10,10 +10,6 @@ Codebase for the fictional WKND site, showcasing the capabilities of Adobe's Edg
 - Preview: https://main--wknd--hlxsites.hlx.page/
 - Live: https://main--wknd--hlxsites.hlx.live/
 
-## Cloning this repository
-
-This repository uses [Git Large File Storage](https://git-lfs.com/) for `/docs/authoring/documents.zip`. Git-LFS should be installed locally before the repository is cloned.
-
 ## Installation
 
 ```sh
@@ -52,7 +48,8 @@ Before you begin, ensure you have the [AEM Sidekick Chrome extension](https://ch
 
 - You will need to fork this repository in order to access "Real User Monitoring" (RUM) data, including conversion data, via the Slack Bot
 - In your fork, point fstab.yaml to a SharePoint or Google Drive folder that you own, and is shared with `helix@adobe.com`
-- Extract and upload the contents of `/docs/authoring/documents.zip` to seed this folder with content. Publish the content to your forked site using the AEM Sidekick
+- Download `documents.zip` from this project's [Demo Hub page](https://external.adobedemo.com/content/demo-hub/en/demos/external/aem_eds_demo0.html) in the Resources, Assets section. Note: you will need to be logged in to the Demo Hub to access this page
+- Extract and upload the contents of `documents.zip` to seed this folder with content. Publish the content to your forked site using the AEM Sidekick
 - Install the Github bot on your forked repository using this link: https://github.com/apps/helix-bot/installations/new
 - Using the AEM sidekick, publish the content that you would like to track conversions for (at minimum, the index and adventures documents)
 - For details on project setup, reference the [Developer Tutorial](https://www.hlx.live/developer/tutorial)
