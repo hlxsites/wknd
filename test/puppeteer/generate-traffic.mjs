@@ -30,7 +30,7 @@ if (!WKND_URL) {
   for (let i = 0; i < ITERATIONS; i++) {
 
     // First, click through the different sections of the site
-    const headerLinks = ["/magazine", "/adventures", "/faqs", "/about-us"];
+    const headerLinks = ["/magazine", "/adventures", "/faqs"];
     for (const link of headerLinks) {
       // Wait for the page to load, click the next link, then repeat
       const linkSelector = `a[href='${link}']`;
