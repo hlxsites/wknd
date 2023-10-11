@@ -22,11 +22,42 @@ import {
   analyticsTrackCWV,
   analyticsTrackError,
   initAnalyticsTrackingQueue,
+  loadAlloy,
   setupAnalyticsTrackingWithAlloy,
 } from './analytics/lib-analytics.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
+
+const PHOTOSHOP_SEGMENT_ID = '609b90e4-5306-4c37-b64b-e3026ad1f768';
+
+function getSegmentsFromAlloyResponse(response) {
+  const segments = [];
+  if (response && response.destinations) {
+    Object.values(response.destinations).forEach((destination) => {
+      if (destination.segments) {
+        Object.values(destination.segments).forEach((segment) => {
+          segments.push(segment.id);
+        });
+      }
+    });
+  }
+  return segments;
+}
+
+async function getSegmentsFromAlloy() {
+  if (!window.alloy) {
+    return [];
+  }
+  // eslint-disable-next-line no-undef
+  const alloyResult = await alloy('sendEvent', {
+    renderDecisions: true,
+  }).catch((error) => {
+    console.error('Error sending event to alloy:', error);
+    return [];
+  });
+  return getSegmentsFromAlloyResponse(alloyResult);
+}
 
 // Define the custom audiences mapping for experience decisioning
 const AUDIENCES = {
@@ -34,6 +65,7 @@ const AUDIENCES = {
   desktop: () => window.innerWidth >= 600,
   'new-visitor': () => !localStorage.getItem('franklin-visitor-returning'),
   'returning-visitor': () => !!localStorage.getItem('franklin-visitor-returning'),
+  photoshop: async () => (await getSegmentsFromAlloy()).includes(PHOTOSHOP_SEGMENT_ID),
 };
 
 /**
@@ -176,6 +208,53 @@ async function loadDemoConfig() {
   window.wknd.demoConfig = demoConfig;
 }
 
+export async function sendAlloyEvents(eventType, ecid) {
+  if (!window.alloy) {
+    return;
+  }
+  console.log('logEventAlloy {}', eventType);
+  const context = {
+    identityMap: {
+      ECID: [
+        {
+          id: ecid,
+          primary: true,
+        },
+      ],
+    },
+  };
+
+  const alloyEvent = {
+    xdm: {
+      eventType,
+      identityMap: context.identityMap,
+      _sitesinternal: {
+        Interests: 'sports',
+        Entitlements: 'photoshop',
+      },
+      person: {
+        country: 'us',
+      },
+    },
+  };
+  console.log(alloyEvent);
+  // eslint-disable-next-line no-undef
+  alloy('sendEvent', alloyEvent);
+}
+
+async function getEcid() {
+  if (!window.alloy) {
+    return '';
+  }
+  if (window.ecid) {
+    return window.ecid;
+  }
+  // eslint-disable-next-line no-undef
+  const alloyResult = await alloy('getIdentity');
+  window.ecid = alloyResult.identity.ECID;
+  return window.ecid;
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
@@ -197,6 +276,8 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  await initAnalyticsTrackingQueue();
+  await loadAlloy(doc);
 
   // Run experience decisioning plugin
   if (getMetadata('experiment')
@@ -212,7 +293,6 @@ async function loadEager(doc) {
 
   const main = doc.querySelector('main');
   if (main) {
-    await initAnalyticsTrackingQueue();
     decorateMain(main);
     await waitForLCP(LCP_BLOCKS);
   }
@@ -302,6 +382,10 @@ function loadDelayed() {
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
+  if (window.location.pathname.includes('products')) {
+    const ecid = await getEcid();
+    await sendAlloyEvents('interaction', ecid);
+  }
   const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
   loadDelayed();
   await setupAnalytics;
