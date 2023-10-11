@@ -49,7 +49,7 @@ function getAlloyInitScript() {
 function getDatastreamConfiguration() {
   // Sites Internal
   return {
-    edgeConfigId: 'caad777c-c410-4ceb-8b36-167f1cecc3de',
+    edgeConfigId: '2324184b-260b-4d66-a8ca-897ab9374fb3',
     orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
   };
 }
@@ -179,6 +179,15 @@ export async function initAnalyticsTrackingQueue() {
 }
 
 /**
+ * Loads alloy library
+ */
+export async function loadAlloy(document) {
+  await import('./alloy.min.js');
+  // eslint-disable-next-line no-undef
+  await alloy('configure', getAlloyConfiguration(document));
+}
+
+/**
  * Sets up analytics tracking with alloy (initializes and configures alloy)
  * @param document
  * @returns {Promise<void>}
@@ -189,15 +198,11 @@ export async function setupAnalyticsTrackingWithAlloy(document) {
     console.warn('alloy not initialized, cannot configure');
     return;
   }
-  // eslint-disable-next-line no-undef
-  const configurePromise = alloy('configure', getAlloyConfiguration(document));
 
   // Custom logic can be inserted here in order to support early tracking before alloy library
   // loads, for e.g. for page views
   const pageViewPromise = analyticsTrackPageViews(document); // track page view early
-
-  await import('./alloy.min.js');
-  await Promise.all([configurePromise, pageViewPromise]);
+  await Promise.all([pageViewPromise]);
 }
 
 /**
