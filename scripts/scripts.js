@@ -82,7 +82,11 @@ const AUDIENCES = {
     return segments.includes(FUNNEL_STATE_ELAPSED_SEGMENT_ID)
       && segments.includes(PHOTOSHOP_SEGMENT_ID);
   },
-  photoshop: async () => (await getSegmentsFromAlloy()).includes(PHOTOSHOP_SEGMENT_ID),
+  photoshop: async () => {
+    const segments = await getSegmentsFromAlloy();
+    return segments.includes(PHOTOSHOP_SEGMENT_ID)
+      && !segments.includes(FUNNEL_STATE_ELAPSED_SEGMENT_ID);
+  },
 };
 
 /**
