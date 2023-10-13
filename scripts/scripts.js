@@ -30,11 +30,11 @@ const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
 const PHOTOSHOP_SEGMENT_ID = '609b90e4-5306-4c37-b64b-e3026ad1f768';
-const FUNNEL_STATE_ELAPSED_SEGMENT_ID = 'f5b5b5c2-0b0a-4b0a-8b0a-0b0a0b0a0b0a';
+const FUNNEL_STATE_ELAPSED_SEGMENT_ID = 'a44525f4-e115-41d3-a650-eaad3fa2a458';
 
 const MAPPING_PREFIX = '_sitesinternal';
 const COOKIE_MAPPING_TO_SCHEMA = {
-  funnelstate: 'funnelstate',
+  funnelstate: 'Funnelstate',
 };
 
 function getSegmentsFromAlloyResponse(response) {
