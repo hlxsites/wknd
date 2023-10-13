@@ -75,7 +75,11 @@ const AUDIENCES = {
   desktop: () => window.innerWidth >= 600,
   'new-visitor': () => !localStorage.getItem('franklin-visitor-returning'),
   'returning-visitor': () => !!localStorage.getItem('franklin-visitor-returning'),
-  'funnel-state-lapsed': async () => (await getSegmentsFromAlloy()).includes(FUNNEL_STATE_ELAPSED_SEGMENT_ID),
+  'funnel-state-lapsed': async () => {
+    const segments = await getSegmentsFromAlloy();
+    return segments.includes(FUNNEL_STATE_ELAPSED_SEGMENT_ID)
+      && segments.includes(PHOTOSHOP_SEGMENT_ID);
+  },
   photoshop: async () => (await getSegmentsFromAlloy()).includes(PHOTOSHOP_SEGMENT_ID),
 };
 
