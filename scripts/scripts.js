@@ -28,6 +28,12 @@ const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
 const PHOTOSHOP_SEGMENT_ID = '609b90e4-5306-4c37-b64b-e3026ad1f768';
+const FUNNEL_STATE_ELAPSED_SEGMENT_ID = 'f5b5b5c2-0b0a-4b0a-8b0a-0b0a0b0a0b0a';
+
+const MAPPING_PREFIX = '_sitesinternal';
+const COOKIE_MAPPING_TO_SCHEMA = {
+  funnelstate: 'funnelstate',
+};
 
 function getSegmentsFromAlloyResponse(response) {
   const segments = [];
@@ -48,6 +54,10 @@ async function getSegmentsFromAlloy() {
   if (!window.alloy) {
     return [];
   }
+  if (window.rtcdpSegments) {
+    return window.rtcdpSegments;
+  }
+
   // eslint-disable-next-line no-undef
   const alloyResult = await alloy('sendEvent', {
     renderDecisions: true,
@@ -55,7 +65,8 @@ async function getSegmentsFromAlloy() {
     console.error('Error sending event to alloy:', error);
     return [];
   });
-  return getSegmentsFromAlloyResponse(alloyResult);
+  window.rtcdpSegments = getSegmentsFromAlloyResponse(alloyResult);
+  return window.rtcdpSegments;
 }
 
 // Define the custom audiences mapping for experience decisioning
@@ -64,6 +75,7 @@ const AUDIENCES = {
   desktop: () => window.innerWidth >= 600,
   'new-visitor': () => !localStorage.getItem('franklin-visitor-returning'),
   'returning-visitor': () => !!localStorage.getItem('franklin-visitor-returning'),
+  'funnel-state-lapsed': (await getSegmentsFromAlloy()).includes(FUNNEL_STATE_ELAPSED_SEGMENT_ID),
   photoshop: async () => (await getSegmentsFromAlloy()).includes(PHOTOSHOP_SEGMENT_ID),
 };
 
@@ -194,6 +206,20 @@ async function loadDemoConfig() {
   window.wknd.demoConfig = demoConfig;
 }
 
+function updateAlloyEventWithCookieData(schema, mapping) {
+  const cookieData = document.cookie.split(';').reduce((res, item) => {
+    const [key, val] = item.split('=');
+    res[key.trim()] = val;
+    return res;
+  }, {});
+  Object.keys(cookieData).forEach((key) => {
+    const mappedKey = mapping[key];
+    if (mappedKey && schema.xdm[MAPPING_PREFIX]) {
+      schema.xdm[MAPPING_PREFIX][mappedKey] = cookieData[key];
+    }
+  });
+}
+
 export async function sendAlloyEvents(eventType, ecid) {
   if (!window.alloy) {
     return;
@@ -210,7 +236,7 @@ export async function sendAlloyEvents(eventType, ecid) {
     },
   };
 
-  const alloyEvent = {
+  const schema = {
     xdm: {
       eventType,
       identityMap: context.identityMap,
@@ -223,9 +249,10 @@ export async function sendAlloyEvents(eventType, ecid) {
       },
     },
   };
-  console.log(alloyEvent);
+  updateAlloyEventWithCookieData(schema, COOKIE_MAPPING_TO_SCHEMA);
+  console.log(schema);
   // eslint-disable-next-line no-undef
-  alloy('sendEvent', alloyEvent);
+  alloy('sendEvent', schema);
 }
 
 async function getEcid() {
@@ -351,7 +378,7 @@ async function loadPage() {
   await loadEager(document);
   await window.hlx.plugins.load('lazy');
   await loadLazy(document);
-  if (window.location.pathname.includes('products')) {
+  if (document.location.href.includes('products')) {
     const ecid = await getEcid();
     await sendAlloyEvents('interaction', ecid);
   }
