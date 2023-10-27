@@ -1,6 +1,7 @@
 import {
   sampleRUM,
   buildBlock,
+  getAllMetadata,
   getMetadata,
   loadHeader,
   loadFooter,
@@ -12,9 +13,6 @@ import {
   waitForLCP,
   loadBlocks,
   loadCSS,
-  loadScript,
-  toCamelCase,
-  toClassName,
 } from './lib-franklin.js';
 import {
   analyticsTrack404,
@@ -36,32 +34,19 @@ const AUDIENCES = {
   'returning-visitor': () => !!localStorage.getItem('franklin-visitor-returning'),
 };
 
-/**
- * Gets all the metadata elements that are in the given scope.
- * @param {String} scope The scope/prefix for the metadata
- * @returns an array of HTMLElement nodes that match the given scope
- */
-export function getAllMetadata(scope) {
-  return [...document.head.querySelectorAll(`meta[property^="${scope}:"],meta[name^="${scope}-"]`)]
-    .reduce((res, meta) => {
-      const id = toClassName(meta.name
-        ? meta.name.substring(scope.length + 1)
-        : meta.getAttribute('property').split(':')[1]);
-      res[id] = meta.getAttribute('content');
-      return res;
-    }, {});
-}
+window.hlx.plugins.add('rum-conversion', {
+  url: '/plugins/rum-conversion/src/index.js',
+  load: 'lazy',
+});
 
-// Define an execution context
-const pluginContext = {
-  getAllMetadata,
-  getMetadata,
-  loadCSS,
-  loadScript,
-  sampleRUM,
-  toCamelCase,
-  toClassName,
-};
+window.hlx.plugins.add('experience-decisioning', {
+  condition: () => getMetadata('experiment')
+    || Object.keys(getAllMetadata('campaign')).length
+    || Object.keys(getAllMetadata('audience')).length,
+  options: { audiences: AUDIENCES },
+  load: 'eager',
+  url: '/plugins/experience-decisioning/src/index.js',
+});
 
 /**
  * Determine if we are serving content for the block-library, if so don't load the header or footer
@@ -198,14 +183,7 @@ async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
 
-  // Run experience decisioning plugin
-  if (getMetadata('experiment')
-    || Object.keys(getAllMetadata('campaign')).length
-    || Object.keys(getAllMetadata('audience')).length) {
-    // eslint-disable-next-line import/no-relative-packages
-    const { loadEager: runEager } = await import('../plugins/experience-decisioning/src/index.js');
-    await runEager.call(pluginContext, { audiences: AUDIENCES });
-  }
+  await window.hlx.plugins.run('loadEager');
 
   // load demo config
   await loadDemoConfig();
@@ -270,23 +248,7 @@ async function loadLazy(doc) {
   // Mark customer as having viewed the page once
   localStorage.setItem('franklin-visitor-returning', true);
 
-  const context = {
-    getMetadata,
-    toClassName,
-  };
-  // eslint-disable-next-line import/no-relative-packages
-  const { initConversionTracking } = await import('../plugins/rum-conversion/src/index.js');
-  await initConversionTracking.call(context, document);
-
-  // Load experience decisioning overlay logic
-  if ((getMetadata('experiment')
-    || Object.keys(getAllMetadata('campaign')).length
-    || Object.keys(getAllMetadata('audience')).length)
-    && (window.location.hostname === 'localhost' || window.location.hostname.endsWith('.hlx.page'))) {
-    // eslint-disable-next-line import/no-relative-packages
-    const { loadLazy: runLazy } = await import('../plugins/experience-decisioning/src/index.js');
-    await runLazy.call(pluginContext, { audiences: AUDIENCES });
-  }
+  window.hlx.plugins.run('loadLazy');
 }
 
 /**
@@ -295,12 +257,18 @@ async function loadLazy(doc) {
  */
 function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
-  window.setTimeout(() => import('./delayed.js'), 3000);
+  window.setTimeout(() => {
+    window.hlx.plugins.load('delayed');
+    window.hlx.plugins.run('loadDelayed');
+    return import('./delayed.js');
+  }, 3000);
   // load anything that can be postponed to the latest here
 }
 
 async function loadPage() {
+  await window.hlx.plugins.load('eager');
   await loadEager(document);
+  await window.hlx.plugins.load('lazy');
   await loadLazy(document);
   const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
   loadDelayed();
