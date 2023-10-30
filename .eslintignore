@@ -3,3 +3,4 @@ ued.js
 /scripts/analytics/alloy*.js
 /styles/**/*.min.css
 /scripts/**/*.min.js
+/plugins/
