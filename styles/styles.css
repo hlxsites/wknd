@@ -138,7 +138,6 @@ a:any-link {
 
 a:hover {
   text-decoration: underline;
-  text-decoration-style: wavy;
   color: var(--link-hover-color);
 }
 
