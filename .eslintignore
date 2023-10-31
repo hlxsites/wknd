@@ -4,3 +4,4 @@ ued.js
 /styles/**/*.min.css
 /scripts/**/*.min.js
 tools/picker
+/plugins/
