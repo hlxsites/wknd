@@ -242,7 +242,7 @@ const Picker = props => {
                     }
 
                     return <Item key={item.key} textValue={item.name}>
-                        {item.images && item.images.length > 0 && <Image src={item.images[0].url} alt={item.name} />}
+                        {item.images && item.images.length > 0 && <Image src={item.images[0].url} alt={item.name} objectFit="contain" />}
                         <Text><span dangerouslySetInnerHTML={{ __html: item.name }} /></Text>
                         {currentBlock.selection === 'single' && (currentBlock.type === 'any' || currentBlock.type === 'item') && <ActionButton aria-label="Copy" onPress={() => copyToClipboard(item.key)}><Copy /></ActionButton>}
                     </Item>;

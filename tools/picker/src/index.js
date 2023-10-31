@@ -140,9 +140,8 @@ const getItems = async (folderKey, page = 1) => {
 
             try {
                 productView.images.forEach(image => {
-                    const url = new URL(image.url);
+                    const url = new URL(image.url, window.location);
                     url.searchParams.set('width', 40);
-                    url.searchParams.set('height', 40);
                     image.url = url.toString();
                 });
             } catch { }
