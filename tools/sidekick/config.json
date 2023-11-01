@@ -16,6 +16,17 @@
       "isPalette": true,
       "includePaths": [ "**.docx**" ],
       "paletteRect": "top: 50px; bottom: 10px; right: 10px; left: auto; width:800px; height: calc(100vh - 60px)"
+    },
+    {
+      "id": "genai-assistant-local",
+      "title": "Assistant (Local)",
+      "url": "https://localhost:9080",
+      "passConfig": true,
+      "passReferrer": true,
+      "isPalette": true,
+      "paletteRect": "top: 50%; left: 50%; transform: translate(-50%, -50%); width:90vw; height: 85vh; box-shadow: 0 0 30px 30px rgba(0,0,0,0.20);",
+      "environments": [ "dev", "preview", "live", "prod" ],
+      "includePaths": [ "/**" ]
     }
   ]
 }
