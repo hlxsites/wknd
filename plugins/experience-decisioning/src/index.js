@@ -1,3 +1,5 @@
+import { getEcid, sendAlloyEvents } from '../../../scripts/scripts.js';
+
 /*
  * Copyright 2022 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -382,6 +384,13 @@ export async function getConfig(experiment, instantExperiment, pluginOptions) {
   return experimentConfig;
 }
 
+function registerPageEventListener(experimentId, variantId) {
+  document.addEventListener('click', async (ev) => {
+    const ecid = await getEcid();
+    sendAlloyEvents({ interact: 1 }, ecid, experimentId, variantId);
+  });
+}
+
 export async function runExperiment(customOptions = {}) {
   if (isBot()) {
     return false;
@@ -433,6 +442,9 @@ export async function runExperiment(customOptions = {}) {
     console.debug(`failed to serve variant ${window.hlx.experiment.selectedVariant}. Falling back to ${experimentConfig.variantNames[0]}.`);
   }
   document.body.classList.add(`variant-${result ? experimentConfig.selectedVariant : experimentConfig.variantNames[0]}`);
+  const ecid = await getEcid();
+  sendAlloyEvents( { display: 1 }, ecid, experimentConfig.id, experimentConfig.selectedVariant);
+  registerPageEventListener(experimentConfig.id, experimentConfig.selectedVariant);
   this.sampleRUM('experiment', {
     source: experimentConfig.id,
     target: result ? experimentConfig.selectedVariant : experimentConfig.variantNames[0],

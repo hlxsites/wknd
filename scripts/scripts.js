@@ -37,6 +37,10 @@ const COOKIE_MAPPING_TO_SCHEMA = {
   funnelstate: 'Funnelstate',
 };
 
+const EVENT_TYPE_PROPOSITION_INTERACTION = 'propositionInteraction';
+
+const KEY_ECID = 'ecid';
+
 function getSegmentsFromAlloyResponse(response) {
   const segments = [];
   if (response && response.destinations) {
@@ -243,7 +247,7 @@ function updateAlloyEventWithCookieData(schema, mapping) {
   });
 }
 
-export async function sendAlloyEvents(eventType, ecid) {
+export async function sendAlloyEvents(eventType, ecid, experimentId, treatmentId) {
   if (!window.alloy) {
     return;
   }
@@ -272,23 +276,47 @@ export async function sendAlloyEvents(eventType, ecid) {
       },
     },
   };
+  if (experimentId && treatmentId) {
+    schema.xdm.eventType = EVENT_TYPE_PROPOSITION_INTERACTION;
+    // eslint-disable-next-line no-underscore-dangle
+    schema.xdm._experience = {
+      decisioning: {
+        propositionEventType: eventType,
+        propositions: [
+          {
+            scopeDetails: {
+              strategies: [
+                {
+                  strategyID: experimentId,
+                  step: 'experimentation',
+                  treatmentID: treatmentId,
+                },
+              ],
+            },
+          },
+        ],
+      },
+    };
+  }
   updateAlloyEventWithCookieData(schema, COOKIE_MAPPING_TO_SCHEMA);
   console.log(schema);
   // eslint-disable-next-line no-undef
   alloy('sendEvent', schema);
 }
 
-async function getEcid() {
+export async function getEcid() {
   if (!window.alloy) {
     return '';
   }
-  if (window.ecid) {
-    return window.ecid;
+  let ecid = localStorage.getItem(KEY_ECID);
+  if (ecid) {
+    return ecid;
   }
   // eslint-disable-next-line no-undef
   const alloyResult = await alloy('getIdentity');
-  window.ecid = alloyResult.identity.ECID;
-  return window.ecid;
+  ecid = alloyResult.identity.ECID;
+  localStorage.setItem(KEY_ECID, ecid);
+  return ecid;
 }
 
 /**
@@ -420,7 +448,7 @@ async function loadPage() {
   await loadLazy(document);
   if (document.location.href.includes('products')) {
     const ecid = await getEcid();
-    await sendAlloyEvents('interaction', ecid);
+    await sendAlloyEvents('display', ecid);
   }
   const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
   loadDelayed();
