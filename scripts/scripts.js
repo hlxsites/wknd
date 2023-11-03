@@ -27,6 +27,9 @@ import {
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
+// add only those urls you need in LCP
+const PRECONNECTION_DOMAINS = ['https://edge.adobedc.net'];
+
 const PHOTOSHOP_SEGMENT_ID = '609b90e4-5306-4c37-b64b-e3026ad1f768';
 const FUNNEL_STATE_ELAPSED_SEGMENT_ID = 'a44525f4-e115-41d3-a650-eaad3fa2a458';
 
@@ -319,11 +322,23 @@ export function decorateMain(main) {
   decorateBlocks(main);
 }
 
+function establishPreConnections() {
+  PRECONNECTION_DOMAINS.forEach((domain) => {
+    if (!document.querySelector(`head > link[rel="preconnect"][href="${domain}"]`)) {
+      const link = document.createElement('link');
+      link.setAttribute('rel', 'preconnect');
+      link.setAttribute('href', domain);
+      document.head.appendChild(link);
+    }
+  });
+}
+
 /**
  * loads everything needed to get to LCP.
  */
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
+  establishPreConnections();
   decorateTemplateAndTheme();
   await initAnalyticsTrackingQueue();
   await loadAlloy(doc);
