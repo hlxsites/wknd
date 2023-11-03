@@ -30,7 +30,7 @@ const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
 // add only those urls you need in LCP
-const PRECONNECTION_DOMAINS = ['https://edge.adobedc.net'];
+const PRECONNECTION_DOMAINS = ['https://edge.adobedc.net', 'https://adobedc.demdex.net'];
 
 const PHOTOSHOP_SEGMENT_ID = '609b90e4-5306-4c37-b64b-e3026ad1f768';
 const FUNNEL_STATE_ELAPSED_SEGMENT_ID = 'a44525f4-e115-41d3-a650-eaad3fa2a458';
