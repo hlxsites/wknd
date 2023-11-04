@@ -356,7 +356,7 @@ async function loadEager(doc) {
   establishPreConnections();
   decorateTemplateAndTheme();
   await initAnalyticsTrackingQueue();
-  await loadAlloy(doc);
+  loadAlloy(doc);
 
   // Run experience decisioning plugin
   if (getMetadata('experiment')
