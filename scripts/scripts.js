@@ -341,7 +341,7 @@ async function loadEager(doc) {
   establishPreConnections();
   decorateTemplateAndTheme();
   await initAnalyticsTrackingQueue();
-  await loadAlloy(doc);
+  loadAlloy(doc);
 
   await window.hlx.plugins.run('loadEager');
 
