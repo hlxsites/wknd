@@ -64,15 +64,21 @@ async function getSegmentsFromAlloy() {
   if (window.rtcdpSegments) {
     return window.rtcdpSegments;
   }
-
-  // eslint-disable-next-line no-undef
-  const alloyResult = await alloy('sendEvent', {
-    renderDecisions: true,
-  }).catch((error) => {
-    console.error('Error sending event to alloy:', error);
-    return [];
-  });
-  window.rtcdpSegments = getSegmentsFromAlloyResponse(alloyResult);
+  await window.alloyLoader;
+  // avoid multiple calls to alloy for render decisions from different audiences
+  if (window.renderDecisionsResult) {
+    await window.renderDecisionsResult;
+  } else {
+    // eslint-disable-next-line no-undef
+    window.renderDecisionsResult = alloy('sendEvent', {
+      renderDecisions: true,
+    }).catch((error) => {
+      console.error('Error sending event to alloy:', error);
+      return [];
+    });
+    await window.renderDecisionsResult;
+  }
+  window.rtcdpSegments = getSegmentsFromAlloyResponse(window.renderDecisionsResult);
   return window.rtcdpSegments;
 }
 
@@ -239,6 +245,7 @@ export async function sendAlloyEvents(eventType, ecid, experimentId, treatmentId
   if (!window.alloy) {
     return;
   }
+  await window.alloyLoader;
   console.log('logEventAlloy {}', eventType);
   const context = {
     identityMap: {
@@ -296,6 +303,7 @@ export async function getEcid() {
   if (!window.alloy) {
     return '';
   }
+  await window.alloyLoader;
   let ecid = localStorage.getItem(KEY_ECID);
   if (ecid) {
     return ecid;
@@ -341,7 +349,7 @@ async function loadEager(doc) {
   establishPreConnections();
   decorateTemplateAndTheme();
   await initAnalyticsTrackingQueue();
-  loadAlloy(doc);
+  window.alloyLoader = loadAlloy(doc);
 
   await window.hlx.plugins.run('loadEager');
 
