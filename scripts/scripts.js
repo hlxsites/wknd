@@ -67,9 +67,10 @@ async function getSegmentsFromAlloy() {
     return window.rtcdpSegments;
   }
   await window.alloyLoader;
+  let result;
   // avoid multiple calls to alloy for render decisions from different audiences
   if (window.renderDecisionsResult) {
-    await window.renderDecisionsResult;
+    result = await window.renderDecisionsResult;
   } else {
     // eslint-disable-next-line no-undef
     window.renderDecisionsResult = alloy('sendEvent', {
@@ -78,9 +79,9 @@ async function getSegmentsFromAlloy() {
       console.error('Error sending event to alloy:', error);
       return [];
     });
-    await window.renderDecisionsResult;
+    result = await window.renderDecisionsResult;
   }
-  window.rtcdpSegments = getSegmentsFromAlloyResponse(window.renderDecisionsResult);
+  window.rtcdpSegments = getSegmentsFromAlloyResponse(result);
   return window.rtcdpSegments;
 }
 
