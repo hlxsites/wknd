@@ -23,7 +23,7 @@
       "url": "https://localhost:9080",
       "passConfig": true,
       "passReferrer": true,
-      "isPalette": true,
+      "isPalette": false,
       "paletteRect": "top: 50%; left: 50%; transform: translate(-50%, -50%); width:90vw; height: 85vh; box-shadow: 0 0 30px 30px rgba(0,0,0,0.20);",
       "environments": [ "dev", "preview", "live", "prod" ],
       "includePaths": [ "/**" ]
