@@ -22,10 +22,28 @@
       "title": "Assistant (Local)",
       "url": "https://localhost:9080",
       "passConfig": true,
-      "passReferrer": true,
       "isPalette": false,
       "paletteRect": "top: 50%; left: 50%; transform: translate(-50%, -50%); width:90vw; height: 85vh; box-shadow: 0 0 30px 30px rgba(0,0,0,0.20);",
       "environments": [ "dev", "preview", "live", "prod" ],
+      "includePaths": [ "/**" ]
+    },
+    {
+      "id": "genai-assistant-dev",
+      "title": "Assistant (Dev)",
+      "url": "https://245265-879aquaant-development.adobeio-static.net/index.html",
+      "passConfig": true,
+      "isPalette": false,
+      "paletteRect": "top: 50%; left: 50%; transform: translate(-50%, -50%); width:90vw; height: 85vh; box-shadow: 0 0 30px 30px rgba(0,0,0,0.20);",
+      "environments": [ "dev", "preview", "live", "prod" ],
+      "includePaths": [ "/**" ]
+    },
+    {
+      "id": "genai-assistant-stage",
+      "title": "Assistant (Stage)",
+      "url": "https://245265-879aquaant-stage.adobeio-static.net/index.html",
+      "passConfig": true,
+      "isPalette": false,
+      "environments": [ "dev", "preview", "live", "prod", "edit" ],
       "includePaths": [ "/**" ]
     }
   ]
