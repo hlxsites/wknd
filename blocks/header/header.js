@@ -1,4 +1,4 @@
-import { decorateIcons } from '../../scripts/lib-franklin.js';
+import { buildBlock, decorateBlock, decorateIcons, loadBlock } from '../../scripts/lib-franklin.js';
 
 /**
  * collapses all open nav sections
@@ -9,6 +9,19 @@ function collapseAllNavSections(sections) {
   sections.querySelectorAll('.nav-sections > ul > li').forEach((section) => {
     section.setAttribute('aria-expanded', 'false');
   });
+}
+
+/**
+ * Loads a block named 'autocomplete' into header
+ * @returns {Promise}
+ * @param autocomplete
+ */
+
+async function loadAutocomplete(autocomplete) {
+  const autocompleteBlock = buildBlock('autocomplete', '');
+  autocomplete.append(autocompleteBlock);
+  decorateBlock(autocompleteBlock);
+  return loadBlock(autocompleteBlock);
 }
 
 /**
@@ -64,5 +77,7 @@ export default async function decorate(block) {
     nav.setAttribute('aria-expanded', 'false');
     decorateIcons(block);
     block.append(nav);
+
+    await loadAutocomplete(nav.querySelector('.autocomplete'));
   }
 }
