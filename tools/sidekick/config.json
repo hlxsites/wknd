@@ -30,7 +30,7 @@
     {
       "id": "genai-assistant-dev",
       "title": "Assistant (Dev)",
-      "url": "https://experience.adobe.com/?unified-shell_version=PR-7687-4c0cbc6b93a930db4fab1ea1c202236077b137bd#/@aem-sites-engineering/aem/ai-assistant/",
+      "url": "https://experience.adobe.com/?unified-shell_version=PR-7687-4c0cbc6b93a930db4fab1ea1c202236077b137bd#/aem/ai-assistant",
       "passConfig": true,
       "isPalette": false,
       "paletteRect": "top: 50%; left: 50%; transform: translate(-50%, -50%); width:90vw; height: 85vh; box-shadow: 0 0 30px 30px rgba(0,0,0,0.20);",
