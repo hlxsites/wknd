@@ -18,9 +18,9 @@
       "paletteRect": "top: 50px; bottom: 10px; right: 10px; left: auto; width:800px; height: calc(100vh - 60px)"
     },
     {
-      "id": "gen-variations-qa",
+      "id": "gen-variations-stage",
       "title": "Generate Variations",
-      "url": "https://245265-879aquaant-qa.adobeio-static.net/index.html",
+      "url": "https://245265-879aquaant-stage.adobeio-static.net/index.html",
       "passConfig": true,
       "isPalette": false,
       "environments": [ "dev", "preview", "live", "prod", "edit" ],
