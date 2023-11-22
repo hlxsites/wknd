@@ -55,6 +55,15 @@
       "isPalette": false,
       "environments": [ "dev", "preview", "live", "prod", "edit" ],
       "includePaths": [ "/**" ]
+    },
+    {
+      "id": "generate-variations-prod",
+      "title": "Generate Variations",
+      "url": "https://experience.adobe.com/?unified-shell_version=PR-7687-c3be237b706409e1036402f590209a8cfb75b821&shell_source=stage#/aem/generate-content-variations",
+      "passConfig": true,
+      "isPalette": false,
+      "environments": [ "preview", "edit" ],
+      "includePaths": ["**.docx**"]
     }
   ]
 }
