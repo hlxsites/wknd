@@ -30,7 +30,7 @@
     {
       "id": "generate-variations-dev",
       "title": "Generate Variations (Dev)",
-      "url": "https://experience.adobe.com/?unified-shell_version=PR-7687-c3be237b706409e1036402f590209a8cfb75b821&shell_source=dev#/aem/generate-content-variations",
+      "url": "https://experience.adobe.com/?shell_source=dev#/aem/generate-variations",
       "passConfig": true,
       "isPalette": false,
       "paletteRect": "top: 50%; left: 50%; transform: translate(-50%, -50%); width:90vw; height: 85vh; box-shadow: 0 0 30px 30px rgba(0,0,0,0.20);",
