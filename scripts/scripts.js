@@ -39,13 +39,13 @@ window.hlx.plugins.add('rum-conversion', {
   load: 'lazy',
 });
 
-window.hlx.plugins.add('experience-decisioning', {
+window.hlx.plugins.add('experimentation', {
   condition: () => getMetadata('experiment')
     || Object.keys(getAllMetadata('campaign')).length
     || Object.keys(getAllMetadata('audience')).length,
   options: { audiences: AUDIENCES },
   load: 'eager',
-  url: '/plugins/experience-decisioning/src/index.js',
+  url: '/plugins/experimentation/src/index.js',
 });
 
 /**
