@@ -14,17 +14,9 @@ import {
   loadBlocks,
   loadCSS,
 } from './lib-franklin.js';
-import {
-  analyticsTrack404,
-  analyticsTrackConversion,
-  analyticsTrackCWV,
-  analyticsTrackError,
-  initAnalyticsTrackingQueue,
-  loadAlloy,
-  setupAnalyticsTrackingWithAlloy,
-} from './analytics/lib-analytics.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
+const CUSTOM_SCHEMA_NAMESPACE = '_sitesinternal';
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
 // add only those urls you need in LCP
@@ -343,6 +335,110 @@ function establishPreConnections() {
 }
 
 /**
+ * Returns script that initializes a queue for each alloy instance,
+ * in order to be ready to receive events before the alloy library is loaded
+ * Documentation
+ * https://experienceleague.adobe.com/docs/experience-platform/edge/fundamentals/installing-the-sdk.html?lang=en#adding-the-code
+ * @type {string}
+ */
+function getAlloyInitScript() {
+  return `!function(n,o){o.forEach(function(o){n[o]||((n.__alloyNS=n.__alloyNS||[]).push(o),n[o]=
+  function(){var u=arguments;return new Promise(function(i,l){n[o].q.push([i,l,u])})},n[o].q=[])})}(window,["alloy"]);`;
+}
+
+/**
+ * Returns datastream id to use as edge configuration id
+ * Custom logic can be inserted here in order to support
+ * different datastream ids for different environments (non-prod/prod)
+ * @returns {{edgeConfigId: string, orgId: string}}
+ */
+function getDatastreamConfiguration() {
+  // Sites Internal
+  return {
+    edgeConfigId: '2324184b-260b-4d66-a8ca-897ab9374fb3',
+    orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+  };
+}
+
+/**
+ * Returns experiment id and variant running
+ * @returns {{experimentVariant: *, experimentId}}
+ */
+export function getExperimentDetails() {
+  if (!window.hlx || !window.hlx.experiment) {
+    return null;
+  }
+  const { id: experimentId, selectedVariant: experimentVariant } = window.hlx.experiment;
+  return { experimentId, experimentVariant };
+}
+
+/**
+ * Enhance all events with additional details, like experiment running,
+ * before sending them to the edge
+ * @param options event in the XDM schema format
+ */
+function enhanceAnalyticsEvent(options) {
+  const experiment = getExperimentDetails();
+  options.xdm[CUSTOM_SCHEMA_NAMESPACE] = {
+    ...options.xdm[CUSTOM_SCHEMA_NAMESPACE],
+    ...(experiment && { experiment }), // add experiment details, if existing, to all events
+  };
+  console.debug(`enhanceAnalyticsEvent complete: ${JSON.stringify(options)}`);
+}
+
+/**
+ * Returns alloy configuration
+ * Documentation https://experienceleague.adobe.com/docs/experience-platform/edge/fundamentals/configuring-the-sdk.html
+ */
+function getAlloyConfiguration(document) {
+  const { hostname } = document.location;
+
+  return {
+    // enable while debugging
+    debugEnabled: hostname.startsWith('localhost') || hostname.includes('--'),
+    // disable when clicks are also tracked via sendEvent with additional details
+    clickCollectionEnabled: true,
+    // adjust default based on customer use case
+    defaultConsent: 'in',
+    ...getDatastreamConfiguration(),
+    onBeforeEventSend: (options) => enhanceAnalyticsEvent(options),
+  };
+}
+
+/**
+ * Create inline script
+ * @param document
+ * @param element where to create the script element
+ * @param innerHTML the script
+ * @param type the type of the script element
+ * @returns {HTMLScriptElement}
+ */
+function createInlineScript(document, element, innerHTML, type) {
+  const script = document.createElement('script');
+  script.type = type;
+  script.innerHTML = innerHTML;
+  element.appendChild(script);
+  return script;
+}
+
+/**
+ * Initializes event queue for analytics tracking using alloy
+ * @returns {Promise<void>}
+ */
+export async function initAnalyticsTrackingQueue() {
+  createInlineScript(document, document.body, getAlloyInitScript(), 'text/javascript');
+}
+
+/**
+ * Loads alloy library
+ */
+export async function loadAlloy(document) {
+  await import('./alloy.min.js');
+  // eslint-disable-next-line no-undef
+  await alloy('configure', getAlloyConfiguration(document));
+}
+
+/**
  * loads everything needed to get to LCP.
  */
 async function loadEager(doc) {
@@ -442,75 +538,11 @@ async function loadPage() {
     const ecid = await getEcid();
     await sendAlloyEvents('display', ecid);
   }
+  const { setupAnalyticsTrackingWithAlloy, initializeAnalyticsTracking } = await import('./analytics/lib-analytics.js');
   const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
   loadDelayed();
   await setupAnalytics;
+  await initializeAnalyticsTracking();
 }
-
-const cwv = {};
-
-// Forward the RUM CWV cached measurements to edge using WebSDK before the page unloads
-window.addEventListener('beforeunload', () => {
-  if (!Object.keys(cwv).length) return;
-  analyticsTrackCWV(cwv);
-});
-
-// Callback to RUM CWV checkpoint in order to cache the measurements
-sampleRUM.always.on('cwv', async (data) => {
-  if (!data.cwv) return;
-  Object.assign(cwv, data.cwv);
-});
-
-sampleRUM.always.on('404', analyticsTrack404);
-sampleRUM.always.on('error', analyticsTrackError);
-
-// Declare conversionEvent, bufferTimeoutId and tempConversionEvent,
-// outside the convert function to persist them for buffering between
-// subsequent convert calls
-const CONVERSION_EVENT_TIMEOUT_MS = 100;
-let bufferTimeoutId;
-let conversionEvent;
-let tempConversionEvent;
-sampleRUM.always.on('convert', (data) => {
-  const { element } = data;
-  // eslint-disable-next-line no-undef
-  if (!element || !alloy) {
-    return;
-  }
-
-  if (element.tagName === 'FORM') {
-    conversionEvent = {
-      ...data,
-      event: 'Form Complete',
-    };
-
-    if (conversionEvent.event === 'Form Complete'
-      // Check for undefined, since target can contain value 0 as well, which is falsy
-      && (data.target === undefined || data.source === undefined)
-    ) {
-      // If a buffer has already been set and tempConversionEvent exists,
-      // merge the two conversionEvent objects to send to alloy
-      if (bufferTimeoutId && tempConversionEvent) {
-        conversionEvent = { ...tempConversionEvent, ...conversionEvent };
-      } else {
-        // Temporarily hold the conversionEvent object until the timeout is complete
-        tempConversionEvent = { ...conversionEvent };
-
-        // If there is partial form conversion data,
-        // set the timeout buffer to wait for additional data
-        bufferTimeoutId = setTimeout(async () => {
-          analyticsTrackConversion({ ...conversionEvent });
-          tempConversionEvent = undefined;
-          conversionEvent = undefined;
-        }, CONVERSION_EVENT_TIMEOUT_MS);
-      }
-    }
-    return;
-  }
-
-  analyticsTrackConversion({ ...data });
-  tempConversionEvent = undefined;
-  conversionEvent = undefined;
-});
 
 loadPage();
