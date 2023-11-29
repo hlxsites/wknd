@@ -57,21 +57,22 @@ async function getSegmentsFromAlloy() {
     return window.rtcdpSegments;
   }
   await window.alloyLoader;
-  let result;
-  // avoid multiple calls to alloy for render decisions from different audiences
-  if (window.renderDecisionsResult) {
-    result = await window.renderDecisionsResult;
+  let renderDecisionResolver;
+
+  if (window.renderDecision) {
+    await window.renderDecision;
   } else {
-    // eslint-disable-next-line no-undef
-    window.renderDecisionsResult = alloy('sendEvent', {
-      renderDecisions: true,
-    }).catch((error) => {
-      console.error('Error sending event to alloy:', error);
-      return [];
+    window.renderDecision = new Promise((resolve) => {
+      renderDecisionResolver = resolve;
     });
-    result = await window.renderDecisionsResult;
+    const response = await fetch('/segments.json');
+    const result = await response.json();
+    const json = {
+      destinations: result.handle[1].payload,
+    };
+    window.rtcdpSegments = getSegmentsFromAlloyResponse(json);
+    renderDecisionResolver();
   }
-  window.rtcdpSegments = getSegmentsFromAlloyResponse(result);
   return window.rtcdpSegments;
 }
 
