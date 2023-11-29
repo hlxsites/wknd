@@ -59,7 +59,7 @@
     {
       "id": "generate-variations",
       "title": "Generate Variations",
-      "url": "https://experience.adobe.com/?unified-shell_version=PR-7720-d0a474c82420071b42b6705ddabc6c1d1585cfcc&shell_source=qa#/aem/generate-variations",
+      "url": "https://experience.adobe.com/?unified-shell_version=PR-7720-d0a474c82420071b42b6705ddabc6c1d1585cfcc#/aem/generate-variations",
       "passConfig": true,
       "isPalette": false,
       "environments": [ "preview", "edit" ],
