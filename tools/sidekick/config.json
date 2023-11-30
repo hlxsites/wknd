@@ -20,21 +20,17 @@
     {
       "id": "generate-variations-local",
       "title": "Generate Variations (Local)",
-      "url": "https://experience.adobe.com/?unified-shell_version=PR-7720-d0a474c82420071b42b6705ddabc6c1d1585cfcc&shell_source=local&devMode=true#/aem/generate-variations",
+      "url": "https://experience.adobe.com/?shell_source=local&devMode=true#/aem/generate-variations",
       "passConfig": true,
-      "isPalette": false,
-      "paletteRect": "top: 50%; left: 50%; transform: translate(-50%, -50%); width:90vw; height: 85vh; box-shadow: 0 0 30px 30px rgba(0,0,0,0.20);",
-      "environments": [ "dev", "preview", "live", "prod", "edit" ],
+      "environments": [ "preview", "live", "edit" ],
       "includePaths": [ "/**" ]
     },
     {
       "id": "generate-variations-dev",
       "title": "Generate Variations (Dev)",
-      "url": "https://experience.adobe.com/?unified-shell_version=PR-7720-d0a474c82420071b42b6705ddabc6c1d1585cfcc&shell_source=dev#/aem/generate-variations",
+      "url": "https://experience.adobe.com/?shell_source=dev#/aem/generate-variations",
       "passConfig": true,
-      "isPalette": false,
-      "paletteRect": "top: 50%; left: 50%; transform: translate(-50%, -50%); width:90vw; height: 85vh; box-shadow: 0 0 30px 30px rgba(0,0,0,0.20);",
-      "environments": [ "dev", "preview", "live", "prod", "edit" ],
+      "environments": [ "preview", "live", "edit" ],
       "includePaths": [ "/**" ]
     },
     {
@@ -42,8 +38,7 @@
       "title": "Generate Variations (Stage)",
       "url": "https://experience-stage.adobe.com/?shell_ims=prod#/aem/generate-variations",
       "passConfig": true,
-      "isPalette": false,
-      "environments": [ "dev", "preview", "live", "prod", "edit" ],
+      "environments": [ "preview", "live", "edit" ],
       "includePaths": [ "/**" ]
     },
     {
@@ -51,9 +46,7 @@
       "title": "Generate Variations (QA)",
       "url": "https://experience-qa.adobe.com/?shell_ims=prod#/aem/generate-variations",
       "passConfig": true,
-      "isPalette": false,
-      "paletteRect": "top: 50%; left: 50%; transform: translate(-50%, -50%); width:90vw; height: 85vh; box-shadow: 0 0 30px 30px rgba(0,0,0,0.20);",
-      "environments": [ "dev", "preview", "live", "prod", "edit" ],
+      "environments": [ "preview", "live", "edit" ],
       "includePaths": [ "/**" ]
     },
     {
