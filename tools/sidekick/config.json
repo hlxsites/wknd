@@ -18,13 +18,12 @@
       "paletteRect": "top: 50px; bottom: 10px; right: 10px; left: auto; width:800px; height: calc(100vh - 60px)"
     },
     {
-      "id": "gen-variations-qa",
+      "id": "generate-variations-qa",
       "title": "Generate Variations",
       "url": "https://experience-qa.adobe.com/?shell_ims=prod#/aem/generate-variations",
       "passConfig": true,
-      "isPalette": false,
       "environments": [ "preview", "live", "edit" ],
-      "includePaths": [ "**.docx**" ]
+      "includePaths": [ "/**" ]
     }
   ]
 }
