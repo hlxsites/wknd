@@ -419,7 +419,8 @@ export async function runExperiment(customOptions = {}) {
   console.debug(`running experiment (${window.hlx.experiment.id}) -> ${window.hlx.experiment.selectedVariant}`);
 
   if (experimentConfig.selectedVariant === experimentConfig.variantNames[0]) {
-    sendAlloyEvents( { display: 1 }, null, experimentConfig.id, experimentConfig.selectedVariant);
+    const ecid = await getEcid();
+    sendAlloyEvents( { display: 1 }, ecid, experimentConfig.id, experimentConfig.selectedVariant);
     return false;
   }
 
