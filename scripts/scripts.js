@@ -255,7 +255,7 @@ export async function sendAlloyEvents(eventType, ecid, experimentId, treatmentId
   }
   await window.alloyLoader;
   console.log('logEventAlloy {}', eventType);
-  const context = {
+  const context = ecid ? {
     identityMap: {
       ECID: [
         {
@@ -264,7 +264,7 @@ export async function sendAlloyEvents(eventType, ecid, experimentId, treatmentId
         },
       ],
     },
-  };
+  } : { identityMap: {} };
 
   const schema = {
     xdm: {
