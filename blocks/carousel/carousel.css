@@ -44,6 +44,7 @@ main .carousel div.carousel-text {
   background-color: white;
   min-height: 188px;
   padding: 0 28px;
+  background-color: lightgrey;
 }
 
 main .carousel div.carousel-text p {
