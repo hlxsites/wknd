@@ -31,6 +31,8 @@ export const DEFAULT_OPTIONS = {
   experimentsQueryParameter: 'experiment',
 };
 
+const RTCDP_AUDIENCE_PREFIX = 'rtcdp';
+
 /**
  * Checks if the current engine is detected as being a bot.
  * @returns `true` if the current engine is detected as being, `false` otherwise
@@ -63,6 +65,10 @@ export async function getResolvedAudiences(applicableAudiences, options) {
   const results = await Promise.all(
     applicableAudiences
       .map((key) => {
+        if (key.indexOf(RTCDP_AUDIENCE_PREFIX) !== -1 && options.audiences[RTCDP_AUDIENCE_PREFIX]) {
+          const rtcdpAudience = key.replace(`${RTCDP_AUDIENCE_PREFIX}-`, '');
+          return options.audiences[RTCDP_AUDIENCE_PREFIX](rtcdpAudience);
+        }
         if (options.audiences[key] && typeof options.audiences[key] === 'function') {
           return options.audiences[key]();
         }

@@ -94,6 +94,18 @@ const AUDIENCES = {
     return segments.includes(PHOTOSHOP_SEGMENT_ID)
       && !segments.includes(FUNNEL_STATE_ELAPSED_SEGMENT_ID);
   },
+  rtcdp: async (rtcdpAudience) => {
+    const segmentMappingsResponse = await fetch('/segment-mappings.json');
+    const segmentMappingsJson = await segmentMappingsResponse.json();
+    const segmentMappings = [];
+    segmentMappingsJson.forEach((mapping) => {
+      const name = mapping.name.replace(/\s+/g, '-').toLowerCase();
+      segmentMappings[name] = mapping.id;
+    });
+    const rtcdpAudienceId = segmentMappings[rtcdpAudience];
+    const segments = await getSegmentsFromAlloy();
+    return segments.includes(rtcdpAudienceId);
+  },
 };
 
 /**
