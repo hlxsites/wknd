@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+const EVENT_TYPE_PROPOSITION_INTERACTION = 'propositionInteraction';
+const EXPERIENCE_STEP_EXPERIMENTATION = 'experimentation';
 /**
  * Customer's XDM schema namespace
  * @type {string}
@@ -49,7 +51,7 @@ function getAlloyInitScript() {
 function getDatastreamConfiguration() {
   // Sites Internal
   return {
-    edgeConfigId: 'caad777c-c410-4ceb-8b36-167f1cecc3de',
+    edgeConfigId: '2324184b-260b-4d66-a8ca-897ab9374fb3',
     orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
   };
 }
@@ -61,10 +63,30 @@ function getDatastreamConfiguration() {
  */
 function enhanceAnalyticsEvent(options) {
   const experiment = getExperimentDetails();
+  const experienceDecisioningXDM = experiment ? {
+    decisioning: {
+      propositionEventType: EVENT_TYPE_PROPOSITION_INTERACTION,
+      propositions: [
+        {
+          scopeDetails: {
+            strategies: [
+              {
+                strategyID: experiment.experimentId,
+                step: EXPERIENCE_STEP_EXPERIMENTATION,
+                treatmentID: experiment.experimentVariant,
+              },
+            ],
+          },
+        },
+      ],
+    },
+  } : {};
   options.xdm[CUSTOM_SCHEMA_NAMESPACE] = {
     ...options.xdm[CUSTOM_SCHEMA_NAMESPACE],
     ...(experiment && { experiment }), // add experiment details, if existing, to all events
   };
+  // eslint-disable-next-line no-underscore-dangle
+  options.xdm._experience = experienceDecisioningXDM;
   console.debug(`enhanceAnalyticsEvent complete: ${JSON.stringify(options)}`);
 }
 
@@ -178,26 +200,38 @@ export async function initAnalyticsTrackingQueue() {
   createInlineScript(document, document.body, getAlloyInitScript(), 'text/javascript');
 }
 
+export async function setupAlloy(document) {
+  // eslint-disable-next-line no-undef
+  if (!alloy) {
+    console.warn('alloy not initialized, cannot configure');
+    return;
+  }
+  // create a promise on window that resolves when alloy loading is complete
+  window.alloyLoader = new Promise((resolve) => {
+    window.alloyLoaderResolve = resolve;
+  });
+  // eslint-disable-next-line no-undef
+  const configurePromise = alloy('configure', getAlloyConfiguration(document));
+
+  await import('./alloy.min.js');
+  await configurePromise;
+  window.alloyLoaderResolve();
+}
+
 /**
  * Sets up analytics tracking with alloy (initializes and configures alloy)
  * @param document
  * @returns {Promise<void>}
  */
 export async function setupAnalyticsTrackingWithAlloy(document) {
-  // eslint-disable-next-line no-undef
-  if (!alloy) {
-    console.warn('alloy not initialized, cannot configure');
-    return;
+  if (window.alloyLoader) {
+    await window.alloyLoader;
+  } else {
+    await setupAlloy(document);
   }
-  // eslint-disable-next-line no-undef
-  const configurePromise = alloy('configure', getAlloyConfiguration(document));
-
   // Custom logic can be inserted here in order to support early tracking before alloy library
   // loads, for e.g. for page views
-  const pageViewPromise = analyticsTrackPageViews(document); // track page view early
-
-  await import('./alloy.min.js');
-  await Promise.all([configurePromise, pageViewPromise]);
+  await analyticsTrackPageViews(document); // track page view early
 }
 
 /**
@@ -394,4 +428,50 @@ export async function analyticsTrackVideo({
   }
 
   return sendAnalyticsEvent(baseXdm);
+}
+
+function getSegmentsFromAlloyResponse(response) {
+  const segments = [];
+  if (response && response.destinations) {
+    Object.values(response.destinations).forEach((destination) => {
+      if (destination.segments) {
+        Object.values(destination.segments).forEach((segment) => {
+          segments.push(segment.id);
+        });
+      }
+    });
+  }
+  console.log('segments', segments);
+  return segments;
+}
+
+export async function getSegmentsFromAlloy() {
+  if (!window.alloy) {
+    return [];
+  }
+  if (window.rtcdpSegments) {
+    return window.rtcdpSegments;
+  }
+  if (window.alloyLoader) {
+    await window.alloyLoader;
+  } else {
+    await setupAlloy(document);
+  }
+  let renderDecisionResolver;
+
+  if (window.renderDecision) {
+    await window.renderDecision;
+  } else {
+    window.renderDecision = new Promise((resolve) => {
+      renderDecisionResolver = resolve;
+    });
+    const response = await fetch('/segments.json');
+    const result = await response.json();
+    const json = {
+      destinations: result.handle[1].payload,
+    };
+    window.rtcdpSegments = getSegmentsFromAlloyResponse(json);
+    renderDecisionResolver();
+  }
+  return window.rtcdpSegments;
 }

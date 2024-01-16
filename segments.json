@@ -1,0 +1,80 @@
+{
+  "requestId": "763428f9-2717-4e20-9187-36f33b2a2b24",
+  "handle": [
+      {
+          "payload": [
+              {
+                  "id": "35744979464013908940387049980416775157",
+                  "namespace": {
+                      "code": "ECID"
+                  }
+              }
+          ],
+          "type": "identity:result"
+      },
+      {
+          "payload": [
+              {
+                  "type": "profileLookup",
+                  "destinationId": "5a9ec6c7-d41e-4a00-9d9e-cf7649764610",
+                  "alias": "franklin-aep-personalization",
+                  "segments": [
+                      {
+                          "id": "e52f5a05-0f03-46e7-96a3-74446971af8e",
+                          "namespace": "ups"
+                      },
+                      {
+                          "id": "609b90e4-5306-4c37-b64b-e3026ad1f768",
+                          "namespace": "ups"
+                      }
+                  ]
+              }
+          ],
+          "type": "activation:pull",
+          "eventIndex": 0
+      },
+      {
+          "payload": [],
+          "type": "personalization:decisions",
+          "eventIndex": 0
+      },
+      {
+          "payload": [],
+          "type": "personalization:decisions",
+          "eventIndex": 0
+      },
+      {
+          "payload": [
+              {
+                  "scope": "Target",
+                  "hint": "35",
+                  "ttlSeconds": 1800
+              },
+              {
+                  "scope": "AAM",
+                  "hint": "9",
+                  "ttlSeconds": 1800
+              },
+              {
+                  "scope": "EdgeNetwork",
+                  "hint": "or2",
+                  "ttlSeconds": 1800
+              }
+          ],
+          "type": "locationHint:result"
+      },
+      {
+          "payload": [
+              {
+                  "key": "kndctr_908936ED5D35CC220A495CD4_AdobeOrg_cluster",
+                  "value": "or2",
+                  "maxAge": 1800,
+                  "attrs": {
+                      "SameSite": "None"
+                  }
+              }
+          ],
+          "type": "state:store"
+      }
+  ]
+}

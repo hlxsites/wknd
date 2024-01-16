@@ -21,6 +21,7 @@ import {
   analyticsTrackError,
   initAnalyticsTrackingQueue,
   setupAnalyticsTrackingWithAlloy,
+  getSegmentsFromAlloy,
 } from './analytics/lib-analytics.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
@@ -32,6 +33,18 @@ const AUDIENCES = {
   desktop: () => window.innerWidth >= 600,
   'new-visitor': () => !localStorage.getItem('franklin-visitor-returning'),
   'returning-visitor': () => !!localStorage.getItem('franklin-visitor-returning'),
+  rtcdp: async (rtcdpAudience) => {
+    const segmentMappingsResponse = await fetch('/segment-mappings.json');
+    const segmentMappingsJson = await segmentMappingsResponse.json();
+    const segmentMappings = [];
+    segmentMappingsJson.forEach((mapping) => {
+      const name = mapping.name.replace(/\s+/g, '-').toLowerCase();
+      segmentMappings[name] = mapping.id;
+    });
+    const rtcdpAudienceId = segmentMappings[rtcdpAudience];
+    const segments = await getSegmentsFromAlloy();
+    return segments.includes(rtcdpAudienceId);
+  },
 };
 
 window.hlx.plugins.add('rum-conversion', {
@@ -182,6 +195,7 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  await initAnalyticsTrackingQueue();
 
   await window.hlx.plugins.run('loadEager');
 
@@ -190,7 +204,6 @@ async function loadEager(doc) {
 
   const main = doc.querySelector('main');
   if (main) {
-    await initAnalyticsTrackingQueue();
     decorateMain(main);
     await waitForLCP(LCP_BLOCKS);
   }
