@@ -19,13 +19,32 @@ const EXPERIENCE_STEP_EXPERIMENTATION = 'experimentation';
 const CUSTOM_SCHEMA_NAMESPACE = '_sitesinternal';
 
 /**
+ * Pre connection domains to which pre-connect will be established
+ * NOTE: Add only those urls you need in LCP
+ */
+const PRECONNECTION_DOMAINS = ['https://edge.adobedc.net', 'https://adobedc.demdex.net'];
+
+/**
  * Configure the cookie keys that should be mapped to the XDM schema and send with each event
  * Ex: { 'funnelState': 'userState' }
  * funnelState in the cookie will be sent as userState in the schema
  */
 const COOKIE_MAPPING_TO_SCHEMA = {
-  funnelState: 'Funnelstate',
 };
+
+/**
+ * Establishes pre-connections to domains that are configured in PRECONNECTION_DOMAINS
+ */
+export function establishPreConnections() {
+  PRECONNECTION_DOMAINS.forEach((domain) => {
+    if (!document.querySelector(`head > link[rel="preconnect"][href="${domain}"]`)) {
+      const link = document.createElement('link');
+      link.setAttribute('rel', 'preconnect');
+      link.setAttribute('href', domain);
+      document.head.appendChild(link);
+    }
+  });
+}
 
 /**
  * Returns experiment id and variant running
@@ -510,21 +529,20 @@ export async function getSegmentsFromAlloy() {
   } else {
     await setupAlloy(document);
   }
-  let renderDecisionResolver;
-
-  if (window.renderDecision) {
-    await window.renderDecision;
+  let result;
+  // avoid multiple calls to alloy for render decisions from different audiences
+  if (window.renderDecisionsResult) {
+    result = await window.renderDecisionsResult;
   } else {
-    window.renderDecision = new Promise((resolve) => {
-      renderDecisionResolver = resolve;
+    // eslint-disable-next-line no-undef
+    window.renderDecisionsResult = alloy('sendEvent', {
+      renderDecisions: true,
+    }).catch((error) => {
+      console.error('Error sending event to alloy:', error);
+      return [];
     });
-    const response = await fetch('/segments.json');
-    const result = await response.json();
-    const json = {
-      destinations: result.handle[1].payload,
-    };
-    window.rtcdpSegments = getSegmentsFromAlloyResponse(json);
-    renderDecisionResolver();
+    result = await window.renderDecisionsResult;
   }
+  window.rtcdpSegments = getSegmentsFromAlloyResponse(result);
   return window.rtcdpSegments;
 }

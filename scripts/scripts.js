@@ -22,6 +22,8 @@ import {
   initAnalyticsTrackingQueue,
   setupAnalyticsTrackingWithAlloy,
   getSegmentsFromAlloy,
+  analyticsCustomData,
+  establishPreConnections,
 } from './analytics/lib-analytics.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
@@ -194,6 +196,7 @@ export function decorateMain(main) {
  */
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
+  establishPreConnections();
   decorateTemplateAndTheme();
   await initAnalyticsTrackingQueue();
 
@@ -285,7 +288,6 @@ async function loadPage() {
   await loadLazy(document);
   const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
 
-  /*
   // example of sending custom data to AEP through Alloy
   if (document.location.href.includes('products')) {
     analyticsCustomData({
@@ -293,7 +295,6 @@ async function loadPage() {
       Entitlements: 'photoshop',
     });
   }
-  */
 
   loadDelayed();
   await setupAnalytics;
