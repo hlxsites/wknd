@@ -502,6 +502,22 @@ export async function analyticsCustomData(additionalXdmFields = {}) {
   return sendAnalyticsEvent(xdmData);
 }
 
+/**
+ * Checks if the analytics cookie consent is set to ALLOW
+ * @returns {boolean}
+ */
+function isCookieConsentAllowed() {
+  // check if cookie cookieconsent_status_ANALYTICS is set to ALLOW
+  const cookies = document.cookie.split(';');
+  // eslint-disable-next-line no-restricted-syntax
+  for (const cookie of cookies) {
+    if (cookie.trim().startsWith('cookieconsent_status_ANALYTICS=ALLOW')) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function getSegmentsFromAlloyResponse(response) {
   const segments = [];
   if (response && response.destinations) {
@@ -519,6 +535,11 @@ function getSegmentsFromAlloyResponse(response) {
 
 export async function getSegmentsFromAlloy() {
   if (!window.alloy) {
+    return [];
+  }
+  // make sure that the cookie consent is available before making the call to alloy,
+  // otherwise the call will be queued and never executed
+  if (!isCookieConsentAllowed()) {
     return [];
   }
   if (window.rtcdpSegments) {
