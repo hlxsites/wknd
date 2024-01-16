@@ -289,6 +289,7 @@ async function loadPage() {
   const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
 
   // example of sending custom data to AEP through Alloy
+  // TODO: comment this after testing
   if (document.location.href.includes('products')) {
     analyticsCustomData({
       Interests: 'sports',
