@@ -19,6 +19,15 @@ const EXPERIENCE_STEP_EXPERIMENTATION = 'experimentation';
 const CUSTOM_SCHEMA_NAMESPACE = '_sitesinternal';
 
 /**
+ * Configure the cookie keys that should be mapped to the XDM schema and send with each event
+ * Ex: { 'funnelState': 'userState' }
+ * funnelState in the cookie will be sent as userState in the schema
+ */
+const COOKIE_MAPPING_TO_SCHEMA = {
+  funnelState: 'Funnelstate',
+};
+
+/**
  * Returns experiment id and variant running
  * @returns {{experimentVariant: *, experimentId}}
  */
@@ -57,7 +66,26 @@ function getDatastreamConfiguration() {
 }
 
 /**
- * Enhance all events with additional details, like experiment running,
+ * If the configured key in COOKIE_MAPPING_TO_SCHEMA exists in the cookie
+ * it'll be added to the XDM schema
+ * @param {*} xdmData
+ */
+function updateAlloyEventWithCookieData(xdmData) {
+  const cookieData = document.cookie.split(';').reduce((res, item) => {
+    const [key, val] = item.split('=');
+    res[key.trim()] = val;
+    return res;
+  }, {});
+  Object.keys(cookieData).forEach((key) => {
+    const mappedKey = COOKIE_MAPPING_TO_SCHEMA[key];
+    if (mappedKey && xdmData.xdm[CUSTOM_SCHEMA_NAMESPACE]) {
+      xdmData.xdm[CUSTOM_SCHEMA_NAMESPACE][mappedKey] = cookieData[key];
+    }
+  });
+}
+
+/**
+ * Enhance all events with additional details, like experiment running, mapped cookie data, etc.
  * before sending them to the edge
  * @param options event in the XDM schema format
  */
@@ -87,6 +115,7 @@ function enhanceAnalyticsEvent(options) {
   };
   // eslint-disable-next-line no-underscore-dangle
   options.xdm._experience = experienceDecisioningXDM;
+  updateAlloyEventWithCookieData(options);
   console.debug(`enhanceAnalyticsEvent complete: ${JSON.stringify(options)}`);
 }
 
@@ -428,6 +457,30 @@ export async function analyticsTrackVideo({
   }
 
   return sendAnalyticsEvent(baseXdm);
+}
+
+/**
+ * Sends custom data to analytics as additional fields in the custom name space
+ * @param element
+ * @param additionalXdmFields
+ * @returns {Promise<*>}
+ */
+export async function analyticsCustomData(additionalXdmFields = {}) {
+  const xdmData = {
+    eventType: 'web.webpagedetails.pageViews',
+    web: {
+      webPageDetails: {
+        pageViews: {
+          value: 0,
+        },
+      },
+    },
+    [CUSTOM_SCHEMA_NAMESPACE]: {
+      ...additionalXdmFields,
+    },
+  };
+
+  return sendAnalyticsEvent(xdmData);
 }
 
 function getSegmentsFromAlloyResponse(response) {

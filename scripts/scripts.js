@@ -284,6 +284,17 @@ async function loadPage() {
   await window.hlx.plugins.load('lazy');
   await loadLazy(document);
   const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
+
+  /*
+  // example of sending custom data to AEP through Alloy
+  if (document.location.href.includes('products')) {
+    analyticsCustomData({
+      Interests: 'sports',
+      Entitlements: 'photoshop',
+    });
+  }
+  */
+
   loadDelayed();
   await setupAnalytics;
 }
