@@ -27,6 +27,12 @@ import {
 } from './analytics/lib-analytics.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
+/**
+ * Add your segment name id mappings path here. Configure Segment sync
+ * from https://github.com/adobe-rnd/aem-experimentation-gh-actions/tree/main/segments-sync
+ * to generate the segment-mappings automatically from your AEP segments.
+ */
+const SEGMENTNAME_ID_MAPPINGS = '/data/segment-mappings.json';
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
 // Define the custom audiences mapping for experience decisioning
@@ -36,7 +42,7 @@ const AUDIENCES = {
   'new-visitor': () => !localStorage.getItem('franklin-visitor-returning'),
   'returning-visitor': () => !!localStorage.getItem('franklin-visitor-returning'),
   rtcdp: async (rtcdpAudience) => {
-    const segmentMappingsResponse = await fetch('/segment-mappings.json');
+    const segmentMappingsResponse = await fetch(SEGMENTNAME_ID_MAPPINGS);
     const segmentMappingsJson = await segmentMappingsResponse.json();
     const segmentMappings = [];
     segmentMappingsJson.forEach((mapping) => {
