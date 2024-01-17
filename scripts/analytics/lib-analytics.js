@@ -19,32 +19,12 @@ const EXPERIENCE_STEP_EXPERIMENTATION = 'experimentation';
 const CUSTOM_SCHEMA_NAMESPACE = '_sitesinternal';
 
 /**
- * Pre connection domains to which pre-connect will be established
- * NOTE: Add only those urls you need in LCP
- */
-const PRECONNECTION_DOMAINS = ['https://edge.adobedc.net', 'https://adobedc.demdex.net'];
-
-/**
  * Configure the cookie keys that should be mapped to the XDM schema and send with each event
  * Ex: { 'funnelState': 'userState' }
  * funnelState in the cookie will be sent as userState in the schema
  */
 const COOKIE_MAPPING_TO_SCHEMA = {
 };
-
-/**
- * Establishes pre-connections to domains that are configured in PRECONNECTION_DOMAINS
- */
-export function establishPreConnections() {
-  PRECONNECTION_DOMAINS.forEach((domain) => {
-    if (!document.querySelector(`head > link[rel="preconnect"][href="${domain}"]`)) {
-      const link = document.createElement('link');
-      link.setAttribute('rel', 'preconnect');
-      link.setAttribute('href', domain);
-      document.head.appendChild(link);
-    }
-  });
-}
 
 /**
  * Returns experiment id and variant running

@@ -11,8 +11,6 @@
  */
 const MAX_SAMPLING_RATE = 10; // At a maximum we sample 1 in 10 requests
 
-const RTCDP_AUDIENCE_PREFIX = 'rtcdp';
-
 export const DEFAULT_OPTIONS = {
   // Generic properties
   rumSamplingRate: MAX_SAMPLING_RATE, // 1 in 10 requests
@@ -65,12 +63,11 @@ export async function getResolvedAudiences(applicableAudiences, options, context
   const results = await Promise.all(
     applicableAudiences
       .map((key) => {
-        if (key.indexOf(RTCDP_AUDIENCE_PREFIX) !== -1 && options.audiences[RTCDP_AUDIENCE_PREFIX]) {
-          const rtcdpAudience = key.replace(`${RTCDP_AUDIENCE_PREFIX}-`, '');
-          return options.audiences[RTCDP_AUDIENCE_PREFIX](rtcdpAudience);
-        }
         if (options.audiences[key] && typeof options.audiences[key] === 'function') {
           return options.audiences[key]();
+        }
+        if (!options.audiences[key] && typeof options.audiences.default === 'function') {
+          return options.audiences.default(key);
         }
         return false;
       }),

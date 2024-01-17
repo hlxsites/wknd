@@ -23,7 +23,6 @@ import {
   setupAnalyticsTrackingWithAlloy,
   getSegmentsFromAlloy,
   analyticsCustomData,
-  establishPreConnections,
 } from './analytics/lib-analytics.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
@@ -33,6 +32,7 @@ const LCP_BLOCKS = []; // add your LCP blocks to the list
  * to generate the segment-mappings automatically from your AEP segments.
  */
 const SEGMENTNAME_ID_MAPPINGS = '/data/segment-mappings.json';
+const RTCDP_AUDIENCE_PREFIX = 'rtcdp';
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
 // Define the custom audiences mapping for experience decisioning
@@ -41,17 +41,22 @@ const AUDIENCES = {
   desktop: () => window.innerWidth >= 600,
   'new-visitor': () => !localStorage.getItem('franklin-visitor-returning'),
   'returning-visitor': () => !!localStorage.getItem('franklin-visitor-returning'),
-  rtcdp: async (rtcdpAudience) => {
-    const segmentMappingsResponse = await fetch(SEGMENTNAME_ID_MAPPINGS);
-    const segmentMappingsJson = await segmentMappingsResponse.json();
-    const segmentMappings = [];
-    segmentMappingsJson.forEach((mapping) => {
-      const name = mapping.name.replace(/\s+/g, '-').toLowerCase();
-      segmentMappings[name] = mapping.id;
-    });
-    const rtcdpAudienceId = segmentMappings[rtcdpAudience];
-    const segments = await getSegmentsFromAlloy();
-    return segments.includes(rtcdpAudienceId);
+  default: async (audience) => {
+    // check if the audience is rtcdp audience
+    if (audience.indexOf(RTCDP_AUDIENCE_PREFIX) !== -1) {
+      const rtcdpAudience = audience.replace(`${RTCDP_AUDIENCE_PREFIX}-`, '');
+      const segmentMappingsResponse = await fetch(SEGMENTNAME_ID_MAPPINGS);
+      const segmentMappingsJson = await segmentMappingsResponse.json();
+      const segmentMappings = [];
+      segmentMappingsJson.forEach((mapping) => {
+        const name = mapping.name.replace(/\s+/g, '-').toLowerCase();
+        segmentMappings[name] = mapping.id;
+      });
+      const rtcdpAudienceId = segmentMappings[rtcdpAudience];
+      const segments = await getSegmentsFromAlloy();
+      return segments.includes(rtcdpAudienceId);
+    }
+    return false;
   },
 };
 
@@ -202,7 +207,6 @@ export function decorateMain(main) {
  */
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
-  establishPreConnections();
   decorateTemplateAndTheme();
   await initAnalyticsTrackingQueue();
 
