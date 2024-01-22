@@ -66,6 +66,9 @@ export async function getResolvedAudiences(applicableAudiences, options, context
         if (options.audiences[key] && typeof options.audiences[key] === 'function') {
           return options.audiences[key]();
         }
+        if (!options.audiences[key] && typeof options.audiences.default === 'function') {
+          return options.audiences.default(key);
+        }
         return false;
       }),
   );
