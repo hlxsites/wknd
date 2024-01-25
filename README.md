@@ -7,8 +7,8 @@ Codebase for the fictional WKND site, showcasing the capabilities of Adobe's Edg
 - Document based content authoring
 
 ## Environments
-- Preview: https://main--wknd--hlxsites.hlx.page/
-- Live: https://main--wknd--hlxsites.hlx.live/
+- Preview: https://main--wknd--rusher.hlx.page/
+- Live: https://main--wknd--rusher.hlx.live/
 
 ## Installation
 
