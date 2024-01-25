@@ -7,7 +7,7 @@ import htm from '../../scripts/htm.js';
 const html = htm.bind(h);
 
 // Function to convert keys into readable questions
-const toQuestion = (key) => key.replace(/-/g, ' ').replace(/\b\w/, (c) => c.toUpperCase());
+const toQuestion = (key) => key.replace(/-/g, ' ').toUpperCase();
 
 const MyList = ({ list, resolve }) => {
   const detailItems = Object.entries(list).map(([key, value]) => html`
