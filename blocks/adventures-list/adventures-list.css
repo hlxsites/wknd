@@ -1,0 +1,41 @@
+.adventures-list {
+    display: block;
+  }
+  
+  .adventures-list ul {
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: normal;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+  
+  .adventures-list ul li {
+    flex-basis: 260px;
+    margin: 0 0 2rem;
+    padding-right: 14px;
+  }
+  
+  .adventures-list ul li .cmp-image-list__item-content {
+    display: block;
+  }
+  
+  .adventures-list ul li .cmp-image-list__item-content img {
+    height: 200px;
+    margin: 0;
+    object-fit: cover;
+    object-position: center;
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .adventures-list .cmp-image-list__item-title {
+    color: var(--text-color);
+    font-size: var(--heading-font-size-xs);
+    font-family: var(--body-font-family);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
