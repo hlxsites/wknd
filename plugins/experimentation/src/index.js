@@ -1,5 +1,3 @@
-import { getEcid, sendAlloyEvents } from '../../../scripts/scripts.js';
-
 /*
  * Copyright 2022 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -21,6 +19,7 @@ export const DEFAULT_OPTIONS = {
   audiences: {},
   audiencesMetaTagPrefix: 'audience',
   audiencesQueryParameter: 'audience',
+  audienceAepPrefix: 'aep',
 
   // Campaigns related properties
   campaignsMetaTagPrefix: 'campaign',
@@ -67,6 +66,16 @@ export async function getResolvedAudiences(applicableAudiences, options, context
       .map((key) => {
         if (options.audiences[key] && typeof options.audiences[key] === 'function') {
           return options.audiences[key]();
+        }
+        if (!options.audiences[key] && key.startsWith(`${options.audienceAepPrefix}-`)) {
+          const aepSegmentId = key.replace(`${options.audienceAepPrefix}-`, '');
+          return import('./aep.js')
+            .then(({ getSegmentsFromAlloy }) => getSegmentsFromAlloy(options.aepConfig))
+            .then((segments) => {
+              console.log('segments', segments);
+              console.log('segment id', aepSegmentId);
+              return segments.includes(aepSegmentId);
+            });
         }
         return false;
       }),
@@ -440,6 +449,10 @@ export async function runExperiment(document, options, context) {
   console.debug(`running experiment (${window.hlx.experiment.id}) -> ${window.hlx.experiment.selectedVariant}`);
 
   if (experimentConfig.selectedVariant === experimentConfig.variantNames[0]) {
+    context.sampleRUM('experiment', {
+      source: experimentConfig.id,
+      target: experimentConfig.selectedVariant,
+    });
     return false;
   }
 
@@ -456,14 +469,14 @@ export async function runExperiment(document, options, context) {
   }
 
   // Fullpage content experiment
-  document.body.classList.add(`experiment-${experimentConfig.id}`);
+  document.body.classList.add(`experiment-${context.toClassName(experimentConfig.id)}`);
   const result = await replaceInner(pages[index], document.querySelector('main'));
   experimentConfig.servedExperience = result || currentPath;
   if (!result) {
     // eslint-disable-next-line no-console
     console.debug(`failed to serve variant ${window.hlx.experiment.selectedVariant}. Falling back to ${experimentConfig.variantNames[0]}.`);
   }
-  document.body.classList.add(`variant-${result ? experimentConfig.selectedVariant : experimentConfig.variantNames[0]}`);
+  document.body.classList.add(`variant-${context.toClassName(result ? experimentConfig.selectedVariant : experimentConfig.variantNames[0])}`);
   const ecid = await getEcid();
   sendAlloyEvents( { display: 1 }, ecid, experimentConfig.id, experimentConfig.selectedVariant);
   registerPageEventListener(experimentConfig.id, experimentConfig.selectedVariant);
@@ -585,7 +598,7 @@ export async function serveAudience(document, options, context) {
   }
 }
 
-window.hlx.patchBlockConfig.push((config) => {
+window.hlx.patchBlockConfig?.push((config) => {
   const { experiment } = window.hlx;
 
   // No experiment is running
@@ -688,7 +701,11 @@ export async function loadLazy(document, options, context) {
   };
   if (window.location.hostname.endsWith('hlx.page')
     || window.location.hostname === ('localhost')
-    || (typeof options.isProd === 'function' && !options.isProd())) {
+    || (typeof options.isProd === 'function' && !options.isProd())
+    || (options.prodHost
+        && options.prodHost !== window.location.host
+        && options.prodHost !== window.location.hostname
+        && options.prodHost !== window.location.origin)) {
     // eslint-disable-next-line import/no-cycle
     const preview = await import('./preview.js');
     preview.default(document, pluginOptions, { ...context, getResolvedAudiences });

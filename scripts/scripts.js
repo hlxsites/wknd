@@ -94,6 +94,13 @@ const AUDIENCES = {
   },
 };
 
+const aepConfig = {
+  edgeConfigId: '2324184b-260b-4d66-a8ca-897ab9374fb3',
+  orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+  enhanceAnalyticsEvent: (...args) => console.log(args),
+  isConsentGiven: () => true,
+};
+
 window.hlx.plugins.add('rum-conversion', {
   url: '/plugins/rum-conversion/src/index.js',
   load: 'lazy',
@@ -103,7 +110,7 @@ window.hlx.plugins.add('experimentation', {
   condition: () => getMetadata('experiment')
     || Object.keys(getAllMetadata('campaign')).length
     || Object.keys(getAllMetadata('audience')).length,
-  options: { audiences: AUDIENCES },
+  options: { audiences: AUDIENCES, aepConfig },
   load: 'eager',
   url: '/plugins/experimentation/src/index.js',
 });
