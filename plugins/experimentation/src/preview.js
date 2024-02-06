@@ -460,6 +460,7 @@ async function decorateAudiencesPill(overlay, options, context) {
     options,
     context,
   );
+  console.log(resolvedAudiences);
   const pill = createPopupButton(
     'Audiences',
     {

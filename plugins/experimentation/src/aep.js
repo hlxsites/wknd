@@ -52,14 +52,14 @@ function getSegmentsFromAlloyResponse(response) {
 let segments;
 let renderDecisions;
 
+export async function init(options) {
+
+  // await setupAlloy(document, options);
+  // initialized = true;
+}
+
 // eslint-disable-next-line import/prefer-default-export
-export async function getSegmentsFromAlloy(options) {
-  // {
-  //   edgeConfigId: '2324184b-260b-4d66-a8ca-897ab9374fb3',
-  //   orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
-  //   enhanceAnalyticsEvent: (...args) => console.log(args),
-  //   isConsentGiven: () => true,
-  // }
+export async function resolveAepSegment(segmentId, options, context) {
   console.assert(options.edgeConfigId, 'aep.edgeConfigId is required');
   console.assert(options.orgId, 'aep.orgId is required');
   console.assert(options.isConsentGiven, 'aep.isConsentGiven is required');
@@ -73,11 +73,6 @@ export async function getSegmentsFromAlloy(options) {
   if (segments) {
     return segments;
   }
-
-  if (!window.alloy) {
-    await setupAlloy(document, options);
-  }
-
   // avoid multiple calls to alloy for render decisions from different audiences
   if (renderDecisions) {
     return getSegmentsFromAlloyResponse(renderDecisions);
@@ -88,7 +83,8 @@ export async function getSegmentsFromAlloy(options) {
       renderDecisions: true,
     });
     segments = getSegmentsFromAlloyResponse(renderDecisions);
-    return segments;
+    return segments.find((segment) => segment === segmentId)
+      || options?.segmentsMap?.find((segment) => segment.name === segmentId);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Error sending event to alloy:', err);

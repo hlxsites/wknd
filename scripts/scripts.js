@@ -22,9 +22,6 @@ window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information 
 // add only those urls you need in LCP
 const PRECONNECTION_DOMAINS = ['https://edge.adobedc.net'];
 
-const PHOTOSHOP_SEGMENT_ID = '609b90e4-5306-4c37-b64b-e3026ad1f768';
-const FUNNEL_STATE_ELAPSED_SEGMENT_ID = 'a44525f4-e115-41d3-a650-eaad3fa2a458';
-
 const MAPPING_PREFIX = '_sitesinternal';
 const COOKIE_MAPPING_TO_SCHEMA = {
   funnelstate: 'Funnelstate',
@@ -34,64 +31,12 @@ const EVENT_TYPE_PROPOSITION_INTERACTION = 'propositionInteraction';
 
 const KEY_ECID = 'ecid';
 
-function getSegmentsFromAlloyResponse(response) {
-  const segments = [];
-  if (response && response.destinations) {
-    Object.values(response.destinations).forEach((destination) => {
-      if (destination.segments) {
-        Object.values(destination.segments).forEach((segment) => {
-          segments.push(segment.id);
-        });
-      }
-    });
-  }
-  console.log('segments', segments);
-  return segments;
-}
-
-async function getSegmentsFromAlloy() {
-  if (!window.alloy) {
-    return [];
-  }
-  if (window.rtcdpSegments) {
-    return window.rtcdpSegments;
-  }
-  await window.alloyLoader;
-  let renderDecisionResolver;
-
-  if (window.renderDecision) {
-    await window.renderDecision;
-  } else {
-    window.renderDecision = new Promise((resolve) => {
-      renderDecisionResolver = resolve;
-    });
-    const response = await fetch('/segments.json');
-    const result = await response.json();
-    const json = {
-      destinations: result.handle[1].payload,
-    };
-    window.rtcdpSegments = getSegmentsFromAlloyResponse(json);
-    renderDecisionResolver();
-  }
-  return window.rtcdpSegments;
-}
-
 // Define the custom audiences mapping for experience decisioning
 const AUDIENCES = {
   mobile: () => window.innerWidth < 600,
   desktop: () => window.innerWidth >= 600,
   'new-visitor': () => !localStorage.getItem('franklin-visitor-returning'),
   'returning-visitor': () => !!localStorage.getItem('franklin-visitor-returning'),
-  'funnel-state-lapsed': async () => {
-    const segments = await getSegmentsFromAlloy();
-    return segments.includes(FUNNEL_STATE_ELAPSED_SEGMENT_ID)
-      && segments.includes(PHOTOSHOP_SEGMENT_ID);
-  },
-  photoshop: async () => {
-    const segments = await getSegmentsFromAlloy();
-    return segments.includes(PHOTOSHOP_SEGMENT_ID)
-      && !segments.includes(FUNNEL_STATE_ELAPSED_SEGMENT_ID);
-  },
 };
 
 const aepConfig = {
@@ -441,6 +386,13 @@ export async function initAnalyticsTrackingQueue() {
  * Loads alloy library
  */
 export async function loadAlloy(document) {
+  if (!window.alloy) {
+    /* eslint-disable */
+    (function(n,o){o.forEach(function(o){n[o]||((n.__alloyNS=n.__alloyNS||
+    []).push(o),n[o]=function(){var u=arguments;return new Promise(
+    function(i,l){n[o].q.push([i,l,u])})},n[o].q=[])}) }
+    (window, ["alloy"]));
+  }
   await import('./alloy.min.js');
   // eslint-disable-next-line no-undef
   await alloy('configure', getAlloyConfiguration(document));
@@ -454,7 +406,7 @@ async function loadEager(doc) {
   establishPreConnections();
   decorateTemplateAndTheme();
   await initAnalyticsTrackingQueue();
-  window.alloyLoader = loadAlloy(doc);
+  await loadAlloy(doc);
 
   await window.hlx.plugins.run('loadEager');
 
