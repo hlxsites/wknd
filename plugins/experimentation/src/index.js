@@ -73,8 +73,8 @@ export async function getResolvedAudiences(applicableAudiences, options, context
             : context.toClassName(key.replace(`${options.audienceAepPrefix}-`, ''));
           return Promise.all([
             import('./aep.js'),
-            options.segmentsNameMap
-              ? fetch(options.segmentsNameMap).then((resp) => resp.json()).then((segments) => segments.map(({id, name}) => ({id, name: context.toClassName(name)})))
+            options.aepConfig.segmentsNameMap
+              ? fetch(options.aepConfig.segmentsNameMap).then((resp) => resp.json()).then((segments) => segments.map(({id, name}) => ({id, name: context.toClassName(name)})))
               : Promise.resolve([]),
             options.alloyLoadPromise || Promise.resolve(),
           ])
