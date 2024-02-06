@@ -1,23 +1,3 @@
-/**
- * Returns alloy configuration
- * Documentation https://experienceleague.adobe.com/docs/experience-platform/edge/fundamentals/configuring-the-sdk.html
- */
-function getAlloyConfiguration(document, { edgeConfigId, orgId, enhanceAnalyticsEvent }) {
-  const { hostname } = document.location;
-
-  return {
-    // enable while debugging
-    debugEnabled: hostname.startsWith('localhost') || hostname.includes('--'),
-    // disable when clicks are also tracked via sendEvent with additional details
-    clickCollectionEnabled: true,
-    // adjust default based on customer use case
-    defaultConsent: 'in',
-    edgeConfigId,
-    orgId,
-    onBeforeEventSend: enhanceAnalyticsEvent,
-  };
-}
-
 function getSegmentsFromAlloyResponse(response) {
   const segments = [];
   if (response && response.destinations) {
@@ -42,7 +22,7 @@ export async function init(options) {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export async function resolveAepSegment(segmentId, options, context) {
+export async function resolveAepSegment(segmentId, options) {
   console.assert(options.edgeConfigId, 'aep.edgeConfigId is required');
   console.assert(options.orgId, 'aep.orgId is required');
   console.assert(options.isConsentGiven, 'aep.isConsentGiven is required');

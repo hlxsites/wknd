@@ -72,11 +72,13 @@ export async function getResolvedAudiences(applicableAudiences, options, context
             ? forcedAudience.replace(`${options.audienceAepPrefix}-`, '')
             : context.toClassName(key.replace(`${options.audienceAepPrefix}-`, ''));
           return Promise.all([
-            options.waitFor ? options.waitFor() : Promise.resolve(),
             import('./aep.js'),
-            fetch('/cache/aep-segments.json').then((resp) => resp.json()).then((segments) => segments.map(({id, name}) => ({id, name: context.toClassName(name)}))),
+            options.segmentsNameMap
+              ? fetch(options.segmentsNameMap).then((resp) => resp.json()).then((segments) => segments.map(({id, name}) => ({id, name: context.toClassName(name)})))
+              : Promise.resolve([]),
+            options.alloyLoadPromise || Promise.resolve(),
           ])
-            .then(([,{ resolveAepSegment }, segmentsMap]) => resolveAepSegment(aepSegmentId, { ...options.aepConfig, segmentsMap }));
+            .then(([{ resolveAepSegment }, segmentsMap]) => resolveAepSegment(aepSegmentId, { ...options.aepConfig, segmentsMap }));
         }
         return false;
       }),

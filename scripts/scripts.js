@@ -43,9 +43,9 @@ const AUDIENCES = {
 const aepConfig = {
   edgeConfigId: '2324184b-260b-4d66-a8ca-897ab9374fb3',
   orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
-  enhanceAnalyticsEvent: (...args) => console.log(args),
   isConsentGiven: () => true,
-  waitFor: () => alloyLoader,
+  alloyLoadPromise: alloyLoader,
+  segmentsNameMap: '/cache/aep-segments.json',
 };
 
 window.hlx.plugins.add('rum-conversion', {
