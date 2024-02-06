@@ -30,27 +30,23 @@ export async function resolveAepSegment(segmentId, options) {
   // make sure that the cookie consent is available before making the call to alloy,
   // otherwise the call will be queued and never executed
   if (!options.isConsentGiven()) {
-    return [];
+    return null;
   }
 
-  if (segments) {
-    return segments;
-  }
   // avoid multiple calls to alloy for render decisions from different audiences
-  if (renderDecisions) {
-    return getSegmentsFromAlloyResponse(renderDecisions);
-  }
-
-  try {
+  if (!renderDecisions) {
     renderDecisions = await window.alloy('sendEvent', {
       renderDecisions: true,
     });
+  }
+
+  try {
     segments = getSegmentsFromAlloyResponse(renderDecisions);
     return segments.find((segment) => segment === segmentId)
       || options?.segmentsMap?.find((segment) => segment.name === segmentId);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('Error sending event to alloy:', err);
-    return [];
+    return null;
   }
 }
