@@ -396,6 +396,7 @@ export async function loadAlloy(document) {
     (window, ["alloy"]));
   }
   await import('./alloy.min.js');
+
   // eslint-disable-next-line no-undef
   return alloy('configure', getAlloyConfiguration(document));
 }
@@ -408,7 +409,6 @@ async function loadEager(doc) {
   establishPreConnections();
   decorateTemplateAndTheme();
   await initAnalyticsTrackingQueue();
-  alloyLoader = loadAlloy(doc);
 
   await window.hlx.plugins.run('loadEager');
 
@@ -492,6 +492,7 @@ function loadDelayed() {
 }
 
 async function loadPage() {
+  alloyLoader = loadAlloy(document);
   await window.hlx.plugins.load('eager');
   await loadEager(document);
   await window.hlx.plugins.load('lazy');
