@@ -14,12 +14,9 @@ function getSegmentsFromAlloyResponse(response) {
 
 let segments;
 let renderDecisions;
-
-export async function init(options) {
-
-  // await setupAlloy(document, options);
-  // initialized = true;
-}
+const renderDecisionsLoading = window.alloy('sendEvent', {
+  renderDecisions: true,
+});
 
 // eslint-disable-next-line import/prefer-default-export
 export async function resolveAepSegment(segmentId, options) {
@@ -35,9 +32,7 @@ export async function resolveAepSegment(segmentId, options) {
 
   // avoid multiple calls to alloy for render decisions from different audiences
   if (!renderDecisions) {
-    renderDecisions = await window.alloy('sendEvent', {
-      renderDecisions: true,
-    });
+    renderDecisions = await renderDecisionsLoading;
   }
 
   try {
