@@ -68,8 +68,9 @@ export async function getResolvedAudiences(applicableAudiences, options, context
           return options.audiences[key]();
         }
         if (!options.audiences[key] && key.startsWith(`${options.audienceAepPrefix}-`)) {
-          const aepSegmentId = forcedAudience.replace(`${options.audienceAepPrefix}-`, '')
-            || context.toClassName(key.replace(`${options.audienceAepPrefix}-`, ''));
+          const aepSegmentId = forcedAudience
+            ? forcedAudience.replace(`${options.audienceAepPrefix}-`, '')
+            : context.toClassName(key.replace(`${options.audienceAepPrefix}-`, ''));
           return Promise.all([
             import('./aep.js'),
             fetch('/.cache/aep-segments.json').then((resp) => resp.json()).then((segments) => segments.map(({id, name}) => ({id, name: context.toClassName(name)}))),
