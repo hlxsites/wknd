@@ -31,6 +31,7 @@ const EVENT_TYPE_PROPOSITION_INTERACTION = 'propositionInteraction';
 
 const KEY_ECID = 'ecid';
 
+let alloyLoader;
 // Define the custom audiences mapping for experience decisioning
 const AUDIENCES = {
   mobile: () => window.innerWidth < 600,
@@ -44,6 +45,7 @@ const aepConfig = {
   orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
   enhanceAnalyticsEvent: (...args) => console.log(args),
   isConsentGiven: () => true,
+  waitFor: () => alloyLoader,
 };
 
 window.hlx.plugins.add('rum-conversion', {
@@ -191,7 +193,7 @@ export async function sendAlloyEvents(eventType, ecid, experimentId, treatmentId
   if (!window.alloy) {
     return;
   }
-  await window.alloyLoader;
+  await alloyLoader;
   console.log('logEventAlloy {}', eventType);
   const context = {
     identityMap: {
@@ -249,7 +251,7 @@ export async function getEcid() {
   if (!window.alloy) {
     return '';
   }
-  await window.alloyLoader;
+  await alloyLoader;
   let ecid = localStorage.getItem(KEY_ECID);
   if (ecid) {
     return ecid;
@@ -395,7 +397,7 @@ export async function loadAlloy(document) {
   }
   await import('./alloy.min.js');
   // eslint-disable-next-line no-undef
-  await alloy('configure', getAlloyConfiguration(document));
+  return alloy('configure', getAlloyConfiguration(document));
 }
 
 /**
@@ -406,7 +408,7 @@ async function loadEager(doc) {
   establishPreConnections();
   decorateTemplateAndTheme();
   await initAnalyticsTrackingQueue();
-  await loadAlloy(doc);
+  alloyLoader = loadAlloy(doc);
 
   await window.hlx.plugins.run('loadEager');
 

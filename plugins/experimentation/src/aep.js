@@ -18,23 +18,6 @@ function getAlloyConfiguration(document, { edgeConfigId, orgId, enhanceAnalytics
   };
 }
 
-async function setupAlloy(document, options) {
-  // eslint-disable-next-line no-undef
-  let loadPromise = Promise.resolve();
-  if (!window.alloy) {
-    /* eslint-disable */
-    (function(n,o){o.forEach(function(o){n[o]||((n.__alloyNS=n.__alloyNS||
-    []).push(o),n[o]=function(){var u=arguments;return new Promise(
-    function(i,l){n[o].q.push([i,l,u])})},n[o].q=[])}) }
-    (window, ["alloy"]));
-    /* eslint-enable */
-    loadPromise = import('./alloy-2.19.2.min.js');
-  }
-  return loadPromise.then(() => {
-    window.alloy('configure', getAlloyConfiguration(document, options));
-  });
-}
-
 function getSegmentsFromAlloyResponse(response) {
   const segments = [];
   if (response && response.destinations) {
