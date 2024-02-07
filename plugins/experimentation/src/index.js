@@ -407,13 +407,6 @@ async function getConfig(experiment, instantExperiment, pluginOptions, context) 
   return experimentConfig;
 }
 
-function registerPageEventListener(experimentId, variantId) {
-  document.addEventListener('click', async (ev) => {
-    const ecid = await getEcid();
-    sendAlloyEvents({ interact: 1 }, ecid, experimentId, variantId);
-  });
-}
-
 export async function runExperiment(document, options, context) {
   if (isBot()) {
     return false;
@@ -480,9 +473,6 @@ export async function runExperiment(document, options, context) {
     console.debug(`failed to serve variant ${window.hlx.experiment.selectedVariant}. Falling back to ${experimentConfig.variantNames[0]}.`);
   }
   document.body.classList.add(`variant-${context.toClassName(result ? experimentConfig.selectedVariant : experimentConfig.variantNames[0])}`);
-  const ecid = await getEcid();
-  sendAlloyEvents( { display: 1 }, ecid, experimentConfig.id, experimentConfig.selectedVariant);
-  registerPageEventListener(experimentConfig.id, experimentConfig.selectedVariant);
   context.sampleRUM('experiment', {
     source: experimentConfig.id,
     target: result ? experimentConfig.selectedVariant : experimentConfig.variantNames[0],
