@@ -14,9 +14,12 @@ import {
   loadBlocks,
   loadCSS,
 } from './lib-franklin.js';
+import {
+  initAnalyticsTrackingQueue,
+  setupAnalyticsTrackingWithAlloy,
+} from './analytics/lib-analytics.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
-const CUSTOM_SCHEMA_NAMESPACE = '_sitesinternal';
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
 // add only those urls you need in LCP
@@ -290,18 +293,6 @@ function establishPreConnections() {
 }
 
 /**
- * Returns script that initializes a queue for each alloy instance,
- * in order to be ready to receive events before the alloy library is loaded
- * Documentation
- * https://experienceleague.adobe.com/docs/experience-platform/edge/fundamentals/installing-the-sdk.html?lang=en#adding-the-code
- * @type {string}
- */
-function getAlloyInitScript() {
-  return `!function(n,o){o.forEach(function(o){n[o]||((n.__alloyNS=n.__alloyNS||[]).push(o),n[o]=
-  function(){var u=arguments;return new Promise(function(i,l){n[o].q.push([i,l,u])})},n[o].q=[])})}(window,["alloy"]);`;
-}
-
-/**
  * Returns datastream id to use as edge configuration id
  * Custom logic can be inserted here in order to support
  * different datastream ids for different environments (non-prod/prod)
@@ -328,87 +319,12 @@ export function getExperimentDetails() {
 }
 
 /**
- * Enhance all events with additional details, like experiment running,
- * before sending them to the edge
- * @param options event in the XDM schema format
- */
-function enhanceAnalyticsEvent(options) {
-  const experiment = getExperimentDetails();
-  options.xdm[CUSTOM_SCHEMA_NAMESPACE] = {
-    ...options.xdm[CUSTOM_SCHEMA_NAMESPACE],
-    ...(experiment && { experiment }), // add experiment details, if existing, to all events
-  };
-  console.debug(`enhanceAnalyticsEvent complete: ${JSON.stringify(options)}`);
-}
-
-/**
- * Returns alloy configuration
- * Documentation https://experienceleague.adobe.com/docs/experience-platform/edge/fundamentals/configuring-the-sdk.html
- */
-function getAlloyConfiguration(document) {
-  const { hostname } = document.location;
-
-  return {
-    // enable while debugging
-    debugEnabled: hostname.startsWith('localhost') || hostname.includes('--'),
-    // disable when clicks are also tracked via sendEvent with additional details
-    clickCollectionEnabled: true,
-    // adjust default based on customer use case
-    defaultConsent: 'in',
-    ...getDatastreamConfiguration(),
-    onBeforeEventSend: (options) => enhanceAnalyticsEvent(options),
-  };
-}
-
-/**
- * Create inline script
- * @param document
- * @param element where to create the script element
- * @param innerHTML the script
- * @param type the type of the script element
- * @returns {HTMLScriptElement}
- */
-function createInlineScript(document, element, innerHTML, type) {
-  const script = document.createElement('script');
-  script.type = type;
-  script.innerHTML = innerHTML;
-  element.appendChild(script);
-  return script;
-}
-
-/**
- * Initializes event queue for analytics tracking using alloy
- * @returns {Promise<void>}
- */
-export async function initAnalyticsTrackingQueue() {
-  createInlineScript(document, document.body, getAlloyInitScript(), 'text/javascript');
-}
-
-/**
- * Loads alloy library
- */
-export async function loadAlloy(document) {
-  if (!window.alloy) {
-    /* eslint-disable */
-    (function(n,o){o.forEach(function(o){n[o]||((n.__alloyNS=n.__alloyNS||
-    []).push(o),n[o]=function(){var u=arguments;return new Promise(
-    function(i,l){n[o].q.push([i,l,u])})},n[o].q=[])}) }
-    (window, ["alloy"]));
-  }
-  await import('./alloy.min.js');
-
-  // eslint-disable-next-line no-undef
-  return alloy('configure', getAlloyConfiguration(document));
-}
-
-/**
  * loads everything needed to get to LCP.
  */
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   establishPreConnections();
   decorateTemplateAndTheme();
-  await initAnalyticsTrackingQueue();
 
   await window.hlx.plugins.run('loadEager');
 
@@ -492,7 +408,8 @@ function loadDelayed() {
 }
 
 async function loadPage() {
-  alloyLoader = loadAlloy(document);
+  initAnalyticsTrackingQueue();
+  alloyLoader = setupAnalyticsTrackingWithAlloy(document, getDatastreamConfiguration());
   await window.hlx.plugins.load('eager');
   await loadEager(document);
   await window.hlx.plugins.load('lazy');
@@ -501,11 +418,7 @@ async function loadPage() {
     const ecid = await getEcid();
     await sendAlloyEvents('display', ecid);
   }
-  const { setupAnalyticsTrackingWithAlloy, initializeAnalyticsTracking } = await import('./analytics/lib-analytics.js');
-  const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
   loadDelayed();
-  await setupAnalytics;
-  await initializeAnalyticsTracking();
 }
 
 loadPage();
