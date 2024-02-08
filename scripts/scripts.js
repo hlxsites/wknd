@@ -23,7 +23,7 @@ const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
 // add only those urls you need in LCP
-const PRECONNECTION_DOMAINS = ['https://edge.adobedc.net'];
+const PRECONNECTION_DOMAINS = [/* 'https://edge.adobedc.net' */];
 
 const MAPPING_PREFIX = '_sitesinternal';
 const COOKIE_MAPPING_TO_SCHEMA = {
