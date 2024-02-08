@@ -70,7 +70,9 @@ function getAlloyConfiguration(document, options) {
     defaultConsent: 'in',
     ...options,
     onBeforeEventSend: (opts) => enhanceAnalyticsEvent(opts),
-    edgeDomain: window.location.hostname,
+    edgeDomain: window.location.hostname.endsWith('.workers.dev')
+      ? window.location.hostname
+      : undefined,
   };
 }
 
