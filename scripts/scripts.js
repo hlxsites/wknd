@@ -23,6 +23,8 @@ import {
   setupAnalyticsTrackingWithAlloy,
 } from './analytics/lib-analytics.js';
 
+import loadOffers from './target.js';
+
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
@@ -266,6 +268,7 @@ function loadDelayed() {
 }
 
 async function loadPage() {
+  await loadOffers('sitesinternal');
   await window.hlx.plugins.load('eager');
   await loadEager(document);
   await window.hlx.plugins.load('lazy');
