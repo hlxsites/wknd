@@ -1,75 +1,158 @@
-.cards > ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    grid-gap: 16px;
+.cards-sneakers > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-gap: 60px;
 }
 
-.cards > ul > li {
-    border: 1px solid var(--highlight-background-color);
-    background-color: var(--background-color)
+.cards-sneakers > ul > li {
+  /* border: 1px solid var(--highlight-background-color); */
+  /* background-color: var(--background-color); */
+  border-radius: 24px;
 }
 
-.cards .cards-card-body {
-    margin: 16px;
+.cards-sneakers .cards-sneakers-card-body {
+  margin: 16px;
 }
 
-.cards .cards-card-image {
-    line-height: 0;
+.cards-sneakers .cards-sneakers-card-image {
+  line-height: 0;
 }
 
-.cards .cards-card-body > *:first-child {
-    margin-top: 0;
+.cards-sneakers .cards-sneakers-card-body > *:first-child {
+  margin-top: 0;
 }
 
-.cards > ul > li img {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
+.cards-sneakers > ul > li img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 16px;
 }
 
-.cards.no-crop > ul > li img {
-    aspect-ratio: unset;
-    object-fit: unset;
+.cards-sneakers .cards-sneakers-card-image {
+  padding: 16px;
 }
 
-
-.cards.scroll > ul {
-    scroll-snap-type: x mandatory;
-    overflow-x: scroll;
-    scroll-behavior: smooth;
-    display: flex;
-    padding-bottom: 16px;
+.cards-sneakers.no-crop > ul > li img {
+  aspect-ratio: unset;
+  object-fit: unset;
 }
 
-.cards.scroll > ul > li{
-    width: 50%;
-    flex-shrink: 0;
-    scroll-snap-align: start;
-    position: relative;
+.cards-sneakers.scroll > ul {
+  scroll-snap-type: x mandatory;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+  display: flex;
+  padding-bottom: 16px;
 }
 
-.cards.scroll > ul::-webkit-scrollbar {
-    width: 5px;
-    height: 8px;
-    background-color: #eee; /* or add it to the track */
+.cards-sneakers.scroll > ul > li {
+  width: 50%;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  position: relative;
 }
 
-.cards.scroll > ul::-webkit-scrollbar-thumb {
+.cards-sneakers.scroll > ul::-webkit-scrollbar {
+  width: 5px;
+  height: 8px;
+  background-color: #eee; /* or add it to the track */
+}
+
+.cards-sneakers.scroll > ul::-webkit-scrollbar-thumb {
   background: #999;
 }
 
+.cards-sneakers .cards-sneakers-card-root {
+  background-color: #F2F0EB;
+  padding: 30px 24px;
+  border-radius: 24px;
+}
+
+.cards-sneakers .cards-sneakers-card-collection-name {
+  color: #707070;
+  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 2.2px;
+  margin: 0;
+  line-height: unset;
+}
+
+.cards-sneakers .cards-sneakers-card-title {
+  color: #000000;
+  text-transform: uppercase;
+  font-size: 20px;
+  font-weight: bolder;
+  letter-spacing: 2.6px;
+  margin: 0;
+  line-height: unset;
+}
+
+.cards-sneakers .cards-sneakers-card-price {
+  color: #E01E61;
+  font-size: 24px;
+  margin: 0;
+  line-height: unset;
+}
+
+.cards-sneakers .cards-sneakers-card-stars-container {
+  list-style: none;
+  margin: 0;
+  padding-inline-start: 0;
+  display: flex;
+  gap: 4px;
+  flex-direction: row;
+  align-items: center;
+  line-height: unset;
+  height: 48px;
+}
+
+.cards-sneakers .cta-button {
+
+}
+
+.cards-sneakers .cards-sneakers-card-colors {
+  list-style: none;
+  margin: 0;
+  padding-inline-start: 0;
+  display: flex;
+  gap: 12px;
+  flex-direction: row;
+  align-items: center;
+  line-height: unset;
+  margin-bottom: 12px;
+}
+
+.cards-sneakers .cards-sneakers-card-color-container {
+  width: 24px;
+  height: 8px;
+  border-radius: 8px;
+  border: 4px solid #FFFFFF;
+}
+
+.cards-sneakers .cards-sneakers-card-stars-container > li svg {
+  fill: #FFD802;
+  width: 24px;
+}
+
+.cards-sneakers .cards-sneakers-card-stars-container > li:last-child {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #707070;
+}
 
 @media (min-width: 900px) {
-    .cards.scroll > ul > li {
+    .cards-sneakers.scroll > ul > li {
         width: calc(100%/3);
     }
 }
 
 @media (min-width: 1200px) {
-    .cards.scroll > ul > li {
+    .cards-sneakers.scroll > ul > li {
         width: calc(100%/4);
     }
 }

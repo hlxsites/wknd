@@ -1,18 +1,48 @@
 import { createOptimizedPicture } from '../../scripts/lib-franklin.js';
+import { collectionName } from '../../scripts/collection-name.js';
 
 export default function decorate(block) {
   /* change to ul, li */
   const ul = document.createElement('ul');
   [...block.children].forEach((row) => {
     const li = document.createElement('li');
-    li.innerHTML = row.innerHTML;
-    [...li.children].forEach((div) => {
-      if (div.children.length === 1 && div.querySelector('picture')) div.className = 'cards-card-image';
-      else div.className = 'cards-card-body';
+    const liWrapper = document.createElement('div');
+    liWrapper.className = 'cards-sneakers-card-root';
+    liWrapper.innerHTML = row.innerHTML;
+    [...liWrapper.children].forEach((div) => {
+      if (div.children.length === 1 && div.querySelector('picture')) div.className = 'cards-sneakers-card-image';
+      else {
+        // Remove colors from the card
+        const colors = div.children[0];
+        div.removeChild(div.children[0]);
+
+        // Add collection name
+        div.className = 'cards-sneakers-card-body';
+        const collectionNameEl = document.createElement('div');
+        collectionNameEl.className = 'cards-sneakers-card-collection-name';
+        collectionNameEl.innerHTML = `${collectionName} 2024 collection`;
+        div.prepend(collectionNameEl);
+
+        // Add classes to children
+        div.children[1].className = 'cards-sneakers-card-title';
+        div.children[2].className = 'cards-sneakers-card-price';
+        div.children[3].className = 'cards-sneakers-card-stars-container';
+
+        // Compute colors and prepend
+        colors.className = 'cards-sneakers-card-colors';
+        [...colors.children].forEach((li) => {
+          console.log('li',li);
+          li.className = 'cards-sneakers-card-color-container';
+          li.style.backgroundColor = li.innerHTML;
+          li.innerHTML = '';
+        });
+        div.prepend(colors);
+      }
     });
+    li.appendChild(liWrapper);
     ul.append(li);
   });
-  ul.querySelectorAll('img').forEach((img) => img.closest('picture').replaceWith(createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }])));
+  ul.querySelectorAll('img').forEach((img) => img.closest('picture').replaceWith(createOptimizedPicture(img.src, img.alt, false, [{ width: '250' }])));
   block.textContent = '';
   block.append(ul);
 }
