@@ -40,6 +40,7 @@ header .nav-brand {
 
 header nav .nav-brand p {
   margin: 0;
+  color: white;
 }
 
 header nav .nav-brand img {
@@ -122,11 +123,13 @@ header nav .nav-sections ul  {
   font-weight: 500;
   list-style: none;
   padding-left: 0;
+  gap: 100px;
 }
 
 header nav .nav-sections li {
   font-size: 20px;
   font-weight: 500;
+  color: white;
 }
 
 header nav[aria-expanded='true'] .nav-sections {
@@ -136,13 +139,19 @@ header nav[aria-expanded='true'] .nav-sections {
 
 /* tools */
 header nav .nav-tools {
+  display: flex;
   grid-area: tools;
   flex: 0 0 auto;
   height: 22px;
+  gap: 50px;
 }
 
 header nav .nav-tools p {
   margin: 0;
+}
+
+header nav .nav-tools .icon {
+  color: white;
 }
 
 header nav[aria-expanded='true'] .nav-tools img {
@@ -194,7 +203,7 @@ header nav[aria-expanded='true'] .nav-tools li {
   }
 
   header nav .nav-brand {
-    flex: 0 0 150px;
+    flex: 0 0 350px;
   }
 
   header nav .nav-sections ul {
@@ -203,6 +212,7 @@ header nav[aria-expanded='true'] .nav-tools li {
     background-color: unset;
     width: unset;
     margin: 0;
+    gap: 100px;
   }
 
   header nav[aria-expanded='true'] .nav-sections ol {
