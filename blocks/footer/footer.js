@@ -16,13 +16,6 @@ export default async function decorate(block) {
     const footer = document.createElement('div');
     footer.innerHTML = html;
     await decorateIcons(footer);
-
-    const classes = ['brand', 'nav', 'follow', 'disc'];
-    let f = footer.firstElementChild;
-    while (f && classes.length) {
-      f.classList.add(classes.shift());
-      f = f.nextElementSibling;
-    }
     block.append(footer);
   }
 }
