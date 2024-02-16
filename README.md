@@ -29,7 +29,7 @@ Before you begin, ensure you have the [AEM Sidekick Chrome extension](https://ch
 ### Experimentation
 [Experimentation docs](https://www.hlx.live/docs/experimentation)
 
-- Load the site's Preview URL (above)
+- Load the site's Preview URL (above) 
 - Note the green "Experiment" pill-shaped button in the bottom right corner
 - Click the button to open the Experimentation UI
 - Click the "Simulate" button next to an experiment to view how that variant will render for the end user
