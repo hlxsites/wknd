@@ -1,0 +1,16 @@
+.view-all-collections-wrapper .button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.view-all-collections-wrapper .button-container > a {
+  background-color: #4B4B4B;
+  border-color: #707070;
+  border-width: 1px;
+  color: #FFFFFF;
+  font-size: 24px;
+  border-radius: 24px;
+  text-transform: none;
+  padding: 20px 40px;
+}

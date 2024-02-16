@@ -75,6 +75,7 @@ header {
 
 main {
   text-align: var(--default-text-align);
+  background-color: white;
 }
 
 .hidden {
