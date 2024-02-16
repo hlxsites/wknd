@@ -16,6 +16,7 @@ Codebase for the fictional WKND site, showcasing the capabilities of Adobe's Edg
 npm i
 ```
 
+
 ## Tests
 
 ```sh
