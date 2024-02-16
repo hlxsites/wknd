@@ -152,6 +152,7 @@ header nav .nav-tools p {
 
 header nav .nav-tools .icon {
   color: white;
+  fill: #fff;
 }
 
 header nav[aria-expanded='true'] .nav-tools img {
