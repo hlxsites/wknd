@@ -1,0 +1,75 @@
+.cards > ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-gap: 16px;
+}
+
+.cards > ul > li {
+    border: 1px solid var(--highlight-background-color);
+    background-color: var(--background-color)
+}
+
+.cards .cards-card-body {
+    margin: 16px;
+}
+
+.cards .cards-card-image {
+    line-height: 0;
+}
+
+.cards .cards-card-body > *:first-child {
+    margin-top: 0;
+}
+
+.cards > ul > li img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+
+.cards.no-crop > ul > li img {
+    aspect-ratio: unset;
+    object-fit: unset;
+}
+
+
+.cards.scroll > ul {
+    scroll-snap-type: x mandatory;
+    overflow-x: scroll;
+    scroll-behavior: smooth;
+    display: flex;
+    padding-bottom: 16px;
+}
+
+.cards.scroll > ul > li{
+    width: 50%;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    position: relative;
+}
+
+.cards.scroll > ul::-webkit-scrollbar {
+    width: 5px;
+    height: 8px;
+    background-color: #eee; /* or add it to the track */
+}
+
+.cards.scroll > ul::-webkit-scrollbar-thumb {
+  background: #999;
+}
+
+
+@media (min-width: 900px) {
+    .cards.scroll > ul > li {
+        width: calc(100%/3);
+    }
+}
+
+@media (min-width: 1200px) {
+    .cards.scroll > ul > li {
+        width: calc(100%/4);
+    }
+}
