@@ -10,8 +10,17 @@ export default function decorate(block) {
     liWrapper.className = 'cards-sneakers-card-root';
     liWrapper.innerHTML = row.innerHTML;
     [...liWrapper.children].forEach((div) => {
-      if (div.children.length === 1 && div.querySelector('picture')) {
-        div.className = 'cards-sneakers-card-image';
+      if (div.querySelector('picture')) {
+        const newDiv = document.createElement('div');
+        newDiv.className = 'cards-sneakers-card-image';
+        const picture = div.querySelector('picture');
+        const anchor = div.querySelector('a');
+        anchor.className = 'cards-sneakers-card-image-anchor';
+        anchor.innerHTML = '';
+        anchor.append(picture);
+        newDiv.append(anchor);
+        liWrapper.removeChild(div);
+        liWrapper.prepend(newDiv);
       }
       else {
         // Remove colors from the card
