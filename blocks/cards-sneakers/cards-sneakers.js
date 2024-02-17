@@ -10,7 +10,9 @@ export default function decorate(block) {
     liWrapper.className = 'cards-sneakers-card-root';
     liWrapper.innerHTML = row.innerHTML;
     [...liWrapper.children].forEach((div) => {
-      if (div.children.length === 1 && div.querySelector('picture')) div.className = 'cards-sneakers-card-image';
+      if (div.children.length === 1 && div.querySelector('picture')) {
+        div.className = 'cards-sneakers-card-image';
+      }
       else {
         // Remove colors from the card
         const colors = div.children[0];
@@ -20,25 +22,33 @@ export default function decorate(block) {
         div.className = 'cards-sneakers-card-body';
         const collectionNameEl = document.createElement('div');
         collectionNameEl.className = 'cards-sneakers-card-collection-name';
-        collectionNameEl.innerHTML = `${collectionName} 2024 collection`;
+        collectionNameEl.innerHTML = collectionName;
         div.prepend(collectionNameEl);
-
-        // Add classes to children
-        div.children[1].className = 'cards-sneakers-card-title';
-        div.children[2].className = 'cards-sneakers-card-price';
-        div.children[3].className = 'cards-sneakers-card-stars-container';
 
         // Compute colors and prepend
         colors.className = 'cards-sneakers-card-colors';
         [...colors.children].forEach((li) => {
-          console.log('li',li);
           li.className = 'cards-sneakers-card-color-container';
           li.style.backgroundColor = li.innerHTML;
           li.innerHTML = '';
         });
         div.prepend(colors);
+
+        // Add classes to children
+        div.children[2].className = 'cards-sneakers-card-title';
+        div.children[3].className = 'cards-sneakers-card-price';
+        div.children[4].className = 'cards-sneakers-card-stars-container';
+        div.children[5].className = 'cards-sneakers-card-stars-buttons-container';
+        [...div.children[5].children].forEach((button) => {
+          button.className = 'cards-sneakers-card-stars-button';
+        });
       }
     });
+    // Add new tag
+    const newTagEl = document.createElement('div');
+    newTagEl.className = 'cards-sneakers-card-collection-new-tag';
+    newTagEl.innerHTML = 'New!';
+    liWrapper.prepend(newTagEl);
     li.appendChild(liWrapper);
     ul.append(li);
   });

@@ -70,6 +70,7 @@
   background-color: #F2F0EB;
   padding: 30px 24px;
   border-radius: 24px;
+  position: relative;
 }
 
 .cards-sneakers .cards-sneakers-card-collection-name {
@@ -104,15 +105,47 @@
   margin: 0;
   padding-inline-start: 0;
   display: flex;
-  gap: 4px;
   flex-direction: row;
   align-items: center;
   line-height: unset;
-  height: 48px;
+  padding: 8px 0px;
 }
 
-.cards-sneakers .cta-button {
+.cards-sneakers .cards-sneakers-card-stars-buttons-container {
+  list-style: none;
+  margin: 0;
+  padding-inline-start: 0;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 36px;
+}
 
+.cards-sneakers .cards-sneakers-card-stars-button {
+  cursor: pointer;
+  background-color: #4B4B4B;
+  border-color: #707070;
+  border-width: 1px;
+  border-radius: 24px;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  font-size: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 4px 12px;
+  letter-spacing: 2px;
+}
+
+.cards-sneakers .cards-sneakers-card-stars-button:first-child {
+  padding: 4px 20px;
+}
+
+.cards-sneakers .cards-sneakers-card-stars-button .icon {
+  display: flex;
+}
+
+.cards-sneakers .cards-sneakers-card-stars-button svg {
+  fill: #FFFFFF;
 }
 
 .cards-sneakers .cards-sneakers-card-colors {
@@ -136,13 +169,29 @@
 
 .cards-sneakers .cards-sneakers-card-stars-container > li svg {
   fill: #FFD802;
-  width: 24px;
+  width: 28px;
+  height: 28px;
+}
+
+.cards-sneakers .cards-sneakers-card-stars-container .icon {
+  display: flex;
 }
 
 .cards-sneakers .cards-sneakers-card-stars-container > li:last-child {
   font-size: 16px;
-  margin-bottom: 12px;
   color: #707070;
+}
+
+.cards-sneakers .cards-sneakers-card-collection-new-tag {
+  position: absolute;
+  padding: 4px 20px;
+  font-size: 16px;
+  text-transform: uppercase;
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+  background-color: #E01E61;
+  right: 0;
+  margin-top: 30px;
 }
 
 @media (min-width: 900px) {
