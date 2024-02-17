@@ -1,0 +1,50 @@
+.sneaker-description-wrapper {
+  color:#000000;
+  border-bottom: 1px solid #D1D1D1;
+  padding-bottom: 48px;
+  margin-bottom: 48px;
+}
+
+.sneaker-description-wrapper h1 {
+  font-size: 32px;
+  margin-bottom: 0px;
+  letter-spacing: 2.5px;
+}
+
+.sneaker-description-wrapper h1 ~ p {
+  font-size: 24px;
+  letter-spacing: 2.5px;
+  line-height: normal;
+  color: #AAAAAA;
+  margin-bottom: 24px;
+}
+
+.sneaker-description-wrapper ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sneaker-description-wrapper ul li ul {
+  font-size: 14px;
+  color: #555555;
+}
+
+.sneaker-description-wrapper ul li ul strong {
+  font-size: 16px;
+  color: #000000;
+}
+
+.sneaker-description-wrapper h1 ~ p ~ ul > li:not(:first-child) > ul {
+  margin-top: 24px;
+}
+
+.sneaker-description-wrapper h1 ~ p ~ ul > li:nth-child(2) > ul > li:not(:first-child) {
+  margin-top: 24px;
+}
+
+.sneaker-description-wrapper h1 ~ p ~ ul {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
