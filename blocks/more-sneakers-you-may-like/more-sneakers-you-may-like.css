@@ -1,0 +1,10 @@
+.more-sneakers-you-may-like-wrapper {
+  display: flex;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  color: black;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  font-size: 30px;
+  font-weight: lighter;
+}
