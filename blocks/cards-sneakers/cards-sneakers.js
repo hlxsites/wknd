@@ -10,6 +10,8 @@ export default function decorate(block) {
     liWrapper.className = 'cards-sneakers-card-root';
     liWrapper.innerHTML = row.innerHTML;
     [...liWrapper.children].forEach((div) => {
+      div.innerHTML = div.innerHTML.replace(/COLLECTION_NAME_PLACEHOLDER/g, collectionName);
+
       if (div.querySelector('picture')) {
         const newDiv = document.createElement('div');
         newDiv.className = 'cards-sneakers-card-image';
@@ -26,14 +28,6 @@ export default function decorate(block) {
         // Remove colors from the card
         const colors = div.children[0];
         div.removeChild(div.children[0]);
-
-        // Add collection name
-        div.className = 'cards-sneakers-card-body';
-        const collectionNameEl = document.createElement('div');
-        collectionNameEl.className = 'cards-sneakers-card-collection-name';
-        collectionNameEl.innerHTML = collectionName;
-        div.prepend(collectionNameEl);
-
         // Compute colors and prepend
         colors.className = 'cards-sneakers-card-colors';
         [...colors.children].forEach((li) => {
@@ -44,6 +38,7 @@ export default function decorate(block) {
         div.prepend(colors);
 
         // Add classes to children
+        div.children[1].className = 'cards-sneakers-card-collection-name';
         div.children[2].className = 'cards-sneakers-card-title';
         div.children[3].className = 'cards-sneakers-card-price';
         div.children[4].className = 'cards-sneakers-card-stars-container';

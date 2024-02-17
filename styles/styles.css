@@ -224,7 +224,8 @@ main input:hover {
 }
 
 main .section {
-  padding: 64px 16px;
+  padding: 64px 32px;
+  padding-top: 0px;
 }
 
 main pre {
@@ -258,9 +259,9 @@ img {
 }
 
 @media (min-width: 600px) {
-  main .section {
+  /* main .section {
     padding: 64px 32px;
-  }
+  } */
 }
 
 @media (min-width: 900px) {
@@ -273,10 +274,10 @@ img {
     --heading-font-size-xs: 22px;
   }
 
-  .section > div {
+  /* .section > div {
     max-width: 1200px;
     margin: auto;
-  }
+  } */
 }
 
 main .section.highlight {
