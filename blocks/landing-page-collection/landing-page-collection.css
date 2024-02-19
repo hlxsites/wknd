@@ -1,0 +1,137 @@
+
+/* remove all the paddings and margins */
+.landing-page-collection-container, .landing-page-discount-container {
+  padding: 0 !important;
+}
+
+.landing-page-collection-wrapper, .landing-page-discount-wrapper {
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden;
+  position: relative;
+}
+
+.landing-page-collection-wrapper >div:first-child picture {
+display: flex;
+}
+.wrapper {
+  height: 100%;
+  position: absolute;
+  display: flex;
+  top: 0;
+}
+
+.wrapper h1, h2, h3, h4, h5, h6 {
+margin: 0 !important;
+}
+
+.leftWrapper {
+  width: 40%;
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  margin-left: 80px;
+}
+
+.rightWrapper {
+  width: 60%;
+  height: 100%;
+}
+
+.rightWrapper > div:first-child {
+  position: absolute;
+  top: 40px;
+}
+
+.rightWrapper .button-container {
+  position: absolute;
+  bottom: 45px;
+  right: 85px;
+}
+
+.landing-page-collection .leftWrapper h1 {
+  font-size: 1.5vw;
+  margin: 0;
+  font-weight: 100;
+  font-family: sans-serif;
+  color: #FF71AF
+}
+
+#custom-name {
+  text-align: left;
+  font-family: sans-serif;
+  font-size: 5vw;
+  font-weight: 900;
+  color: #DD175B;
+  white-space: nowrap;
+}
+
+.landing-page-collection h2 {
+  text-align: left;
+  font-family: sans-serif;
+  font-size: 4vw;
+  font-weight: 900;
+  color: #fff;
+}
+
+.leftWrapper > div:nth-child(3)  {
+  font-family: sans-serif;
+  font-size: 2vw;
+  color: #fff;
+  font-weight: 900;
+}
+
+.leftWrapper >div:last-child {
+  margin-top: 80px;
+}
+
+.landing-page-collection .button-container a {
+  background-color:  #DD175B;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  width: 200px;
+  border-radius: 300px;
+  font-family: sans-serif;
+  font-size: 15px;
+  height: 40px;
+}
+
+.landing-page-discount {
+  position: relative;
+}
+
+#off-your-first-purchase {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translate(-50%,-10%);
+  width: 80%;
+  height: 235px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(6, 6, 6, 0.5);
+  border-radius: 29px;
+  color: #FFF;
+  font-size: 65px;
+  font-family: sans-serif;
+}
+
+.landing-page-discount > div:nth-child(2) {
+  position: absolute;
+  color: #FFF;
+  top: 10%;
+  right: 10%;
+  width: 40%;
+}
+
+.landing-page-discount > div:nth-child(2) h2 {
+  font-weight: 100;
+  font-family: sans-serif;
+  font-size: 32px;
+  font-style: italic;
+}
