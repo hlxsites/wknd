@@ -1,75 +1,121 @@
-.cards > ul {
+.cards {
+    display: flex;
+    gap: 130px;
+}
+
+.cards .cards-info, .cards .cards-details {
+    width: 50%;
+}
+
+.cards .cards-info {
+    flex: 1;
+}
+
+.cards .cards-details > div {
+    color: black;
+    margin-left: 100px;
+    margin-top: 70px;
+}
+
+.cards .cards-image {
+    max-width: 850px;
+    max-height: 850px;
+}
+
+
+.cards .cards-thumbnails > ul {
+    display: flex;
+    gap: 16px;
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    grid-gap: 16px;
 }
 
-.cards > ul > li {
-    border: 1px solid var(--highlight-background-color);
-    background-color: var(--background-color)
+.cards .cards-thumbnails > ul > li {
+    width: 130px;
+    height: 130px;
 }
 
-.cards .cards-card-body {
-    margin: 16px;
+.cards .cards-thumbnail-button--active {
+    border: 2px solid black;
 }
 
-.cards .cards-card-image {
-    line-height: 0;
+.cards .cards-card-color {
+    text-transform: uppercase;
+    font-size: 30px;
+    font-weight: bold;
 }
 
-.cards .cards-card-body > *:first-child {
-    margin-top: 0;
+.cards-details .cards-card-collection-name {
+    color: #000000;
+    text-transform: uppercase;
+    font-size: 40px;
+    letter-spacing: 2.2px;
+    margin: 0;
+    line-height: unset;
 }
 
-.cards > ul > li img {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
+.cards-details .cards-card-title {
+    color: #000000;
+    text-transform: uppercase;
+    font-size: 60px;
+    font-weight: bold;
+    letter-spacing: 2.6px;
+    margin: 0;
+    line-height: unset;
 }
 
-.cards.no-crop > ul > li img {
-    aspect-ratio: unset;
-    object-fit: unset;
+.cards-details .cards-card-price {
+    color: #E01E61;
+    font-size: 60px;
+    font-weight: bold;
+    margin: 0;
+    line-height: unset;
 }
 
-
-.cards.scroll > ul {
-    scroll-snap-type: x mandatory;
-    overflow-x: scroll;
-    scroll-behavior: smooth;
+.cards-details .cards-card-stars-container {
+    list-style: none;
+    margin: 0;
+    padding-inline-start: 0;
     display: flex;
-    padding-bottom: 16px;
+    flex-direction: row;
+    align-items: center;
+    line-height: unset;
+    padding: 8px 0px;
 }
 
-.cards.scroll > ul > li{
-    width: 50%;
-    flex-shrink: 0;
-    scroll-snap-align: start;
-    position: relative;
-}
-
-.cards.scroll > ul::-webkit-scrollbar {
-    width: 5px;
-    height: 8px;
-    background-color: #eee; /* or add it to the track */
-}
-
-.cards.scroll > ul::-webkit-scrollbar-thumb {
-  background: #999;
+.cards-details .cards-card-stars-button {
+    list-style: none;
+    margin: 0;
+    padding-inline-start: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    line-height: unset;
+    padding: 8px 0px;
 }
 
 
-@media (min-width: 900px) {
-    .cards.scroll > ul > li {
-        width: calc(100%/3);
+.cards-details .cards-card-stars-button svg {
+    fill: #FFD802;
+    width: 44px;
+    height: 44px;
+}
+
+@media (max-width: 1200px) {
+    .cards .cards-details > div {
+        margin: 0;
     }
-}
 
-@media (min-width: 1200px) {
-    .cards.scroll > ul > li {
-        width: calc(100%/4);
+    .cards-details .cards-card-price, .cards-details .cards-card-title {
+        font-size: 40px;
+    }
+
+    .cards-details .cards-card-collection-name {
+        font-size: 20px;
+    }
+
+    .cards .cards-card-color {
+        font-size: 15px;
     }
 }
