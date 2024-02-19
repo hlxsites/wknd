@@ -1,3 +1,7 @@
+.cards-wrapper {
+    margin-bottom: 75px;
+}
+
 .cards {
     display: flex;
     gap: 130px;
@@ -117,5 +121,9 @@
 
     .cards .cards-card-color {
         font-size: 15px;
+    }
+
+    .cards-wrapper {
+        margin-bottom: 25px;
     }
 }
