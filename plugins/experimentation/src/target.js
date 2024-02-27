@@ -63,7 +63,7 @@ function getApplicableOffers(data) {
   const offers = [];
   const options = data.execute?.pageLoad?.options ?? [];
   options.forEach((option) => {
-    if (options.sourceType !== 'target' || option.type !== 'actions') {
+    if (option.sourceType !== 'target' || option.type !== 'actions') {
       return;
     }
     option.content.forEach((content) => {
