@@ -7,6 +7,38 @@ function escapeSelector(selector) {
   return selector.replaceAll(/#(\d)/g, '#\\3$1 ');
 }
 
+export function enableQAMode() {
+  const now = new Date() * 1;
+  let qaMode;
+  if (window.location.search) {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('at_preview_token');
+    const previewIndex = params.get('at_preview_index')?.split('_');
+    if (token && previewIndex) {
+      const [activityIndex, experienceIndex] = previewIndex;
+      qaMode = {
+        token,
+        listedActivitiesOnly: true,
+        previewIndexes: [{ activityIndex, experienceIndex }],
+      };
+      window.sessionStorage.setItem('at_qamode', JSON.stringify({ ...qaMode, expires: now + 18e5 }));
+    }
+  }
+  if (!qaMode) {
+    qaMode = window.sessionStorage.getItem('at_qamode');
+    if (qaMode) {
+      qaMode = JSON.parse(qaMode);
+      if (qaMode.expires < now) {
+        qaMode = undefined;
+        window.sessionStorage.removeItem('at_qamode');
+      } else {
+        delete qaMode.expires;
+      }
+    }
+  }
+  return qaMode;
+}
+
 function applyAction(el, type, content, context) {
   switch (type) {
     case 'insertAfter':

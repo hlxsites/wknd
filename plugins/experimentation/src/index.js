@@ -577,12 +577,19 @@ export async function serveAudience(document, options, context) {
   }
 }
 
-async function fetchTargetOffers(tenant) {
+async function fetchTargetOffers(tenant, targetHost) {
+  const tntId = window.localStorage.getItem('at_tntId') || crypto.randomUUID();
   const sessionId = window.sessionStorage.getItem('at_sessionId') || crypto.randomUUID();
   window.sessionStorage.setItem('at_sessionId', sessionId);
-  const endpoint = new URL(`https://${tenant}.tt.omtrdc.net/rest/v1/delivery`);
+  const endpoint = new URL(targetHost || `https://${tenant}.tt.omtrdc.net/rest/v1/delivery`);
   endpoint.searchParams.append('client', tenant);
   endpoint.searchParams.append('sessionId', sessionId);
+  let qaMode;
+  if (window.location.hostname.endsWith('.hlx.page')
+    || window.location.hostname === 'localhost') {
+    const { enableQAMode } = await import('./target.js');
+    qaMode = enableQAMode();
+  }
   return fetch(endpoint, {
     method: 'POST',
     headers: {
@@ -591,6 +598,8 @@ async function fetchTargetOffers(tenant) {
     },
     body: JSON.stringify({
       requestId: crypto.randomUUID(),
+      ...tntId ? { id: { tntId } } : {},
+      qaMode,
       context: {
         userAgent: navigator.userAgent,
         channel: 'web',
@@ -616,7 +625,7 @@ async function fetchTargetOffers(tenant) {
 
 async function applyTargetOffers(document, options, context) {
   const tenant = options.targetTenant;
-  const promise = fetchTargetOffers(tenant);
+  const promise = fetchTargetOffers(tenant, options.targetHost);
   const mod = await import('./target.js');
   return mod.default(document, promise, context);
 }
