@@ -110,12 +110,12 @@ function createInlineScript(document, element, innerHTML, type) {
  */
 async function sendAnalyticsEvent(xdmData) {
   // eslint-disable-next-line no-undef
-  if (!alloy) {
+  if (!window.alloy) {
     console.warn('alloy not initialized, cannot send analytics event');
     return Promise.resolve();
   }
   // eslint-disable-next-line no-undef
-  return alloy('sendEvent', {
+  return window.alloy('sendEvent', {
     documentUnloading: true,
     xdm: xdmData,
   });
@@ -129,12 +129,12 @@ async function sendAnalyticsEvent(xdmData) {
  */
 export async function analyticsSetConsent(approved) {
   // eslint-disable-next-line no-undef
-  if (!alloy) {
+  if (!window.alloy) {
     console.warn('alloy not initialized, cannot set consent');
     return Promise.resolve();
   }
   // eslint-disable-next-line no-undef
-  return alloy('setConsent', {
+  return window.alloy('setConsent', {
     consent: [{
       standard: 'Adobe',
       version: '1.0',
@@ -185,12 +185,12 @@ export async function initAnalyticsTrackingQueue() {
  */
 export async function setupAnalyticsTrackingWithAlloy(document) {
   // eslint-disable-next-line no-undef
-  if (!alloy) {
+  if (!window.alloy) {
     console.warn('alloy not initialized, cannot configure');
     return;
   }
   // eslint-disable-next-line no-undef
-  const configurePromise = alloy('configure', getAlloyConfiguration(document));
+  const configurePromise = window.alloy('configure', getAlloyConfiguration(document));
 
   // Custom logic can be inserted here in order to support early tracking before alloy library
   // loads, for e.g. for page views
