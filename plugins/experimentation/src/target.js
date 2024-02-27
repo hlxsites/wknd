@@ -104,7 +104,7 @@ export default async function applyOffers(document, targetDeliveryPromise, conte
   window.localStorage.setItem('aem-experimentation', JSON.stringify(config));
 
   const offers = getApplicableOffers(json);
-  if (offers.length) {
+  if (!offers.length) {
     return false;
   }
 
