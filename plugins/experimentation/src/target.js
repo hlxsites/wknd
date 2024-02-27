@@ -97,11 +97,11 @@ export default async function applyOffers(document, targetDeliveryPromise, conte
   const resp = await targetDeliveryPromise;
   const json = await resp.json();
 
-  const config = window.localStorage.getItem('aem-experimentation') || {};
+  const config = JSON.parse(window.localStorage.getItem('aem-experimentation') || '{}');
   config.target ||= { id: { tntId: json.id.tntId } };
   config.target.id ||= { tntId: json.id.tntId };
   config.target.id.tntId ||= json.id.tntId;
-  window.localStorage.setItem('aem-experimentation', config);
+  window.localStorage.setItem('aem-experimentation', JSON.stringify(config));
 
   const offers = getApplicableOffers(json);
   if (offers.length) {
