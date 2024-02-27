@@ -709,12 +709,12 @@ export async function loadEager(document, options, context) {
   context.sampleRUM.always.on('campaign', adjustedRumSamplingRate('campaign', options, context));
   context.sampleRUM.always.on('experiment', adjustedRumSamplingRate('experiment', options, context));
   let res = await runCampaign(document, options, context);
-  if (!res) {
-    res = await runExperiment(document, options, context);
-  }
-  if (!res) {
-    res = await serveAudience(document, options, context);
-  }
+  // if (!res) {
+  //   res = await runExperiment(document, options, context);
+  // }
+  // if (!res) {
+  //   res = await serveAudience(document, options, context);
+  // }
   if (!res) {
     res = await applyTargetOffers(document, options, context);
   }
