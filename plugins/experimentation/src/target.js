@@ -7,7 +7,7 @@ function escapeSelector(selector) {
   return selector.replaceAll(/#(\d)/g, '#\\3$1 ');
 }
 
-function applyFunction(el, type, content, context) {
+function applyAction(el, type, content, context) {
   switch (type) {
     case 'insertAfter':
       el.insertAdjacentHTML('afterend', content);
@@ -36,21 +36,17 @@ function applyFunction(el, type, content, context) {
   }
 }
 
-function patchDOM(doc, sectionOrBlock, offers, context) {
-  return offers.filter((offer) => {
-    const remainingActions = offer.content?.filter(({ selector, content, type }) => {
-      const el = doc.querySelector(escapeSelector(selector));
-      if (sectionOrBlock.contains(el)) {
-        const res = applyFunction(el, type, content, context);
-        if (!res) {
-          console.error(`operation not yet implemented: ${type}`);
-        }
-        return res;
+function applyOffers(doc, sectionOrBlock, offers, context) {
+  return offers.filter(({ selector, content, type }) => {
+    const el = doc.querySelector(escapeSelector(selector));
+    if (sectionOrBlock.contains(el)) {
+      const res = applyAction(el, type, content, context);
+      if (!res) {
+        console.error(`operation not yet implemented: ${type}`);
       }
-      return true;
-    });
-    offer.content = remainingActions;
-    return remainingActions?.length;
+      return !res;
+    }
+    return true;
   });
 }
 
@@ -73,7 +69,7 @@ function getApplicableOffers(data) {
   return offers;
 }
 
-export default async function applyOffers(document, targetDeliveryPromise, context) {
+export default async function personalizePage(document, targetDeliveryPromise, context) {
   // var AT_QA_MODE = 'at_qa_mode=';
   // var isSet = document.cookie.split(';').some(function (cookie) {
   //     return cookie.trim().startsWith(AT_QA_MODE);
@@ -111,7 +107,7 @@ export default async function applyOffers(document, targetDeliveryPromise, conte
   let remainingOffers = offers;
   const applyMutations = (mutations, observer) => {
     for (let i = 0; i < mutations.length; i += 1) {
-      remainingOffers = patchDOM(document, mutations[i].target, remainingOffers, context);
+      remainingOffers = applyOffers(document, mutations[i].target, remainingOffers, context);
       if (!remainingOffers.length) {
         observer.disconnect();
         return;
