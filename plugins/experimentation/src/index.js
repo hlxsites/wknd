@@ -594,11 +594,11 @@ async function fetchTargetOffers(tenant) {
       context: {
         userAgent: navigator.userAgent,
         channel: 'web',
-        screen: window.screen,
+        screen: { width: window.screen.width, height: window.screen.height },
         window: { width: window.innerWidth, height: window.innerHeight },
         browser: { host: window.location.hostname },
         address: {
-          url: window.Location.href,
+          url: window.location.href,
           referringUrl: document.referrer,
         },
       },
