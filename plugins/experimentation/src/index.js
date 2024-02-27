@@ -614,11 +614,11 @@ async function fetchTargetOffers(tenant) {
   });
 }
 
-async function applyTargetOffers(document, options) {
+async function applyTargetOffers(document, options, context) {
   const tenant = options.targetTenant;
   const promise = fetchTargetOffers(tenant);
   const mod = await import('./target.js');
-  return mod.default(document, promise);
+  return mod.default(document, promise, context);
 }
 
 window.hlx.patchBlockConfig?.push((config) => {
