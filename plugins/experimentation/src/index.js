@@ -580,7 +580,7 @@ export async function serveAudience(document, options, context) {
 async function fetchTargetOffers(tenant) {
   const sessionId = window.sessionStorage.getItem('at_sessionId') || crypto.randomUUID();
   window.sessionStorage.setItem('at_sessionId', sessionId);
-  const endpoint = `https://${tenant}.tt.omtrdc.net/rest/v1/delivery`;
+  const endpoint = new URL(`https://${tenant}.tt.omtrdc.net/rest/v1/delivery`);
   endpoint.searchParams.append('client', tenant);
   endpoint.searchParams.append('sessionId', sessionId);
   return fetch(endpoint, {
