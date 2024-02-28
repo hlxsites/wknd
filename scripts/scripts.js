@@ -189,13 +189,13 @@ async function loadEager(doc) {
     secureOnly: true,
     serverDomain: 'sitesinternal.tt.omtrdc.net',
   };
-  const link = document.createElement('link');
-  link.setAttribute('rel', 'preconnect');
-  link.setAttribute('href', 'https://sitesinternal.tt.omtrdc.net');
-  link.setAttribute('as', 'fetch');
-  link.setAttribute('crossorigin', true);
-  link.setAttribute('fetchpriority', 'high');
-  document.head.append(link);
+  // const link = document.createElement('link');
+  // link.setAttribute('rel', 'preconnect');
+  // link.setAttribute('href', 'https://sitesinternal.tt.omtrdc.net');
+  // link.setAttribute('as', 'fetch');
+  // link.setAttribute('crossorigin', true);
+  // link.setAttribute('fetchpriority', 'high');
+  // document.head.append(link);
   await import('./at.js');
 
   await window.hlx.plugins.run('loadEager');
