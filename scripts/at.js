@@ -1477,8 +1477,13 @@ window.adobe.target = (function () {
 	  const enabled = config[ENABLED];
 	  return enabled && isCookieEnabled() && !isDeliveryDisabled();
 	}
+	let _isDebugEnabled;
 	function isDebugEnabled() {
-	  return exists$2(window$1, document$1, DEBUG);
+		if (_isDebugEnabled !== undefined) {
+			return _isDebugEnabled;
+		}
+		_isDebugEnabled = exists$2(window$1, document$1, DEBUG);
+	  return _isDebugEnabled;
 	}
 	function isAuthoringEnabled() {
 	  return exists$2(window$1, document$1, AUTHORING);
