@@ -4604,7 +4604,7 @@ window.adobe.target = (function () {
 	  } = window$1;
 	  return {
 	    host: location.hostname,
-	    webGLRenderer: getWebGLRenderer()
+	    // webGLRenderer: getWebGLRenderer()
 	  };
 	}
 	function createAddress() {
@@ -9159,7 +9159,7 @@ window.adobe.target = (function () {
 
 	return bootstrap;
 
-})();
+}());
 window.adobe.target.init(window, document, {
   "clientCode": "demo",
   "imsOrgId": "",
