@@ -1387,8 +1387,11 @@ window.adobe.target = (function () {
 	  }, {}, filter(isExpired, cookies));
 	}
 
+	let cookiesMap;
 	function getTargetCookie(name) {
-	  const cookiesMap = readCookies();
+	  if (!cookiesMap) {
+			cookiesMap = readCookies();
+		}
 	  const cookie = cookiesMap[name];
 	  return isObject(cookie) ? cookie.value : "";
 	}
