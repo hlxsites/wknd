@@ -182,6 +182,9 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  if (getMetadata('experiment')) {
+    await import('./lib-target.js').then((mod) => mod.personalizePage('sitesinternal'));
+  }
 
   await window.hlx.plugins.run('loadEager');
 
