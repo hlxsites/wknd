@@ -4148,7 +4148,7 @@ window.adobe.target = (function () {
 	  }
 	  return result;
 	}
-	const WEB_GL_RENDERER_INTERNAL = getWebGLRendererInternal();
+	// const WEB_GL_RENDERER_INTERNAL = getWebGLRendererInternal();
 	function getPixelRatio() {
 	  let {
 	    devicePixelRatio: ratio
