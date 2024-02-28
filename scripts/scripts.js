@@ -194,6 +194,7 @@ async function loadEager(doc) {
   link.setAttribute('href', 'https://sitesinternal.tt.omtrdc.net');
   link.setAttribute('as', 'fetch');
   link.setAttribute('crossorigin', true);
+  link.setAttribute('fetchpriority', 'high');
   document.head.append(link);
   await import('./at.js');
 
