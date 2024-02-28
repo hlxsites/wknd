@@ -3112,9 +3112,9 @@ window.adobe.target = (function () {
 	  const sessionId = getTargetCookie(SESSION_ID_COOKIE);
 	  if (isBlank(sessionId)) {
 	    setSessionId(SESSION_ID);
-	  } else {
+	  } /*else {
 	    setSessionId(sessionId);
-	  }
+	  }*/
 	  return getTargetCookie(SESSION_ID_COOKIE);
 	}
 
