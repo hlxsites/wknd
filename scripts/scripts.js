@@ -190,14 +190,9 @@ async function loadEager(doc) {
     serverDomain: 'sitesinternal.tt.omtrdc.net',
     bodyHidingEnabled: false,
   };
-  // const link = document.createElement('link');
-  // link.setAttribute('rel', 'preconnect');
-  // link.setAttribute('href', 'https://sitesinternal.tt.omtrdc.net');
-  // link.setAttribute('as', 'fetch');
-  // link.setAttribute('crossorigin', true);
-  // link.setAttribute('fetchpriority', 'high');
-  // document.head.append(link);
-  await import('./at.js');
+
+  const version = new URLSearchParams(window.location.search).get('atjs') || 'at.min.js';
+  await import(`./${version}.js');
 
   await window.hlx.plugins.run('loadEager');
 

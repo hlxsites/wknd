@@ -1387,8 +1387,11 @@ window.adobe.target = (function () {
 	  }, {}, filter(isExpired, cookies));
 	}
 
+	let cookiesMap;
 	function getTargetCookie(name) {
-	  const cookiesMap = readCookies();
+	  if (!cookiesMap) {
+			cookiesMap = readCookies();
+		}
 	  const cookie = cookiesMap[name];
 	  return isObject(cookie) ? cookie.value : "";
 	}
@@ -1477,8 +1480,13 @@ window.adobe.target = (function () {
 	  const enabled = config[ENABLED];
 	  return enabled && isCookieEnabled() && !isDeliveryDisabled();
 	}
+	let _isDebugEnabled;
 	function isDebugEnabled() {
-	  return exists$2(window$1, document$1, DEBUG);
+		if (_isDebugEnabled !== undefined) {
+			return _isDebugEnabled;
+		}
+		_isDebugEnabled = exists$2(window$1, document$1, DEBUG);
+	  return _isDebugEnabled;
 	}
 	function isAuthoringEnabled() {
 	  return exists$2(window$1, document$1, AUTHORING);
@@ -3104,9 +3112,9 @@ window.adobe.target = (function () {
 	  const sessionId = getTargetCookie(SESSION_ID_COOKIE);
 	  if (isBlank(sessionId)) {
 	    setSessionId(SESSION_ID);
-	  } else {
+	  } /*else {
 	    setSessionId(sessionId);
-	  }
+	  }*/
 	  return getTargetCookie(SESSION_ID_COOKIE);
 	}
 
@@ -4148,7 +4156,7 @@ window.adobe.target = (function () {
 	  }
 	  return result;
 	}
-	const WEB_GL_RENDERER_INTERNAL = getWebGLRendererInternal();
+	// const WEB_GL_RENDERER_INTERNAL = getWebGLRendererInternal();
 	function getPixelRatio() {
 	  let {
 	    devicePixelRatio: ratio
@@ -4604,7 +4612,7 @@ window.adobe.target = (function () {
 	  } = window$1;
 	  return {
 	    host: location.hostname,
-	    webGLRenderer: getWebGLRenderer()
+	    // webGLRenderer: getWebGLRenderer()
 	  };
 	}
 	function createAddress() {
@@ -9159,15 +9167,15 @@ window.adobe.target = (function () {
 
 	return bootstrap;
 
-})();
+}());
 window.adobe.target.init(window, document, {
-  "clientCode": "${clientCode}",
-  "imsOrgId": "${imsOrgId}",
-  "serverDomain": "${serverDomain}",
-  "crossDomain": "${crossDomain}",
-  "timeout": Number("${timeout}"),
-  "globalMboxName": "${globalMboxName}",
-  "version": "2.11.4",
+  "clientCode": "demo",
+  "imsOrgId": "",
+  "serverDomain": "localhost:5000",
+  "crossDomain": "enabled",
+  "timeout": 2000,
+  "globalMboxName": "target-global-mbox",
+  "version": "2.0.0",
   "defaultContentHiddenStyle": "visibility: hidden;",
   "defaultContentVisibleStyle": "visibility: visible;",
   "bodyHiddenStyle": "body {opacity: 0 !important}",
@@ -9176,7 +9184,7 @@ window.adobe.target.init(window, document, {
   "sessionIdLifetime": 1860000,
   "selectorsPollingTimeout": 5000,
   "visitorApiTimeout": 2000,
-  "overrideMboxEdgeServer": true,
+  "overrideMboxEdgeServer": false,
   "overrideMboxEdgeServerTimeout": 1860000,
   "optoutEnabled": false,
   "optinEnabled": false,
@@ -9185,14 +9193,15 @@ window.adobe.target.init(window, document, {
   "authoringScriptUrl": "//cdn.tt.omtrdc.net/cdn/target-vec.js",
   "urlSizeLimit": 2048,
   "endpoint": "/rest/v1/delivery",
-  "pageLoadEnabled": String("${globalMboxAutoCreate}") === "true",
+  "pageLoadEnabled": true,
   "viewsEnabled": true,
   "analyticsLogging": "server_side",
   "serverState": {},
-  "decisioningMethod": "${decisioningMethod}",
-  "legacyBrowserSupport": false,
+  "decisioningMethod": "server-side",
+  "legacyBrowserSupport":  false,
   "allowHighEntropyClientHints": false,
   "aepSandboxId": null,
   "aepSandboxName": null
 }
 );
+//# sourceMappingURL=at.build.js.map
