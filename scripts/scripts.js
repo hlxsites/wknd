@@ -189,6 +189,7 @@ async function loadEager(doc) {
     secureOnly: true,
     serverDomain: 'sitesinternal.tt.omtrdc.net',
     bodyHidingEnabled: false,
+    pageLoadEnabled: true,
   };
 
   const version = new URLSearchParams(window.location.search).get('atjs') || 'at.min';
