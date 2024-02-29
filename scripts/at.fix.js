@@ -4609,11 +4609,11 @@ window.adobe.target = (function () {
 	    height: documentElement.clientHeight
 	  };
 	}
-	function createBrowser(context) {
+	function createBrowser(config) {
 	  const {
 	    location
 	  } = window$1;
-	  if (!context[WITH_WEB_GL_RENDERER]) {
+	  if (!config[WITH_WEB_GL_RENDERER]) {
 	    return {
 	      host: location.hostname
 	    };
@@ -4649,7 +4649,7 @@ window.adobe.target = (function () {
 	    channel: WEB_CHANNEL,
 	    screen: createScreen(),
 	    window: createWindow(),
-	    browser: createBrowser(context),
+	    browser: createBrowser(config),
 	    address: createAddress(),
 	    geo: context && context.geo,
 	    crossDomain: config[CROSS_DOMAIN],
