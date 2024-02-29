@@ -184,7 +184,7 @@ async function loadEager(doc) {
   decorateTemplateAndTheme();
   window.targetGlobalSettings = {
     clientCode: 'sitesinternal',
-    cookieDomain: 'target-integration4--wknd--hlxsites.hlx.live',
+    cookieDomain: 'atjs--wknd--hlxsites.hlx.live',
     imsOrgId: '908936ED5D35CC220A495CD4@AdobeOrg',
     secureOnly: true,
     serverDomain: 'sitesinternal.tt.omtrdc.net',
