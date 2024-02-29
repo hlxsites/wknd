@@ -931,6 +931,7 @@ window.adobe.target = (function () {
 	const MBOX_PARAMS = "mboxParams";
 	const GLOBAL_MBOX_PARAMS = "globalMboxParams";
 	const URL_SIZE_LIMIT = "urlSizeLimit";
+	const WITH_WEB_GL_RENDERER = "withWebGLRenderer";
 	const SESSION_ID_PARAM = "mboxSession";
 	const DEVICE_ID_COOKIE = "PC";
 	const EDGE_CLUSTER_COOKIE = "mboxEdgeCluster";
@@ -1006,7 +1007,7 @@ window.adobe.target = (function () {
 	const IP_V4_REGEX = /^(?!0)(?!.*\.$)((1?\d?\d|25[0-5]|2[0-4]\d)(\.|$)){4}$/;
 	const STANDARD_DOMAIN_REGEX = /^(com|edu|gov|net|mil|org|nom|co|name|info|biz)$/i;
 	let config = {};
-	const OVERRIDABLE_SETTINGS = [ENABLED, CLIENT_CODE, IMS_ORG_ID, SERVER_DOMAIN, CROSS_DOMAIN, COOKIE_DOMAIN, TIMEOUT$1, MBOX_PARAMS, GLOBAL_MBOX_PARAMS, DEFAULT_CONTENT_HIDDEN_STYLE, DEFAULT_CONTENT_VISIBLE_STYLE, DEVICE_ID_LIFETIME, BODY_HIDDEN_STYLE, BODY_HIDING_ENABLED, SELECTORS_POLLING_TIMEOUT, VISITOR_API_TIMEOUT, OVERRIDE_MBOX_EDGE_SERVER, OVERRIDE_MBOX_EDGE_SERVER_TIMEOUT, OPTOUT_ENABLED, OPTIN_ENABLED, SECURE_ONLY, SUPPLEMENTAL_DATA_ID_PARAM_TIMEOUT, AUTHORING_SCRIPT_URL, URL_SIZE_LIMIT, ENDPOINT, PAGE_LOAD_ENABLED, VIEWS_ENABLED, ANALYTICS_LOGGING, SERVER_STATE, DECISIONING_METHOD_SETTING, POLLING_INTERVAL_SETTING, ARTIFACT_LOCATION_SETTING, ARTIFACT_FORMAT_SETTING, ARTIFACT_PAYLOAD_SETTING, TARGET_ENVIRONMENT_SETTING, CDN_ENVIRONMENT_SETTING, TELEMETRY_ENABLED_SETTING, CDN_BASEPATH_SETTING, CSP_SCRIPT_NONCE, CSP_STYLE_NONCE, GLOBAL_MBOX_NAME, ALLOW_HIGH_ENTROPY_CLIENT_HINTS, AEP_SANDBOX_ID, AEP_SANDBOX_NAME];
+	const OVERRIDABLE_SETTINGS = [ENABLED, CLIENT_CODE, IMS_ORG_ID, SERVER_DOMAIN, CROSS_DOMAIN, COOKIE_DOMAIN, TIMEOUT$1, MBOX_PARAMS, GLOBAL_MBOX_PARAMS, DEFAULT_CONTENT_HIDDEN_STYLE, DEFAULT_CONTENT_VISIBLE_STYLE, DEVICE_ID_LIFETIME, BODY_HIDDEN_STYLE, BODY_HIDING_ENABLED, SELECTORS_POLLING_TIMEOUT, VISITOR_API_TIMEOUT, OVERRIDE_MBOX_EDGE_SERVER, OVERRIDE_MBOX_EDGE_SERVER_TIMEOUT, OPTOUT_ENABLED, OPTIN_ENABLED, SECURE_ONLY, SUPPLEMENTAL_DATA_ID_PARAM_TIMEOUT, AUTHORING_SCRIPT_URL, URL_SIZE_LIMIT, ENDPOINT, PAGE_LOAD_ENABLED, VIEWS_ENABLED, ANALYTICS_LOGGING, SERVER_STATE, DECISIONING_METHOD_SETTING, POLLING_INTERVAL_SETTING, ARTIFACT_LOCATION_SETTING, ARTIFACT_FORMAT_SETTING, ARTIFACT_PAYLOAD_SETTING, TARGET_ENVIRONMENT_SETTING, CDN_ENVIRONMENT_SETTING, TELEMETRY_ENABLED_SETTING, CDN_BASEPATH_SETTING, CSP_SCRIPT_NONCE, CSP_STYLE_NONCE, GLOBAL_MBOX_NAME, ALLOW_HIGH_ENTROPY_CLIENT_HINTS, AEP_SANDBOX_ID, AEP_SANDBOX_NAME, WITH_WEB_GL_RENDERER];
 	function overrideSettingsIfRequired(settings, globalSettings) {
 	  if (!settings[ENABLED]) {
 	    return;
@@ -1389,9 +1390,9 @@ window.adobe.target = (function () {
 
 	let cookiesMap;
 	function getTargetCookie(name) {
-	  if (!cookiesMap) {
-			cookiesMap = readCookies();
-		}
+	  if (!cookiesMap || cookiesMap[name]) {
+	    cookiesMap = readCookies();
+	  }
 	  const cookie = cookiesMap[name];
 	  return isObject(cookie) ? cookie.value : "";
 	}
@@ -1405,7 +1406,8 @@ window.adobe.target = (function () {
 	  const expires = map(getExpires, cookies);
 	  return Math.max.apply(null, expires);
 	}
-	function saveCookies(cookiesMap, domain, secure) {
+	function saveCookies(newCookiesMap, domain, secure) {
+	  cookiesMap = newCookiesMap;
 	  const cookies = toArray(cookiesMap);
 	  const maxExpires = Math.abs(getMaxExpires(cookies) * 1000 - now());
 	  const serializedCookies = join("|", map(serialize, cookies));
@@ -1427,7 +1429,9 @@ window.adobe.target = (function () {
 	    domain,
 	    secure
 	  } = options;
-	  const cookiesMap = readCookies();
+	  if (!cookiesMap) {
+	    cookiesMap = readCookies();
+	  }
 	  cookiesMap[name] = createCookie(name, value, Math.ceil(expires + now() / 1000));
 	  saveCookies(cookiesMap, domain, secure);
 	}
@@ -1482,10 +1486,10 @@ window.adobe.target = (function () {
 	}
 	let _isDebugEnabled;
 	function isDebugEnabled() {
-		if (_isDebugEnabled !== undefined) {
-			return _isDebugEnabled;
-		}
-		_isDebugEnabled = exists$2(window$1, document$1, DEBUG);
+	  if (_isDebugEnabled !== undefined) {
+	    return _isDebugEnabled;
+	  }
+	  _isDebugEnabled = exists$2(window$1, document$1, DEBUG);
 	  return _isDebugEnabled;
 	}
 	function isAuthoringEnabled() {
@@ -3112,9 +3116,9 @@ window.adobe.target = (function () {
 	  const sessionId = getTargetCookie(SESSION_ID_COOKIE);
 	  if (isBlank(sessionId)) {
 	    setSessionId(SESSION_ID);
-	  } /*else {
+	  } else {
 	    setSessionId(sessionId);
-	  }*/
+	  }
 	  return getTargetCookie(SESSION_ID_COOKIE);
 	}
 
@@ -4156,7 +4160,6 @@ window.adobe.target = (function () {
 	  }
 	  return result;
 	}
-	// const WEB_GL_RENDERER_INTERNAL = getWebGLRendererInternal();
 	function getPixelRatio() {
 	  let {
 	    devicePixelRatio: ratio
@@ -4275,7 +4278,7 @@ window.adobe.target = (function () {
 	  return null;
 	}
 	function getWebGLRenderer() {
-	  return WEB_GL_RENDERER_INTERNAL;
+	  return getWebGLRendererInternal();
 	}
 
 	const PROFILE_PREFIX = "profile.";
@@ -4606,13 +4609,18 @@ window.adobe.target = (function () {
 	    height: documentElement.clientHeight
 	  };
 	}
-	function createBrowser() {
+	function createBrowser(context) {
 	  const {
 	    location
 	  } = window$1;
+	  if (!context[WITH_WEB_GL_RENDERER]) {
+	    return {
+	      host: location.hostname
+	    };
+	  }
 	  return {
 	    host: location.hostname,
-	    // webGLRenderer: getWebGLRenderer()
+	    webGLRenderer: getWebGLRenderer()
 	  };
 	}
 	function createAddress() {
@@ -4641,7 +4649,7 @@ window.adobe.target = (function () {
 	    channel: WEB_CHANNEL,
 	    screen: createScreen(),
 	    window: createWindow(),
-	    browser: createBrowser(),
+	    browser: createBrowser(context),
 	    address: createAddress(),
 	    geo: context && context.geo,
 	    crossDomain: config[CROSS_DOMAIN],
@@ -9167,15 +9175,15 @@ window.adobe.target = (function () {
 
 	return bootstrap;
 
-}());
+})();
 window.adobe.target.init(window, document, {
-  "clientCode": "demo",
-  "imsOrgId": "",
-  "serverDomain": "localhost:5000",
-  "crossDomain": "enabled",
-  "timeout": 2000,
-  "globalMboxName": "target-global-mbox",
-  "version": "2.0.0",
+  "clientCode": "${clientCode}",
+  "imsOrgId": "${imsOrgId}",
+  "serverDomain": "${serverDomain}",
+  "crossDomain": "${crossDomain}",
+  "timeout": Number("${timeout}"),
+  "globalMboxName": "${globalMboxName}",
+  "version": "2.11.4",
   "defaultContentHiddenStyle": "visibility: hidden;",
   "defaultContentVisibleStyle": "visibility: visible;",
   "bodyHiddenStyle": "body {opacity: 0 !important}",
@@ -9184,7 +9192,7 @@ window.adobe.target.init(window, document, {
   "sessionIdLifetime": 1860000,
   "selectorsPollingTimeout": 5000,
   "visitorApiTimeout": 2000,
-  "overrideMboxEdgeServer": false,
+  "overrideMboxEdgeServer": true,
   "overrideMboxEdgeServerTimeout": 1860000,
   "optoutEnabled": false,
   "optinEnabled": false,
@@ -9193,15 +9201,15 @@ window.adobe.target.init(window, document, {
   "authoringScriptUrl": "//cdn.tt.omtrdc.net/cdn/target-vec.js",
   "urlSizeLimit": 2048,
   "endpoint": "/rest/v1/delivery",
-  "pageLoadEnabled": true,
+  "pageLoadEnabled": String("${globalMboxAutoCreate}") === "true",
   "viewsEnabled": true,
   "analyticsLogging": "server_side",
   "serverState": {},
-  "decisioningMethod": "server-side",
-  "legacyBrowserSupport":  false,
+  "decisioningMethod": "${decisioningMethod}",
+  "legacyBrowserSupport": false,
   "allowHighEntropyClientHints": false,
   "aepSandboxId": null,
-  "aepSandboxName": null
+  "aepSandboxName": null,
+  "withWebGLRenderer": true
 }
 );
-//# sourceMappingURL=at.build.js.map
