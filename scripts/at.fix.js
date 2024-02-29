@@ -1390,7 +1390,7 @@ window.adobe.target = (function () {
 
 	let cookiesMap;
 	function getTargetCookie(name) {
-	  if (!cookiesMap || cookiesMap[name]) {
+	  if (!cookiesMap || !cookiesMap[name]) {
 	    cookiesMap = readCookies();
 	  }
 	  const cookie = cookiesMap[name];
