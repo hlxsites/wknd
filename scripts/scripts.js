@@ -192,7 +192,7 @@ async function loadEager(doc) {
   };
 
   const version = new URLSearchParams(window.location.search).get('atjs') || 'at.min.js';
-  await import(`./${version}.js');
+  await import(`./${version}.js`);
 
   await window.hlx.plugins.run('loadEager');
 
