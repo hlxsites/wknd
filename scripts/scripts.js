@@ -190,6 +190,7 @@ async function loadEager(doc) {
     serverDomain: 'sitesinternal.tt.omtrdc.net',
     bodyHidingEnabled: false,
     pageLoadEnabled: true,
+    withWebGLRenderer: false,
   };
 
   const version = new URLSearchParams(window.location.search).get('atjs') || 'at.min';
