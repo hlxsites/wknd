@@ -25,12 +25,10 @@ import {
 
 await import('./analytics/alloy.min.js');
 let res = await window.alloy('configure', {
-  edgeConfigId: '49f60b5b-a0d6-4857-99a7-efd5d4588b30',
+  edgeConfigId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
   orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
 });
-console.log(res);
-res = await window.alloy('sendEvent', { renderDecisions: true });
-console.log(res);
+const renderDecisionPromise = window.alloy('sendEvent', { renderDecisions: true });
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
@@ -210,6 +208,7 @@ async function loadEager(doc) {
   if (main) {
     // await initAnalyticsTrackingQueue();
     decorateMain(main);
+    await renderDecisionPromise;
     await waitForLCP(LCP_BLOCKS);
   }
 }
