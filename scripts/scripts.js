@@ -176,6 +176,15 @@ export function decorateMain(main) {
   decorateBlocks(main);
 }
 
+function addPreconnect(href) {
+  const link = document.createElement('link');
+  link.setAttribute('rel', 'preconnect');
+  link.setAttribute('as', 'fetch');
+  link.setAttribute('crossorigin', 'anonymous');
+  link.setAttribute('href', href);
+  document.head.append(link);
+}
+
 /**
  * loads everything needed to get to LCP.
  */
@@ -192,6 +201,9 @@ async function loadEager(doc) {
     pageLoadEnabled: true,
     withWebGLRenderer: false,
   };
+
+  addPreconnect('https://sitesinternal.tt.omtrdc.net');
+  addPreconnect('https://mboxedge35.tt.omtrdc.net');
 
   const version = new URLSearchParams(window.location.search).get('atjs') || 'at.min';
   await import(`./${version}.js`);
