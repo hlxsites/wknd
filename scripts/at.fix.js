@@ -1350,7 +1350,7 @@ window.adobe.target = (function () {
 	}
 
 	const {
-	  get: getCookie,
+	  get: _getCookie,
 	  set: setCookie,
 	  remove: removeCookie
 	} = reactorCookie;
@@ -1361,6 +1361,14 @@ window.adobe.target = (function () {
 	    value,
 	    expires
 	  };
+	}
+	const isFirefox = !!navigator.userAgent.match(/ Firefox\/[.\d]+/);
+	function getCookie(name) {
+	  if (!isFirefox) {
+	    const matches = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
+	    return matches ? matches.pop() : null;
+	  }
+	  return _getCookie(name);
 	}
 	function deserialize(str) {
 	  const parts = split("#", str);
