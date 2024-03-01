@@ -1362,11 +1362,12 @@ window.adobe.target = (function () {
 	    expires
 	  };
 	}
-	const isFirefox = !!navigator.userAgent.match(/ Firefox\/[.\d]+/);
+	const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 	function getCookie(name) {
-	  if (!isFirefox) {
-	    const matches = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
-	    return matches ? matches.pop() : null;
+	  if (!isSafari) {
+	    const cookieString = "; " + document.cookie;
+	    const [, tail] = cookieString.split("; " + name + "=");
+	    return tail ? tail.split(";").shift() : null;
 	  }
 	  return _getCookie(name);
 	}
