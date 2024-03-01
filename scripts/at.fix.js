@@ -3100,10 +3100,21 @@ window.adobe.target = (function () {
 	    secure: config[SECURE_ONLY]
 	  });
 	}
+	function throttle(func, timeFrame) {
+	  let lastTime = 0;
+	  return function () {
+	    const now = Date.now();
+	    if (now - lastTime >= timeFrame) {
+	      func(...arguments);
+	      lastTime = now;
+	    }
+	  };
+	}
 	function setSessionId(value) {
 	  const config = getConfig();
 	  saveSessionId(value, config);
 	}
+	const throttledSetSessionId = throttle(sessionId => setSessionId(sessionId), 300);
 	function getSessionId() {
 	  if (shouldUseOptin() && !isTargetApproved()) {
 	    return SESSION_ID;
@@ -3117,7 +3128,7 @@ window.adobe.target = (function () {
 	  if (isBlank(sessionId)) {
 	    setSessionId(SESSION_ID);
 	  } else {
-	    setSessionId(sessionId);
+	    throttledSetSessionId(sessionId);
 	  }
 	  return getTargetCookie(SESSION_ID_COOKIE);
 	}
