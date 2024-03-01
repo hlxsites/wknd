@@ -28,7 +28,6 @@ let res = await window.alloy('configure', {
   edgeConfigId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
   orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
 });
-const renderDecisionPromise = window.alloy('sendEvent', { renderDecisions: true });
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
@@ -191,11 +190,13 @@ function addPreconnect(href) {
   link.setAttribute('href', href);
   document.head.append(link);
 }
+addPreconnect('https://edge.adobedc.net');
 
 /**
  * loads everything needed to get to LCP.
  */
 async function loadEager(doc) {
+  const renderDecisionPromise = window.alloy('sendEvent', { renderDecisions: true });
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
 
@@ -208,8 +209,8 @@ async function loadEager(doc) {
   if (main) {
     // await initAnalyticsTrackingQueue();
     decorateMain(main);
-    await renderDecisionPromise;
     await waitForLCP(LCP_BLOCKS);
+    await renderDecisionPromise;
   }
 }
 
