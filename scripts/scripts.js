@@ -14,14 +14,23 @@ import {
   loadBlocks,
   loadCSS,
 } from './lib-franklin.js';
-import {
-  analyticsTrack404,
-  analyticsTrackConversion,
-  analyticsTrackCWV,
-  analyticsTrackError,
-  initAnalyticsTrackingQueue,
-  setupAnalyticsTrackingWithAlloy,
-} from './analytics/lib-analytics.js';
+// import {
+//   analyticsTrack404,
+//   analyticsTrackConversion,
+//   analyticsTrackCWV,
+//   analyticsTrackError,
+//   initAnalyticsTrackingQueue,
+//   setupAnalyticsTrackingWithAlloy,
+// } from './analytics/lib-analytics.js';
+
+await import('./analytics/alloy.min.js');
+let res = await window.alloy('configure', {
+  edgeConfigId: '49f60b5b-a0d6-4857-99a7-efd5d4588b30',
+  orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+});
+console.log(res);
+res = await window.alloy('sendEvent', { renderDecisions: true });
+console.log(res);
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
@@ -191,22 +200,6 @@ function addPreconnect(href) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
-  window.targetGlobalSettings = {
-    clientCode: 'sitesinternal',
-    cookieDomain: 'atjs--wknd--hlxsites.hlx.live',
-    imsOrgId: '908936ED5D35CC220A495CD4@AdobeOrg',
-    secureOnly: true,
-    serverDomain: 'sitesinternal.tt.omtrdc.net',
-    bodyHidingEnabled: false,
-    pageLoadEnabled: true,
-    withWebGLRenderer: false,
-  };
-
-  addPreconnect('https://sitesinternal.tt.omtrdc.net');
-  addPreconnect('https://mboxedge35.tt.omtrdc.net');
-
-  const version = new URLSearchParams(window.location.search).get('atjs') || 'at.min';
-  await import(`./${version}.js`);
 
   await window.hlx.plugins.run('loadEager');
 
@@ -215,7 +208,7 @@ async function loadEager(doc) {
 
   const main = doc.querySelector('main');
   if (main) {
-    await initAnalyticsTrackingQueue();
+    // await initAnalyticsTrackingQueue();
     decorateMain(main);
     await waitForLCP(LCP_BLOCKS);
   }
@@ -295,18 +288,18 @@ async function loadPage() {
   await loadEager(document);
   await window.hlx.plugins.load('lazy');
   await loadLazy(document);
-  const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
+  // const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
   loadDelayed();
-  await setupAnalytics;
+  // await setupAnalytics;
 }
 
 const cwv = {};
 
 // Forward the RUM CWV cached measurements to edge using WebSDK before the page unloads
-window.addEventListener('beforeunload', () => {
-  if (!Object.keys(cwv).length) return;
-  analyticsTrackCWV(cwv);
-});
+// window.addEventListener('beforeunload', () => {
+//   if (!Object.keys(cwv).length) return;
+//   analyticsTrackCWV(cwv);
+// });
 
 // Callback to RUM CWV checkpoint in order to cache the measurements
 sampleRUM.always.on('cwv', async (data) => {
@@ -314,8 +307,8 @@ sampleRUM.always.on('cwv', async (data) => {
   Object.assign(cwv, data.cwv);
 });
 
-sampleRUM.always.on('404', analyticsTrack404);
-sampleRUM.always.on('error', analyticsTrackError);
+// sampleRUM.always.on('404', analyticsTrack404);
+// sampleRUM.always.on('error', analyticsTrackError);
 
 // Declare conversionEvent, bufferTimeoutId and tempConversionEvent,
 // outside the convert function to persist them for buffering between
@@ -352,7 +345,7 @@ sampleRUM.always.on('convert', (data) => {
         // If there is partial form conversion data,
         // set the timeout buffer to wait for additional data
         bufferTimeoutId = setTimeout(async () => {
-          analyticsTrackConversion({ ...conversionEvent });
+          // analyticsTrackConversion({ ...conversionEvent });
           tempConversionEvent = undefined;
           conversionEvent = undefined;
         }, CONVERSION_EVENT_TIMEOUT_MS);
@@ -361,7 +354,7 @@ sampleRUM.always.on('convert', (data) => {
     return;
   }
 
-  analyticsTrackConversion({ ...data });
+  // analyticsTrackConversion({ ...data });
   tempConversionEvent = undefined;
   conversionEvent = undefined;
 });
