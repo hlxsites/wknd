@@ -1350,7 +1350,7 @@ window.adobe.target = (function () {
 	    return CACHE$1[url];
 	  }
 	  if (window.URL) {
-	    CACHE$1[url] = new URL(url);
+	    CACHE$1[url] = new URL(url, window.location);
 	  } else {
 	    ANCHOR.href = url;
 	    const parsedUri = src$1(ANCHOR.href);
