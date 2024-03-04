@@ -1312,6 +1312,13 @@ window.adobe.target = (function () {
 	const CACHE$1 = {};
 	function parseQueryString(value) {
 	  try {
+	    if (window.URLSearchParams) {
+	      return [...new URLSearchParams(value).entries()].reduce((res, _ref) => {
+	        let [k, v] = _ref;
+	        res[k] = v;
+	        return res;
+	      }, {});
+	    }
 	    return parse(value);
 	  } catch (e) {
 	    return {};
@@ -1342,10 +1349,14 @@ window.adobe.target = (function () {
 	  if (CACHE$1[url]) {
 	    return CACHE$1[url];
 	  }
-	  ANCHOR.href = url;
-	  const parsedUri = src$1(ANCHOR.href);
-	  parsedUri.queryKey = parseQueryString(parsedUri.query);
-	  CACHE$1[url] = parsedUri;
+	  if (window.URL) {
+	    CACHE$1[url] = new URL(url);
+	  } else {
+	    ANCHOR.href = url;
+	    const parsedUri = src$1(ANCHOR.href);
+	    parsedUri.queryKey = parseQueryString(parsedUri.query);
+	    CACHE$1[url] = parsedUri;
+	  }
 	  return CACHE$1[url];
 	}
 
@@ -1463,6 +1474,9 @@ window.adobe.target = (function () {
 	    referrer
 	  } = doc;
 	  const parsedUri = parseUri(referrer);
+	  if (window.URL) {
+	    return parseUri.searchParams.get(name);
+	  }
 	  const refParams = parsedUri.queryKey;
 	  return isNil(refParams) ? false : isNotBlank(refParams[name]);
 	}
@@ -5197,6 +5211,15 @@ window.adobe.target = (function () {
 
 	const SDID_PARAM = "adobe_mc_sdid";
 	function getRedirectUriParams(uri) {
+	  if (window.URL) {
+	    const param = uri.searchParams.get(SDID_PARAM);
+	    if (!isString(param) || isBlank(param)) {
+	      return uri.search;
+	    }
+	    const nowInSeconds = Math.round(now() / 1000);
+	    uri.searchParams.set(SDID_PARAM, param.replace(/\|TS=\d+/, "|TS=" + nowInSeconds));
+	    return uri.search;
+	  }
 	  const result = uri.queryKey;
 	  const param = result[SDID_PARAM];
 	  if (!isString(param)) {
@@ -5210,10 +5233,21 @@ window.adobe.target = (function () {
 	  return result;
 	}
 	function getUriParams(uri) {
+	  if (window.URL) {
+	    return uri.search;
+	  }
 	  return uri.queryKey;
 	}
 	function createUrlInternal(url, params, uriParamsFunc) {
 	  const parsedUri = parseUri(url);
+	  if (window.URL) {
+	    parsedUri.search = uriParamsFunc(parsedUri);
+	    Object.entries(params).forEach(_ref => {
+	      let [k, v] = _ref;
+	      parsedUri.searchParams.set(k, v);
+	    });
+	    return url.href;
+	  }
 	  const {
 	    protocol
 	  } = parsedUri;
@@ -5254,7 +5288,7 @@ window.adobe.target = (function () {
 	const GET = "GET";
 	const POST = "POST";
 	const METHOD = "method";
-	const URL = "url";
+	const URL$1 = "url";
 	const HEADERS = "headers";
 	const DATA = "data";
 	const CREDENTIALS = "credentials";
@@ -5265,7 +5299,7 @@ window.adobe.target = (function () {
 	}
 	function processOptions$2(options) {
 	  const method = options[METHOD] || GET;
-	  const url = options[URL] || throwError(URL_REQUIRED);
+	  const url = options[URL$1] || throwError(URL_REQUIRED);
 	  const headers = options[HEADERS] || {};
 	  const data = options[DATA] || null;
 	  const credentials = options[CREDENTIALS] || false;
@@ -5273,7 +5307,7 @@ window.adobe.target = (function () {
 	  const async = isNil(options[ASYNC]) ? true : options[ASYNC] === true;
 	  const result = {};
 	  result[METHOD] = method;
-	  result[URL] = url;
+	  result[URL$1] = url;
 	  result[HEADERS] = headers;
 	  result[DATA] = data;
 	  result[CREDENTIALS] = credentials;
@@ -5327,7 +5361,7 @@ window.adobe.target = (function () {
 	function createXhrPromise(win, opts) {
 	  const options = processOptions$2(opts);
 	  const method = options[METHOD];
-	  const url = options[URL];
+	  const url = options[URL$1];
 	  const headers = options[HEADERS];
 	  const data = options[DATA];
 	  const credentials = options[CREDENTIALS];
@@ -5354,7 +5388,7 @@ window.adobe.target = (function () {
 	function createOptions(url, params, timeout) {
 	  const result = {};
 	  result[METHOD] = GET;
-	  result[URL] = createUrl(url, params);
+	  result[URL$1] = createUrl(url, params);
 	  result[TIMEOUT] = timeout;
 	  return result;
 	}
@@ -6826,7 +6860,7 @@ window.adobe.target = (function () {
 	  headers[CONTENT_TYPE] = [TEXT_PLAIN];
 	  const options = {};
 	  options[METHOD] = POST;
-	  options[URL] = url;
+	  options[URL$1] = url;
 	  options[DATA] = data;
 	  options[CREDENTIALS] = true;
 	  options[ASYNC] = false;
