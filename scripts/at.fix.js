@@ -1482,7 +1482,7 @@ window.adobe.target = (function () {
 	  } = doc;
 	  const parsedUri = parseUri(referrer);
 	  if (window.URL) {
-	    return parseUri.searchParams.get(name);
+	    return parsedUri.searchParams.get(name);
 	  }
 	  const refParams = parsedUri.queryKey;
 	  return isNil(refParams) ? false : isNotBlank(refParams[name]);
