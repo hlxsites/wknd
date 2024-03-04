@@ -1362,7 +1362,7 @@ window.adobe.target = (function () {
 
 	const {
 	  get: _getCookie,
-	  set: setCookie,
+	  set: _setCookie,
 	  remove: removeCookie
 	} = reactorCookie;
 	const MBOX_COOKIE = "mbox";
@@ -1373,14 +1373,21 @@ window.adobe.target = (function () {
 	    expires
 	  };
 	}
-	const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+	const cookieCache = {};
+	function setCookie(name, serializedValue, attributes) {
+	  _setCookie(name, serializedValue, attributes);
+	  cookieCache[name] = serializedValue;
+	}
 	function getCookie(name) {
-	  if (!isSafari) {
-	    const cookieString = "; " + document.cookie;
-	    const [, tail] = cookieString.split("; " + name + "=");
-	    return tail ? tail.split(";").shift() : null;
+	  if (cookieCache[name]) {
+	    return cookieCache[name];
 	  }
-	  return _getCookie(name);
+	  if (window.cookieStore) {
+	    cookieCache[name] = window.cookieStore.get(name);
+	  } else {
+	    cookieCache[name] = _getCookie(name);
+	  }
+	  return cookieCache[name];
 	}
 	function deserialize(str) {
 	  const parts = split("#", str);
