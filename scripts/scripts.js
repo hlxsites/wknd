@@ -327,7 +327,7 @@ let tempConversionEvent;
 sampleRUM.always.on('convert', (data) => {
   const { element } = data;
   // eslint-disable-next-line no-undef
-  if (!element || !alloy) {
+  if (!element || !window.alloy) {
     return;
   }
 
