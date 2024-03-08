@@ -30,9 +30,13 @@ const renderDecisionPromise = new Promise((resolve) => {
       window.alloy('configure', {
         edgeConfigId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
         orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+        thirdPartyCookiesEnabled: false,
       });
     })
+    // Get the decisions, but don't render them automatically to avoid
+    // having to wait for an additional reporting roundtrip
     .then(() => window.alloy('sendEvent', { renderDecisions: false }))
+    // Manually render the decisions. Reporting will be done later at the end of the eager phase
     .then((res) => window.alloy('applyPropositions', { propositions: res.propositions }))
     .then(resolve);
 });
@@ -285,6 +289,8 @@ async function loadPage() {
   await window.hlx.plugins.load('eager');
   const props = await loadEager(document);
   if (props) {
+    console.log(props);
+    // Report shown decisions
     window.alloy('sendEvent', {
       xdm: {
         eventType: 'decisioning.propositionDisplay',
