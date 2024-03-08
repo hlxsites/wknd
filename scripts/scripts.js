@@ -23,7 +23,8 @@ import {
 //   setupAnalyticsTrackingWithAlloy,
 // } from './analytics/lib-analytics.js';
 
-await import('./analytics/alloy.min.js');
+const alloyVersion = new URLSearchParams(window.location.search).get('alloy') || 'alloy.min';
+await import(`./analytics/${alloyVersion}.js`);
 let res = await window.alloy('configure', {
   edgeConfigId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
   orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
