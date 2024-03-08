@@ -30,7 +30,7 @@ const renderDecisionPromise = new Promise((resolve) => {
       window.alloy('configure', {
         edgeConfigId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
         orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
-        thirdPartyCookiesEnabled: false,
+        thirdPartyCookiesEnabled: true,
       });
     })
     // Get the decisions, but don't render them automatically to avoid
