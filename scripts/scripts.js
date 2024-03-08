@@ -24,10 +24,15 @@ import {
 // } from './analytics/lib-analytics.js';
 
 const alloyVersion = new URLSearchParams(window.location.search).get('alloy') || 'alloy.min';
-await import(`./analytics/${alloyVersion}.js`);
-let res = await window.alloy('configure', {
-  edgeConfigId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
-  orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+const renderDecisionPromise = new Promise((resolve) => {
+  import(`./analytics/${alloyVersion}.js`)
+    .then(() => {
+      window.alloy('configure', {
+        edgeConfigId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
+        orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+      });
+      return window.alloy('sendEvent', { renderDecisions: true });
+    }).then(resolve);
 });
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
@@ -183,21 +188,10 @@ export function decorateMain(main) {
   decorateBlocks(main);
 }
 
-function addPreconnect(href) {
-  const link = document.createElement('link');
-  link.setAttribute('rel', 'preconnect');
-  link.setAttribute('as', 'fetch');
-  link.setAttribute('crossorigin', 'anonymous');
-  link.setAttribute('href', href);
-  document.head.append(link);
-}
-addPreconnect('https://edge.adobedc.net');
-
 /**
  * loads everything needed to get to LCP.
  */
 async function loadEager(doc) {
-  const renderDecisionPromise = window.alloy('sendEvent', { renderDecisions: true });
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
 
