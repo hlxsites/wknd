@@ -31,8 +31,10 @@ const renderDecisionPromise = new Promise((resolve) => {
         edgeConfigId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
         orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
       });
-      return window.alloy('sendEvent', { renderDecisions: true });
-    }).then(resolve);
+    })
+    .then(() => window.alloy('sendEvent', { renderDecisions: false }))
+    .then((res) => window.alloy('applyPropositions', { propositions: res.propositions }))
+    .then(resolve);
 });
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
@@ -205,7 +207,8 @@ async function loadEager(doc) {
     // await initAnalyticsTrackingQueue();
     decorateMain(main);
     await waitForLCP(LCP_BLOCKS);
-    await renderDecisionPromise;
+    const res = await renderDecisionPromise;
+    return res;
   }
 }
 
@@ -280,7 +283,19 @@ function loadDelayed() {
 
 async function loadPage() {
   await window.hlx.plugins.load('eager');
-  await loadEager(document);
+  const props = await loadEager(document);
+  if (props) {
+    window.alloy('sendEvent', {
+      xdm: {
+        eventType: 'decisioning.propositionDisplay',
+        _experience: {
+          decisioning: {
+            propositions: props,
+          },
+        },
+      },
+    });
+  }
   await window.hlx.plugins.load('lazy');
   await loadLazy(document);
   // const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
