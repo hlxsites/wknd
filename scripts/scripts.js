@@ -32,8 +32,6 @@ if (alloyVersion) {
         window.alloy('configure', {
           edgeConfigId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
           orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
-          thirdPartyCookiesEnabled: true,
-          prehidingStyle: 'body { display: none }',
         });
         resolve();
       })
@@ -249,7 +247,12 @@ async function loadEager(doc) {
     // await initAnalyticsTrackingQueue();
     decorateMain(main);
     await renderDecisionPromise;
-    await waitForLCP(LCP_BLOCKS);
+    await Promise((res) => {
+      window.requestAnimationFrame(async () => {
+        await waitForLCP(LCP_BLOCKS);
+        res();
+      });
+    });
   }
 }
 
