@@ -185,28 +185,50 @@ function addPreconnect(href) {
   document.head.append(link);
 }
 
+
+window.targetGlobalSettings = {
+  clientCode: 'sitesinternal',
+  cookieDomain: 'atjs--wknd--hlxsites.hlx.live',
+  imsOrgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+  secureOnly: true,
+  serverDomain: 'sitesinternal.tt.omtrdc.net',
+  bodyHidingEnabled: false,
+  pageLoadEnabled: false,
+  viewsEnabled: false,
+  withWebGLRenderer: false,
+};
+const version = new URLSearchParams(window.location.search).get('atjs') || 'at.min';
+const atjsPromise = import(`./${version}.js`);
+
+addPreconnect('https://sitesinternal.tt.omtrdc.net');
+addPreconnect('https://mboxedge35.tt.omtrdc.net');
+
+document.addEventListener('at-library-loaded', async () => {
+  const resp = await window.adobe.target.getOffers({ request: { execute: { pageLoad: {} } } });
+  const observer = new MutationObserver((mutations) => {
+    if (mutations.some((m) => (
+      m.dataset.sectionStatus === 'loaded'
+        || m.dataset.blockStatus === 'loaded'
+        || ['BODY', 'HEADER', 'FOOTER'].includes(m.target.tagName)))) {
+      window.adobe.target.applyOffers({ response: resp });
+    }
+  });
+  observer.observe(document.querySelector('main'), {
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['data-block-status', 'data-section-status'],
+  });
+  observer.observe(document.querySelector('body'), { childList: true });
+  observer.observe(document.querySelector('body > header'), { childList: true });
+  observer.observe(document.querySelector('body > footer'), { childList: true });
+});
+
 /**
  * loads everything needed to get to LCP.
  */
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
-  window.targetGlobalSettings = {
-    clientCode: 'sitesinternal',
-    cookieDomain: 'atjs--wknd--hlxsites.hlx.live',
-    imsOrgId: '908936ED5D35CC220A495CD4@AdobeOrg',
-    secureOnly: true,
-    serverDomain: 'sitesinternal.tt.omtrdc.net',
-    bodyHidingEnabled: false,
-    pageLoadEnabled: true,
-    withWebGLRenderer: false,
-  };
-
-  addPreconnect('https://sitesinternal.tt.omtrdc.net');
-  addPreconnect('https://mboxedge35.tt.omtrdc.net');
-
-  const version = new URLSearchParams(window.location.search).get('atjs') || 'at.min';
-  await import(`./${version}.js`);
 
   await window.hlx.plugins.run('loadEager');
 
@@ -218,6 +240,7 @@ async function loadEager(doc) {
     await initAnalyticsTrackingQueue();
     decorateMain(main);
     await waitForLCP(LCP_BLOCKS);
+    await atjsPromise;
   }
 }
 
