@@ -205,22 +205,22 @@ addPreconnect('https://mboxedge35.tt.omtrdc.net');
 
 document.addEventListener('at-library-loaded', async () => {
   const resp = await window.adobe.target.getOffers({ request: { execute: { pageLoad: {} } } });
-  const observer = new MutationObserver((mutations) => {
-    if (mutations.some((m) => (
-      m.dataset.sectionStatus === 'loaded'
-        || m.dataset.blockStatus === 'loaded'
-        || ['BODY', 'HEADER', 'FOOTER'].includes(m.target.tagName)))) {
+  const observer = new MutationObserver((mutations, obs) => {
+    if (mutations.some((m) => m.dataset.sectionStatus === 'loaded' || m.dataset.blockStatus === 'loaded')) {
+      obs.disconnect();
+      window.adobe.target.applyOffers({ response: resp });
+    } else if (mutations.some((m) => m.target.tagName === 'BODY')) {
       window.adobe.target.applyOffers({ response: resp });
     }
   });
-  observer.observe(document.querySelector('main'), {
+  observer.observe(document.querySelector('body'), {
     subtree: true,
     attributes: true,
     attributeFilter: ['data-block-status', 'data-section-status'],
   });
-  observer.observe(document.querySelector('body'), { childList: true });
-  observer.observe(document.querySelector('body > header'), { childList: true });
-  observer.observe(document.querySelector('body > footer'), { childList: true });
+  document.querySelectorAll('body,body>header,body>footer').forEach((el) => {
+    observer.observe(el, { childList: true });
+  });
 });
 
 /**
