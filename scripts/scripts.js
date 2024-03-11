@@ -214,8 +214,9 @@ async function loadEager(doc) {
     // await initAnalyticsTrackingQueue();
     decorateMain(main);
     const res = await renderDecisionPromise;
-    window.setTimeout(() => {
-      if (res) {
+    await waitForLCP(LCP_BLOCKS);
+    if (res) {
+      window.setTimeout(() => {
         // Report shown decisions
         window.alloy('sendEvent', {
           xdm: {
@@ -227,10 +228,8 @@ async function loadEager(doc) {
             },
           },
         });
-      }
-    });
-    await waitForLCP(LCP_BLOCKS);
-    return res;
+      });
+    }
   }
 }
 
