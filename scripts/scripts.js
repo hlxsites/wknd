@@ -34,12 +34,16 @@ if (alloyVersion) {
           orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
           thirdPartyCookiesEnabled: true,
         });
+        resolve();
       })
       // Get the decisions, but don't render them automatically to avoid
       // having to wait for an additional reporting roundtrip
       .then(() => window.alloy('sendEvent', { renderDecisions: false }))
       // Manually render the decisions. Reporting will be done later at the end of the eager phase
       .then((res) => {
+        if (document.querySelectorAll('[data-block-status="loaded"],[data-section-status="loaded"]')) {
+          window.alloy('applyPropositions', { propositions: res.propositions });
+        }
         const observer = new MutationObserver((mutations, obs) => {
           if (mutations.some((m) => m.target.dataset.sectionStatus === 'loaded' || m.target.dataset.blockStatus === 'loaded')) {
             obs.disconnect();
@@ -54,8 +58,7 @@ if (alloyVersion) {
         document.querySelectorAll('body,body>header,body>footer').forEach((el) => {
           observer.observe(el, { childList: true });
         });
-      })
-      .then(resolve);
+      });
   });
 }
 
