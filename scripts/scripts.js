@@ -41,6 +41,7 @@ if (alloyVersion) {
       .then(() => window.alloy('sendEvent', { renderDecisions: false }))
       // Manually render the decisions. Reporting will be done later at the end of the eager phase
       .then((res) => {
+        // Apply propositions as sections/blocks are loaded
         if (document.querySelectorAll('[data-block-status="loaded"],[data-section-status="loaded"]')) {
           window.alloy('applyPropositions', { propositions: res.propositions });
         }
@@ -57,6 +58,21 @@ if (alloyVersion) {
         });
         document.querySelectorAll('body,body>header,body>footer').forEach((el) => {
           observer.observe(el, { childList: true });
+        });
+        return res;
+      }).then((res) => {
+        window.setTimeout(() => {
+          // Report shown decisions
+          window.alloy('sendEvent', {
+            xdm: {
+              eventType: 'decisioning.propositionDisplay',
+              _experience: {
+                decisioning: {
+                  propositions: res.propositions,
+                },
+              },
+            },
+          });
         });
       });
   });
@@ -231,23 +247,8 @@ async function loadEager(doc) {
   if (main) {
     // await initAnalyticsTrackingQueue();
     decorateMain(main);
-    const res = await renderDecisionPromise;
+    await renderDecisionPromise;
     await waitForLCP(LCP_BLOCKS);
-    if (res) {
-      window.setTimeout(() => {
-        // Report shown decisions
-        window.alloy('sendEvent', {
-          xdm: {
-            eventType: 'decisioning.propositionDisplay',
-            _experience: {
-              decisioning: {
-                propositions: res.propositions,
-              },
-            },
-          },
-        });
-      });
-    }
   }
 }
 
