@@ -23,14 +23,13 @@ import {
 //   setupAnalyticsTrackingWithAlloy,
 // } from './analytics/lib-analytics.js';
 
-function initWebSDK(path, config, postConfig) {
+function initWebSDK(path, config) {
   return new Promise((resolve) => {
     import(path)
       .then(() => {
         window.alloy('configure', config);
         resolve();
-      })
-      .then(() => postConfig && postConfig());
+      });
   });
 }
 
@@ -59,7 +58,7 @@ function onDecoratedElement(fn) {
   });
 }
 
-async function applyRenderDecisions() {
+async function getAndApplyRenderDecisions() {
   // Get the decisions, but don't render them automatically
   // so we can hook up into the AEM EDS page load sequence
   const response = await window.alloy('sendEvent', { renderDecisions: false });
@@ -88,7 +87,8 @@ if (alloyVersion) {
   alloyLoadedPromise = initWebSDK(`./analytics/${alloyVersion}.js`, {
     edgeConfigId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
     orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
-  }, applyRenderDecisions);
+  });
+  alloyLoadedPromise.then(() => getAndApplyRenderDecisions());
 }
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
