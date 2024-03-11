@@ -239,8 +239,8 @@ async function loadEager(doc) {
   if (main) {
     await initAnalyticsTrackingQueue();
     decorateMain(main);
-    await waitForLCP(LCP_BLOCKS);
     await atjsPromise;
+    await waitForLCP(LCP_BLOCKS);
   }
 }
 
