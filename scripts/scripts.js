@@ -247,7 +247,7 @@ async function loadEager(doc) {
     // await initAnalyticsTrackingQueue();
     decorateMain(main);
     await renderDecisionPromise;
-    await Promise((res) => {
+    await new Promise((res) => {
       window.requestAnimationFrame(async () => {
         await waitForLCP(LCP_BLOCKS);
         res();
