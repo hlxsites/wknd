@@ -206,13 +206,12 @@ if (version) {
     if (document.querySelector('[data-block-status="loaded"],[data-section-status="loaded"]')) {
       window.adobe.target.applyOffers({ response: resp });
     }
-    const observer = new MutationObserver((mutations, obs) => {
+    const observer = new MutationObserver((mutations) => {
       if (mutations.some((m) => m.target.dataset.sectionStatus === 'loaded' || m.target.dataset.blockStatus === 'loaded')) {
-        obs.disconnect();
         window.adobe.target.applyOffers({ response: resp });
       }
     });
-    observer.observe(document.querySelector('body'), {
+    observer.observe(document.querySelector('main'), {
       subtree: true,
       attributes: true,
       attributeFilter: ['data-block-status', 'data-section-status'],
