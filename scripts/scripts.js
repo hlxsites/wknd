@@ -23,10 +23,10 @@ import {
 //   setupAnalyticsTrackingWithAlloy,
 // } from './analytics/lib-analytics.js';
 
-let renderDecisionPromise = Promise.resolve();
+let alloyLoadedPromise;
 const alloyVersion = new URLSearchParams(window.location.search).get('alloy');
 if (alloyVersion) {
-  renderDecisionPromise = new Promise((resolve) => {
+  alloyLoadedPromise = new Promise((resolve) => {
     import(`./analytics/${alloyVersion}.js`)
       .then(() => {
         window.alloy('configure', {
@@ -246,7 +246,7 @@ async function loadEager(doc) {
   if (main) {
     // await initAnalyticsTrackingQueue();
     decorateMain(main);
-    await renderDecisionPromise;
+    await (alloyLoadedPromise || Promise.resolve());
     await new Promise((res) => {
       window.requestAnimationFrame(async () => {
         await waitForLCP(LCP_BLOCKS);
