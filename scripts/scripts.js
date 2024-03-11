@@ -203,6 +203,9 @@ if (version) {
   addPreconnect('https://mboxedge35.tt.omtrdc.net');
   document.addEventListener('at-library-loaded', async () => {
     const resp = await window.adobe.target.getOffers({ request: { execute: { pageLoad: {} } } });
+    if (document.querySelector('[data-block-status="loaded"],[data-section-status="loaded"]')) {
+      window.adobe.target.applyOffers({ response: resp });
+    }
     const observer = new MutationObserver((mutations, obs) => {
       if (mutations.some((m) => m.target.dataset.sectionStatus === 'loaded' || m.target.dataset.blockStatus === 'loaded')) {
         obs.disconnect();
