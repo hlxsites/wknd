@@ -23,58 +23,72 @@ import {
 //   setupAnalyticsTrackingWithAlloy,
 // } from './analytics/lib-analytics.js';
 
+function initWebSDK(path, config, postConfig) {
+  return new Promise((resolve) => {
+    import(path)
+      .then(() => {
+        window.alloy('configure', config);
+        resolve();
+      })
+      .then(() => postConfig && postConfig());
+  });
+}
+
+function onDecoratedElement(fn) {
+  // Apply propositions to all already decorated blocks/sections
+  if (document.querySelector('[data-block-status="loaded"],[data-section-status="loaded"]')) {
+    fn();
+  }
+
+  const observer = new MutationObserver((mutations) => {
+    if (mutations.some((m) => m.target.tagName === 'BODY'
+      || m.target.dataset.sectionStatus === 'loaded'
+      || m.target.dataset.blockStatus === 'loaded')) {
+      fn();
+    }
+  });
+  // Watch sections and blocks being decorated async
+  observer.observe(document.querySelector('main'), {
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['data-block-status', 'data-section-status'],
+  });
+  // Watch anything else added to the body
+  document.querySelectorAll('body').forEach((el) => {
+    observer.observe(el, { childList: true });
+  });
+}
+
+async function applyRenderDecisions() {
+  // Get the decisions, but don't render them automatically
+  // so we can hook up into the AEM EDS page load sequence
+  const response = await window.alloy('sendEvent', { renderDecisions: false });
+
+  onDecoratedElement(() => window.alloy('applyPropositions', { propositions: response.propositions }));
+
+  // Reporting is deferred to avoid long tasks
+  window.setTimeout(() => {
+    // Report shown decisions
+    window.alloy('sendEvent', {
+      xdm: {
+        eventType: 'decisioning.propositionDisplay',
+        _experience: {
+          decisioning: {
+            propositions: response.propositions,
+          },
+        },
+      },
+    });
+  });
+}
+
 let alloyLoadedPromise;
 const alloyVersion = new URLSearchParams(window.location.search).get('alloy');
 if (alloyVersion) {
-  alloyLoadedPromise = new Promise((resolve) => {
-    import(`./analytics/${alloyVersion}.js`)
-      .then(() => {
-        window.alloy('configure', {
-          edgeConfigId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
-          orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
-        });
-        resolve();
-      })
-      // Get the decisions, but don't render them automatically to avoid
-      // having to wait for an additional reporting roundtrip
-      .then(() => window.alloy('sendEvent', { renderDecisions: false }))
-      // Manually render the decisions. Reporting will be done later at the end of the eager phase
-      .then((res) => {
-        // Apply propositions as sections/blocks are loaded
-        if (document.querySelectorAll('[data-block-status="loaded"],[data-section-status="loaded"]')) {
-          window.alloy('applyPropositions', { propositions: res.propositions });
-        }
-        const observer = new MutationObserver((mutations, obs) => {
-          if (mutations.some((m) => m.target.dataset.sectionStatus === 'loaded' || m.target.dataset.blockStatus === 'loaded')) {
-            obs.disconnect();
-            window.alloy('applyPropositions', { propositions: res.propositions });
-          }
-        });
-        observer.observe(document.querySelector('body'), {
-          subtree: true,
-          attributes: true,
-          attributeFilter: ['data-block-status', 'data-section-status'],
-        });
-        document.querySelectorAll('body,body>header,body>footer').forEach((el) => {
-          observer.observe(el, { childList: true });
-        });
-        return res;
-      }).then((res) => {
-        window.setTimeout(() => {
-          // Report shown decisions
-          window.alloy('sendEvent', {
-            xdm: {
-              eventType: 'decisioning.propositionDisplay',
-              _experience: {
-                decisioning: {
-                  propositions: res.propositions,
-                },
-              },
-            },
-          });
-        });
-      });
-  });
+  alloyLoadedPromise = initWebSDK(`./analytics/${alloyVersion}.js`, {
+    edgeConfigId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
+    orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+  }, applyRenderDecisions);
 }
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
