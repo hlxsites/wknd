@@ -180,11 +180,10 @@ function addPreconnect(href) {
   const link = document.createElement('link');
   link.setAttribute('rel', 'preconnect');
   link.setAttribute('as', 'fetch');
-  link.setAttribute('crossorigin', 'anonymous');
+  link.setAttribute('crossorigin', 'with-credentials');
   link.setAttribute('href', href);
   document.head.append(link);
 }
-
 
 window.targetGlobalSettings = {
   clientCode: 'sitesinternal',
