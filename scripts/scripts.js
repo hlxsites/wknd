@@ -23,23 +23,26 @@ import {
 //   setupAnalyticsTrackingWithAlloy,
 // } from './analytics/lib-analytics.js';
 
-const alloyVersion = new URLSearchParams(window.location.search).get('alloy') || 'alloy.min';
-const renderDecisionPromise = new Promise((resolve) => {
-  import(`./analytics/${alloyVersion}.js`)
-    .then(() => {
-      window.alloy('configure', {
-        edgeConfigId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
-        orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
-        thirdPartyCookiesEnabled: true,
-      });
-    })
-    // Get the decisions, but don't render them automatically to avoid
-    // having to wait for an additional reporting roundtrip
-    .then(() => window.alloy('sendEvent', { renderDecisions: false }))
-    // Manually render the decisions. Reporting will be done later at the end of the eager phase
-    .then((res) => window.alloy('applyPropositions', { propositions: res.propositions }))
-    .then(resolve);
-});
+let renderDecisionPromise = Promise.resolve();
+const alloyVersion = new URLSearchParams(window.location.search).get('alloy');
+if (alloyVersion) {
+  renderDecisionPromise = new Promise((resolve) => {
+    import(`./analytics/${alloyVersion}.js`)
+      .then(() => {
+        window.alloy('configure', {
+          edgeConfigId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
+          orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+          thirdPartyCookiesEnabled: true,
+        });
+      })
+      // Get the decisions, but don't render them automatically to avoid
+      // having to wait for an additional reporting roundtrip
+      .then(() => window.alloy('sendEvent', { renderDecisions: false }))
+      // Manually render the decisions. Reporting will be done later at the end of the eager phase
+      .then((res) => window.alloy('applyPropositions', { propositions: res.propositions }))
+      .then(resolve);
+  });
+}
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
@@ -210,8 +213,23 @@ async function loadEager(doc) {
   if (main) {
     // await initAnalyticsTrackingQueue();
     decorateMain(main);
-    await waitForLCP(LCP_BLOCKS);
     const res = await renderDecisionPromise;
+    window.setTimeout(() => {
+      if (res) {
+        // Report shown decisions
+        window.alloy('sendEvent', {
+          xdm: {
+            eventType: 'decisioning.propositionDisplay',
+            _experience: {
+              decisioning: {
+                propositions: res.propositions,
+              },
+            },
+          },
+        });
+      }
+    });
+    await waitForLCP(LCP_BLOCKS);
     return res;
   }
 }
@@ -287,21 +305,7 @@ function loadDelayed() {
 
 async function loadPage() {
   await window.hlx.plugins.load('eager');
-  const props = await loadEager(document);
-  if (props) {
-    console.log(props);
-    // Report shown decisions
-    window.alloy('sendEvent', {
-      xdm: {
-        eventType: 'decisioning.propositionDisplay',
-        _experience: {
-          decisioning: {
-            propositions: props,
-          },
-        },
-      },
-    });
-  }
+  await loadEager(document);
   await window.hlx.plugins.load('lazy');
   await loadLazy(document);
   // const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
