@@ -34,6 +34,73 @@ const AUDIENCES = {
   'returning-visitor': () => !!localStorage.getItem('franklin-visitor-returning'),
 };
 
+function addPreconnect(href) {
+  const link = document.createElement('link');
+  link.setAttribute('rel', 'preconnect');
+  link.setAttribute('as', 'fetch');
+  link.setAttribute('crossorigin', 'with-credentials');
+  link.setAttribute('href', href);
+  document.head.append(link);
+}
+
+function initATJS(path, config, postConfig) {
+  window.targetGlobalSettings = config;
+  addPreconnect('https://sitesinternal.tt.omtrdc.net');
+  addPreconnect('https://mboxedge35.tt.omtrdc.net');
+  return new Promise((resolve) => {
+    document.addEventListener('at-library-loaded', () => {
+      postConfig();
+    });
+    import(path).then(resolve());
+  });
+}
+
+function onDecoratedElement(fn) {
+  // Apply propositions to all already decorated blocks/sections
+  if (document.querySelector('[data-block-status="loaded"],[data-section-status="loaded"]')) {
+    fn();
+  }
+
+  const observer = new MutationObserver((mutations) => {
+    if (mutations.some((m) => m.target.tagName === 'BODY'
+      || m.target.dataset.sectionStatus === 'loaded'
+      || m.target.dataset.blockStatus === 'loaded')) {
+      fn();
+    }
+  });
+  // Watch sections and blocks being decorated async
+  observer.observe(document.querySelector('main'), {
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['data-block-status', 'data-section-status'],
+  });
+  // Watch anything else added to the body
+  document.querySelectorAll('body').forEach((el) => {
+    observer.observe(el, { childList: true });
+  });
+}
+
+async function getAndApplyOffers() {
+  const response = await window.adobe.target.getOffers({ request: { execute: { pageLoad: {} } } });
+  onDecoratedElement(() => window.adobe.target.getAndApplyOffers({ response }));
+}
+
+let atjsPromise;
+const atjsVersion = new URLSearchParams(window.location.search).get('atjs');
+if (atjsVersion) {
+  atjsPromise = initATJS(`./${atjsVersion}.js`, {
+    clientCode: 'sitesinternal',
+    serverDomain: 'sitesinternal.tt.omtrdc.net',
+    imsOrgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+    bodyHidingEnabled: false,
+    cookieDomain: window.location.hostname,
+    pageLoadEnabled: false,
+    secureOnly: true,
+    viewsEnabled: false,
+    withWebGLRenderer: false,
+  }, getAndApplyOffers);
+}
+
 window.hlx.plugins.add('rum-conversion', {
   url: '/plugins/rum-conversion/src/index.js',
   load: 'lazy',
@@ -176,53 +243,6 @@ export function decorateMain(main) {
   decorateBlocks(main);
 }
 
-function addPreconnect(href) {
-  const link = document.createElement('link');
-  link.setAttribute('rel', 'preconnect');
-  link.setAttribute('as', 'fetch');
-  link.setAttribute('crossorigin', 'with-credentials');
-  link.setAttribute('href', href);
-  document.head.append(link);
-}
-
-let atjsPromise = Promise.resolve();
-const version = new URLSearchParams(window.location.search).get('atjs');
-if (version) {
-  window.targetGlobalSettings = {
-    clientCode: 'sitesinternal',
-    serverDomain: 'sitesinternal.tt.omtrdc.net',
-    imsOrgId: '908936ED5D35CC220A495CD4@AdobeOrg',
-    bodyHidingEnabled: false,
-    cookieDomain: window.location.hostname,
-    pageLoadEnabled: false,
-    secureOnly: true,
-    viewsEnabled: false,
-    withWebGLRenderer: false,
-  };
-  addPreconnect('https://sitesinternal.tt.omtrdc.net');
-  addPreconnect('https://mboxedge35.tt.omtrdc.net');
-  document.addEventListener('at-library-loaded', async () => {
-    const resp = await window.adobe.target.getOffers({ request: { execute: { pageLoad: {} } } });
-    if (document.querySelector('[data-block-status="loaded"],[data-section-status="loaded"]')) {
-      window.adobe.target.applyOffers({ response: resp });
-    }
-    const observer = new MutationObserver((mutations) => {
-      if (mutations.some((m) => m.target.dataset.sectionStatus === 'loaded' || m.target.dataset.blockStatus === 'loaded')) {
-        window.adobe.target.applyOffers({ response: resp });
-      }
-    });
-    observer.observe(document.querySelector('main'), {
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['data-block-status', 'data-section-status'],
-    });
-    document.querySelectorAll('body,body>header,body>footer').forEach((el) => {
-      observer.observe(el, { childList: true });
-    });
-  });
-  atjsPromise = import(`./${version}.js`);
-}
-
 /**
  * loads everything needed to get to LCP.
  */
@@ -239,8 +259,13 @@ async function loadEager(doc) {
   if (main) {
     await initAnalyticsTrackingQueue();
     decorateMain(main);
-    await atjsPromise;
-    await waitForLCP(LCP_BLOCKS);
+    await (atjsPromise || Promise.resolve());
+    await new Promise((resolve) => {
+      window.requestAnimationFrame(async () => {
+        await waitForLCP(LCP_BLOCKS);
+        resolve();
+      })
+    })
   }
 }
 
