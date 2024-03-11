@@ -185,40 +185,41 @@ function addPreconnect(href) {
   document.head.append(link);
 }
 
-window.targetGlobalSettings = {
-  clientCode: 'sitesinternal',
-  cookieDomain: 'atjs--wknd--hlxsites.hlx.live',
-  imsOrgId: '908936ED5D35CC220A495CD4@AdobeOrg',
-  secureOnly: true,
-  serverDomain: 'sitesinternal.tt.omtrdc.net',
-  bodyHidingEnabled: false,
-  pageLoadEnabled: false,
-  viewsEnabled: false,
-  withWebGLRenderer: false,
-};
-const version = new URLSearchParams(window.location.search).get('atjs') || 'at.min';
-const atjsPromise = import(`./${version}.js`);
-
-addPreconnect('https://sitesinternal.tt.omtrdc.net');
-addPreconnect('https://mboxedge35.tt.omtrdc.net');
-
-document.addEventListener('at-library-loaded', async () => {
-  const resp = await window.adobe.target.getOffers({ request: { execute: { pageLoad: {} } } });
-  const observer = new MutationObserver((mutations, obs) => {
-    if (mutations.some((m) => m.target.dataset.sectionStatus === 'loaded' || m.target.dataset.blockStatus === 'loaded')) {
-      obs.disconnect();
-      window.adobe.target.applyOffers({ response: resp });
-    }
+let atjsPromise = Promise.resolve();
+const version = new URLSearchParams(window.location.search).get('atjs');
+if (version) {
+  window.targetGlobalSettings = {
+    clientCode: 'sitesinternal',
+    serverDomain: 'sitesinternal.tt.omtrdc.net',
+    imsOrgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+    bodyHidingEnabled: false,
+    cookieDomain: window.location.hostname,
+    pageLoadEnabled: false,
+    secureOnly: true,
+    viewsEnabled: false,
+    withWebGLRenderer: false,
+  };
+  addPreconnect('https://sitesinternal.tt.omtrdc.net');
+  addPreconnect('https://mboxedge35.tt.omtrdc.net');
+  document.addEventListener('at-library-loaded', async () => {
+    const resp = await window.adobe.target.getOffers({ request: { execute: { pageLoad: {} } } });
+    const observer = new MutationObserver((mutations, obs) => {
+      if (mutations.some((m) => m.target.dataset.sectionStatus === 'loaded' || m.target.dataset.blockStatus === 'loaded')) {
+        obs.disconnect();
+        window.adobe.target.applyOffers({ response: resp });
+      }
+    });
+    observer.observe(document.querySelector('body'), {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['data-block-status', 'data-section-status'],
+    });
+    document.querySelectorAll('body,body>header,body>footer').forEach((el) => {
+      observer.observe(el, { childList: true });
+    });
   });
-  observer.observe(document.querySelector('body'), {
-    subtree: true,
-    attributes: true,
-    attributeFilter: ['data-block-status', 'data-section-status'],
-  });
-  document.querySelectorAll('body,body>header,body>footer').forEach((el) => {
-    observer.observe(el, { childList: true });
-  });
-});
+  atjsPromise = import(`./${version}.js`);
+}
 
 /**
  * loads everything needed to get to LCP.
