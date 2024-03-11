@@ -95,7 +95,7 @@ if (atjsVersion) {
     secureOnly: true,
     viewsEnabled: false,
     withWebGLRenderer: false,
-  }, getAndApplyOffers);
+  });
   document.addEventListener('at-library-loaded', () => getAndApplyOffers());
 }
 
