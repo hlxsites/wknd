@@ -262,8 +262,8 @@ async function loadEager(doc) {
       window.requestAnimationFrame(async () => {
         await waitForLCP(LCP_BLOCKS);
         resolve();
-      })
-    })
+      });
+    });
   }
 }
 
