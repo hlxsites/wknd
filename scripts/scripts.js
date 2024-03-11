@@ -43,15 +43,12 @@ function addPreconnect(href) {
   document.head.append(link);
 }
 
-function initATJS(path, config, postConfig) {
+function initATJS(path, config) {
   window.targetGlobalSettings = config;
   addPreconnect('https://sitesinternal.tt.omtrdc.net');
   addPreconnect('https://mboxedge35.tt.omtrdc.net');
   return new Promise((resolve) => {
-    document.addEventListener('at-library-loaded', () => {
-      postConfig();
-    });
-    import(path).then(resolve());
+    import(path).then(resolve);
   });
 }
 
@@ -82,7 +79,7 @@ function onDecoratedElement(fn) {
 
 async function getAndApplyOffers() {
   const response = await window.adobe.target.getOffers({ request: { execute: { pageLoad: {} } } });
-  onDecoratedElement(() => window.adobe.target.getAndApplyOffers({ response }));
+  onDecoratedElement(() => window.adobe.target.applyOffers({ response }));
 }
 
 let atjsPromise;
@@ -99,6 +96,7 @@ if (atjsVersion) {
     viewsEnabled: false,
     withWebGLRenderer: false,
   }, getAndApplyOffers);
+  document.addEventListener('at-library-loaded', () => getAndApplyOffers());
 }
 
 window.hlx.plugins.add('rum-conversion', {
