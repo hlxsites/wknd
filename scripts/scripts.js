@@ -15,16 +15,49 @@ import {
   loadCSS,
 } from './lib-franklin.js';
 import {
-  analyticsTrack404,
-  analyticsTrackConversion,
-  analyticsTrackCWV,
-  analyticsTrackError,
-  initAnalyticsTrackingQueue,
-  setupAnalyticsTrackingWithAlloy,
-} from './analytics/lib-analytics.js';
+  initMartech,
+  sendAnalyticsEvent,
+  updateUserConsent,
+} from './adobe-martech/index.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
+
+/**
+ * Enhance all events with additional details, like experiment running,
+ * before sending them to the edge
+ * @param options event in the XDM schema format
+ */
+function enhanceAnalyticsEvent(options) {
+  const { experiment } = window.hlx;
+  // eslint-disable-next-line no-underscore-dangle
+  options.xdm._sitesinternal = {
+    // eslint-disable-next-line no-underscore-dangle
+    ...options.xdm._sitesinternal,
+    ...(experiment && { experiment }), // add experiment details, if existing, to all events
+  };
+}
+
+const martechLoadedPromise = await initMartech({
+  datastreamId: 'caad777c-c410-4ceb-8b36-167f1cecc3de',
+  orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+  defaultConsent: 'in', // 'pending',
+  onBeforeEventSend: (options) => {
+    const { experiment } = window.hlx;
+    // eslint-disable-next-line no-underscore-dangle
+    options.xdm._sitesinternal = {
+      // eslint-disable-next-line no-underscore-dangle
+      ...options.xdm._sitesinternal,
+      ...(experiment && { experiment }), // add experiment details, if existing, to all events
+    };
+  },
+});
+window.addEventListener('consent', (ev) => {
+  updateUserConsent(ev.detail.categories.includes('CC_TARGETING'));
+});
+window.addEventListener('consent-updated', (ev) => {
+  updateUserConsent(ev.detail.categories.includes('CC_TARGETING'));
+});
 
 // Define the custom audiences mapping for experience decisioning
 const AUDIENCES = {
@@ -190,8 +223,8 @@ async function loadEager(doc) {
 
   const main = doc.querySelector('main');
   if (main) {
-    await initAnalyticsTrackingQueue();
     decorateMain(main);
+    await martechLoadedPromise;
     await waitForLCP(LCP_BLOCKS);
   }
 }
@@ -270,27 +303,85 @@ async function loadPage() {
   await loadEager(document);
   await window.hlx.plugins.load('lazy');
   await loadLazy(document);
-  const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
+  // const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
   loadDelayed();
-  await setupAnalytics;
+  // await setupAnalytics;
 }
 
-const cwv = {};
-
-// Forward the RUM CWV cached measurements to edge using WebSDK before the page unloads
-window.addEventListener('beforeunload', () => {
-  if (!Object.keys(cwv).length) return;
-  analyticsTrackCWV(cwv);
+sampleRUM.always.on('lazy', () => {
+  sendAnalyticsEvent({
+    eventType: 'web.webpagedetails.pageViews',
+    web: {
+      webPageDetails: {
+        pageViews: {
+          value: 1,
+        },
+        name: document.title,
+      },
+    },
+    _sitesinternal: {},
+  });
 });
-
-// Callback to RUM CWV checkpoint in order to cache the measurements
-sampleRUM.always.on('cwv', async (data) => {
-  if (!data.cwv) return;
-  Object.assign(cwv, data.cwv);
+sampleRUM.always.on('cwv', (data) => {
+  sendAnalyticsEvent({
+    eventType: 'web.performance.measurements',
+    _sitesinternal: { cwv: data.cwv },
+  });
 });
-
-sampleRUM.always.on('404', analyticsTrack404);
-sampleRUM.always.on('error', analyticsTrackError);
+sampleRUM.always.on('404', () => {
+  sendAnalyticsEvent({
+    eventType: 'web.webpagedetails.pageViews',
+    web: {
+      webPageDetails: {
+        pageViews: { value: 0 },
+      },
+    },
+    _sitesinternal: { isPageNotFound: true },
+  });
+});
+sampleRUM.always.on('error', () => {
+  sendAnalyticsEvent({
+    eventType: 'web.webpagedetails.pageViews',
+    web: {
+      webPageDetails: {
+        pageViews: { value: 0 },
+        isErrorPage: true,
+      },
+    },
+    _sitesinternal: {},
+  });
+});
+sampleRUM.always.on('formsubmit', (data) => {
+  console.log(data);
+  const element = { data };
+  const formId = element?.id || element?.dataset?.action;
+  return sendAnalyticsEvent({
+    eventType: 'web.formFilledOut',
+    _sitesinternal: {
+      form: {
+        ...(formId && { formId }),
+        formComplete: 1,
+      },
+    },
+  });
+});
+sampleRUM.always.on('click', (data) => {
+  console.log(data);
+  const element = { data };
+  sendAnalyticsEvent({
+    eventType: 'web.webinteraction.linkClicks',
+    web: {
+      webInteraction: {
+        URL: element.href,
+        // eslint-disable-next-line no-nested-ternary
+        name: element.text ? element.text.trim() : (element.innerHTML ? element.innerHTML.trim() : ''),
+        linkClicks: { value: 1 },
+        type: 'other',
+      },
+    },
+    _sitesinternal: {},
+  });
+});
 
 // Declare conversionEvent, bufferTimeoutId and tempConversionEvent,
 // outside the convert function to persist them for buffering between
@@ -300,10 +391,51 @@ let bufferTimeoutId;
 let conversionEvent;
 let tempConversionEvent;
 sampleRUM.always.on('convert', (data) => {
-  const { element } = data;
+  const { source: conversionName, target: conversionValue, element } = data;
   // eslint-disable-next-line no-undef
-  if (!element || !alloy) {
+  if (!element) {
     return;
+  }
+
+  function analyticsTrackConversion() {
+    const xdmData = {
+      eventType: 'web.webinteraction.conversion',
+      _sitesinternal: {
+        conversion: {
+          conversionComplete: 1,
+          conversionName,
+          conversionValue,
+        },
+      },
+    };
+
+    if (element.tagName === 'FORM') {
+      xdmData.eventType = 'web.formFilledOut';
+      const formId = element?.id || element?.dataset?.action;
+      // eslint-disable-next-line no-underscore-dangle
+      xdmData._sitesinternal.form = {
+        ...(formId && { formId }),
+        // don't count as form complete, as this event should be tracked separately,
+        // track only the details of the form together with the conversion
+        formComplete: 0,
+      };
+    } else if (element.tagName === 'A') {
+      xdmData.eventType = 'web.webinteraction.linkClicks';
+      xdmData.web = {
+        webInteraction: {
+          URL: element.href,
+          // eslint-disable-next-line no-nested-ternary
+          name: element.text ? element.text.trim() : (element.innerHTML ? element.innerHTML.trim() : ''),
+          linkClicks: {
+            // don't count as link click, as this event should be tracked separately,
+            // track only the details of the link with the conversion
+            value: 0,
+          },
+          type: 'other',
+        },
+      };
+    }
+    sendAnalyticsEvent(xdmData);
   }
 
   if (element.tagName === 'FORM') {

@@ -4,7 +4,7 @@
  * https://github.com/sandstreamdev/cookieconsent
  */
 import { getPlaceholderOrDefault } from '../lib-franklin.js';
-import { analyticsSetConsent } from '../analytics/lib-analytics.js';
+import { updateUserConsent } from '../adobe-martech/index.js';
 
 const REVOKE_CONSENT_ELEMENT_ID = 'cc-revoke-choice';
 const configureCookieConsent = () => {
@@ -76,7 +76,7 @@ const configureCookieConsent = () => {
 
   function applyConsent() {
     if (window.alloy) {
-      analyticsSetConsent(getConsentForCategory(CC.ANALYTICS));
+      updateUserConsent(!!getConsentForCategory(CC.ANALYTICS));
     }
   }
 
