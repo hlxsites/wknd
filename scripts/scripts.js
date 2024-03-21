@@ -188,9 +188,9 @@ async function loadEager(doc) {
 
   const main = doc.querySelector('main');
   if (main) {
-    decorateMain(main);
     await martechLoadedPromise;
     await new Promise((res) => {
+      window.requestAnimationFrame(() => decorateMain(main));
       window.requestAnimationFrame(async () => {
         await waitForLCP(LCP_BLOCKS);
         res();
