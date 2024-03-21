@@ -151,7 +151,9 @@ export async function updateUserConsent(isConsented) {
 }
 
 export async function initMartech(config = {}) {
+  // eslint-disable-next-line no-console
   console.assert(config.datastreamId || config.edgeConfigId, 'Please set your "datastreamId" for the WebSDK config.');
+  // eslint-disable-next-line no-console
   console.assert(config.orgId, 'Please set your "orgId" for the WebSDK config.');
   initAlloyQueue();
   initDatalayer();

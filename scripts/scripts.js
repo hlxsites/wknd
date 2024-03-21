@@ -21,7 +21,7 @@ import {
 const LCP_BLOCKS = ['carousel']; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
-const martechLoadedPromise = await initMartech({
+const martechLoadedPromise = initMartech({
   datastreamId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
   orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
   defaultConsent: 'in', // 'pending',
@@ -189,14 +189,11 @@ async function loadEager(doc) {
 
   const main = doc.querySelector('main');
   if (main) {
-    await martechLoadedPromise;
-    await new Promise((res) => {
-      window.requestAnimationFrame(() => decorateMain(main));
-      window.requestAnimationFrame(async () => {
-        await waitForLCP(LCP_BLOCKS);
-        res();
-      });
-    });
+    decorateMain(main);
+    await Promise.all([
+      martechLoadedPromise,
+      waitForLCP(LCP_BLOCKS),
+    ]);
   }
 }
 
