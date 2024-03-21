@@ -155,13 +155,10 @@ export async function initMartech(config = {}) {
   console.assert(config.orgId, 'Please set your "orgId" for the WebSDK config.');
   initAlloyQueue();
   initDatalayer();
-  const loadedPromise = configureAlloy({
+  return configureAlloy({
     ...getDefaultAlloyConfiguration(),
     ...config,
-  });
-  loadedPromise
-    .then(getAndApplyRenderDecisions);
-  return loadedPromise;
+  }).then(getAndApplyRenderDecisions);
 }
 
 export async function activateDataLayer() {
