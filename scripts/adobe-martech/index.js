@@ -105,6 +105,10 @@ async function getAndApplyRenderDecisions() {
   });
 }
 
+async function loadDataLayer() {
+  return import('./acdl.min.js');
+}
+
 export function pushToDataLayer(data) {
   window[dataLayerName].push(data);
 }
@@ -155,6 +159,8 @@ export async function initMartech(config = {}) {
     ...getDefaultAlloyConfiguration(),
     ...config,
   });
-  loadedPromise.then(getAndApplyRenderDecisions);
+  loadedPromise
+    .then(getAndApplyRenderDecisions)
+    .then(loadDataLayer);
   return loadedPromise;
 }
