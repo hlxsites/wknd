@@ -1,8 +1,6 @@
 import {
   sampleRUM,
   buildBlock,
-  getAllMetadata,
-  getMetadata,
   loadHeader,
   loadFooter,
   decorateButtons,
@@ -22,21 +20,6 @@ import {
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
-
-/**
- * Enhance all events with additional details, like experiment running,
- * before sending them to the edge
- * @param options event in the XDM schema format
- */
-function enhanceAnalyticsEvent(options) {
-  const { experiment } = window.hlx;
-  // eslint-disable-next-line no-underscore-dangle
-  options.xdm._sitesinternal = {
-    // eslint-disable-next-line no-underscore-dangle
-    ...options.xdm._sitesinternal,
-    ...(experiment && { experiment }), // add experiment details, if existing, to all events
-  };
-}
 
 const martechLoadedPromise = await initMartech({
   datastreamId: 'caad777c-c410-4ceb-8b36-167f1cecc3de',
@@ -59,26 +42,9 @@ window.addEventListener('consent-updated', (ev) => {
   updateUserConsent(ev.detail.categories.includes('CC_TARGETING'));
 });
 
-// Define the custom audiences mapping for experience decisioning
-const AUDIENCES = {
-  mobile: () => window.innerWidth < 600,
-  desktop: () => window.innerWidth >= 600,
-  'new-visitor': () => !localStorage.getItem('franklin-visitor-returning'),
-  'returning-visitor': () => !!localStorage.getItem('franklin-visitor-returning'),
-};
-
 window.hlx.plugins.add('rum-conversion', {
   url: '/plugins/rum-conversion/src/index.js',
   load: 'lazy',
-});
-
-window.hlx.plugins.add('experimentation', {
-  condition: () => getMetadata('experiment')
-    || Object.keys(getAllMetadata('campaign')).length
-    || Object.keys(getAllMetadata('audience')).length,
-  options: { audiences: AUDIENCES },
-  load: 'eager',
-  url: '/plugins/experimentation/src/index.js',
 });
 
 /**
@@ -225,7 +191,12 @@ async function loadEager(doc) {
   if (main) {
     decorateMain(main);
     await martechLoadedPromise;
-    await waitForLCP(LCP_BLOCKS);
+    await new Promise((res) => {
+      window.requestAnimationFrame(async () => {
+        await waitForLCP(LCP_BLOCKS);
+        res();
+      });
+    });
   }
 }
 
@@ -308,7 +279,8 @@ async function loadPage() {
   // await setupAnalytics;
 }
 
-sampleRUM.always.on('lazy', () => {
+sampleRUM.always.on('lazy', (data) => {
+  console.log(data);
   sendAnalyticsEvent({
     eventType: 'web.webpagedetails.pageViews',
     web: {
@@ -323,12 +295,14 @@ sampleRUM.always.on('lazy', () => {
   });
 });
 sampleRUM.always.on('cwv', (data) => {
+  console.log(data);
   sendAnalyticsEvent({
     eventType: 'web.performance.measurements',
     _sitesinternal: { cwv: data.cwv },
   });
 });
-sampleRUM.always.on('404', () => {
+sampleRUM.always.on('404', (data) => {
+  console.log(data);
   sendAnalyticsEvent({
     eventType: 'web.webpagedetails.pageViews',
     web: {
@@ -339,7 +313,8 @@ sampleRUM.always.on('404', () => {
     _sitesinternal: { isPageNotFound: true },
   });
 });
-sampleRUM.always.on('error', () => {
+sampleRUM.always.on('error', (data) => {
+  console.log(data);
   sendAnalyticsEvent({
     eventType: 'web.webpagedetails.pageViews',
     web: {
@@ -391,6 +366,7 @@ let bufferTimeoutId;
 let conversionEvent;
 let tempConversionEvent;
 sampleRUM.always.on('convert', (data) => {
+  console.log(data);
   const { source: conversionName, target: conversionValue, element } = data;
   // eslint-disable-next-line no-undef
   if (!element) {

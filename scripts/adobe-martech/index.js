@@ -4,9 +4,21 @@
  * Documentation:
  * https://experienceleague.adobe.com/docs/experience-platform/edge/fundamentals/installing-the-sdk.html?lang=en#adding-the-code
  */
+let alloyName;
 function initAlloyQueue(globalObjectName = 'alloy') {
+  alloyName = globalObjectName;
   // eslint-disable-next-line
   !function(n,o){o.forEach(function(o){n[o]||((n.__alloyNS=n.__alloyNS||[]).push(o),n[o]=function(){var u=arguments;return new Promise(function(i,l){n[o].q.push([i,l,u])})},n[o].q=[])})}(window,[globalObjectName]);;
+}
+
+/**
+ * Documentation:
+ * https://github.com/adobe/adobe-client-data-layer/wiki
+ */
+let dataLayerName;
+function initDatalayer(globalObjectName = 'adobeDataLayer') {
+  dataLayerName = globalObjectName;
+  window[globalObjectName] ||= [];
 }
 
 export function getPageContext() {
@@ -21,12 +33,12 @@ export function getPageContext() {
  * Returns alloy configuration
  * Documentation https://experienceleague.adobe.com/docs/experience-platform/edge/fundamentals/configuring-the-sdk.html
  */
-function getDefaultAlloyConfiguration(document) {
+function getDefaultAlloyConfiguration() {
   const { hostname } = window.location;
 
   return {
     // enable while debugging
-    debugEnabled: hostname.startsWith('localhost') || hostname.includes('--'),
+    debugEnabled: hostname.startsWith('localhost') || hostname.endsWith('.hlx.page') || hostname.endsWith('.aem.page'),
     // disable when clicks are also tracked via sendEvent with additional details
     // clickCollectionEnabled: true,
     // adjust default based on customer use case
@@ -39,7 +51,7 @@ function configureAlloy(config) {
   return new Promise((resolve) => {
     import('./alloy.min.js')
       .then(() => {
-        window.alloy('configure', config);
+        window[alloyName]('configure', config);
         resolve();
       });
   });
@@ -73,14 +85,14 @@ function onDecoratedElement(fn) {
 async function getAndApplyRenderDecisions() {
   // Get the decisions, but don't render them automatically
   // so we can hook up into the AEM EDS page load sequence
-  const response = await window.alloy('sendEvent', { renderDecisions: false });
+  const response = await window[alloyName]('sendEvent', { renderDecisions: false });
 
-  onDecoratedElement(() => window.alloy('applyPropositions', { propositions: response.propositions }));
+  onDecoratedElement(() => window[alloyName]('applyPropositions', { propositions: response.propositions }));
 
   // Reporting is deferred to avoid long tasks
   window.setTimeout(() => {
     // Report shown decisions
-    window.alloy('sendEvent', {
+    window[alloyName]('sendEvent', {
       xdm: {
         eventType: 'decisioning.propositionDisplay',
         _experience: {
@@ -93,19 +105,23 @@ async function getAndApplyRenderDecisions() {
   });
 }
 
+export function pushToDataLayer(data) {
+  window[dataLayerName].push(data);
+}
+
 /**
  * Sends an analytics event to alloy
  * @param xdmData - the xdm data object
  * @returns {Promise<*>}
  */
 export async function sendAnalyticsEvent(xdmData) {
-  if (!window.alloy) {
+  if (!window[alloyName]) {
     // eslint-disable-next-line no-console
     console.warn('Adobe WebSDK is not properly initialized. Cannot send analytics event');
     return Promise.resolve();
   }
   // eslint-disable-next-line no-undef
-  return window.alloy('sendEvent', {
+  return window[alloyName]('sendEvent', {
     documentUnloading: true,
     xdm: xdmData,
   });
@@ -118,7 +134,7 @@ export async function sendAnalyticsEvent(xdmData) {
  * @returns {Promise<*>}
  */
 export async function updateUserConsent(isConsented) {
-  return window.alloy('setConsent', {
+  return window[alloyName]('setConsent', {
     consent: [{
       standard: 'Adobe',
       version: '2.0',
@@ -134,6 +150,7 @@ export async function initMartech(config = {}) {
   console.assert(config.datastreamId || config.edgeConfigId, 'Please set your "datastreamId" for the WebSDK config.');
   console.assert(config.orgId, 'Please set your "orgId" for the WebSDK config.');
   initAlloyQueue();
+  initDatalayer();
   const loadedPromise = configureAlloy({
     ...getDefaultAlloyConfiguration(),
     ...config,
