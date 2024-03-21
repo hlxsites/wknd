@@ -1,8 +1,16 @@
 import { sampleRUM } from './lib-franklin.js';
 import { sendAnalyticsEvent } from './adobe-martech/index.js';
 
+const { hostname } = window.location;
+const debug = (...args) => {
+  if (hostname === 'localhost' || hostname.endsWith('.hlx.page') || hostname.endsWith('.aem.page')) {
+    // eslint-disable-next-line no-console
+    console.debug.call(null, '[rum]', ...args);
+  }
+};
+
 sampleRUM.always.on('lazy', (data) => {
-  console.log(data);
+  debug('lazy', data);
   sendAnalyticsEvent({
     eventType: 'web.webpagedetails.pageViews',
     web: {
@@ -17,14 +25,17 @@ sampleRUM.always.on('lazy', (data) => {
   });
 });
 sampleRUM.always.on('cwv', (data) => {
-  console.log(data);
+  debug('cwv', data);
+  if (!data.cwv) {
+    return;
+  }
   sendAnalyticsEvent({
     eventType: 'web.performance.measurements',
     _sitesinternal: { cwv: data.cwv },
   });
 });
 sampleRUM.always.on('404', (data) => {
-  console.log(data);
+  debug('404', data);
   sendAnalyticsEvent({
     eventType: 'web.webpagedetails.pageViews',
     web: {
@@ -36,7 +47,7 @@ sampleRUM.always.on('404', (data) => {
   });
 });
 sampleRUM.always.on('error', (data) => {
-  console.log(data);
+  debug('error', data);
   sendAnalyticsEvent({
     eventType: 'web.webpagedetails.pageViews',
     web: {
@@ -49,7 +60,7 @@ sampleRUM.always.on('error', (data) => {
   });
 });
 sampleRUM.always.on('formsubmit', (data) => {
-  console.log(data);
+  debug('formsubmit', data);
   const element = { data };
   const formId = element?.id || element?.dataset?.action;
   return sendAnalyticsEvent({
@@ -63,7 +74,7 @@ sampleRUM.always.on('formsubmit', (data) => {
   });
 });
 sampleRUM.always.on('click', (data) => {
-  console.log(data);
+  debug('click', data);
   const element = { data };
   sendAnalyticsEvent({
     eventType: 'web.webinteraction.linkClicks',
@@ -88,7 +99,7 @@ let bufferTimeoutId;
 let conversionEvent;
 let tempConversionEvent;
 sampleRUM.always.on('convert', (data) => {
-  console.log(data);
+  debug('convert', data);
   const { source: conversionName, target: conversionValue, element } = data;
   // eslint-disable-next-line no-undef
   if (!element) {

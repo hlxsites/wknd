@@ -38,7 +38,7 @@ function getDefaultAlloyConfiguration() {
 
   return {
     // enable while debugging
-    debugEnabled: hostname.startsWith('localhost') || hostname.endsWith('.hlx.page') || hostname.endsWith('.aem.page'),
+    debugEnabled: hostname === 'localhost' || hostname.endsWith('.hlx.page') || hostname.endsWith('.aem.page'),
     // disable when clicks are also tracked via sendEvent with additional details
     // clickCollectionEnabled: true,
     // adjust default based on customer use case
