@@ -82,26 +82,26 @@ function onDecoratedElement(fn) {
   });
 }
 
+let renderDecisionResponse;
 async function getAndApplyRenderDecisions() {
   // Get the decisions, but don't render them automatically
   // so we can hook up into the AEM EDS page load sequence
-  const response = await window[alloyName]('sendEvent', { renderDecisions: false });
+  renderDecisionResponse = await window[alloyName]('sendEvent', { renderDecisions: false });
 
-  onDecoratedElement(() => window[alloyName]('applyPropositions', { propositions: response.propositions }));
+  onDecoratedElement(() => window[alloyName]('applyPropositions', { propositions: renderDecisionResponse.propositions }));
+  return renderDecisionResponse;
+}
 
-  // Reporting is deferred to avoid long tasks
-  window.setTimeout(() => {
-    // Report shown decisions
-    window[alloyName]('sendEvent', {
-      xdm: {
-        eventType: 'decisioning.propositionDisplay',
-        _experience: {
-          decisioning: {
-            propositions: response.propositions,
-          },
+async function reportShownRenderDecisions() {
+  window[alloyName]('sendEvent', {
+    xdm: {
+      eventType: 'decisioning.propositionDisplay',
+      _experience: {
+        decisioning: {
+          propositions: renderDecisionResponse.propositions,
         },
       },
-    });
+    },
   });
 }
 
@@ -165,5 +165,6 @@ export async function initMartech(config = {}) {
 }
 
 export async function activateDataLayer() {
+  await reportShownRenderDecisions();
   return loadDataLayer();
 }
