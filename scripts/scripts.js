@@ -22,7 +22,7 @@ const LCP_BLOCKS = ['carousel']; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
 const martechLoadedPromise = await initMartech({
-  datastreamId: 'caad777c-c410-4ceb-8b36-167f1cecc3de',
+  datastreamId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
   orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
   defaultConsent: 'in', // 'pending',
   onBeforeEventSend: (options) => {
