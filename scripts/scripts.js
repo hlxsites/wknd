@@ -14,6 +14,7 @@ import {
 } from './lib-franklin.js';
 import {
   initMartech,
+  activateDataLayer,
   updateUserConsent,
 } from './adobe-martech/index.js';
 
@@ -252,6 +253,7 @@ async function loadLazy(doc) {
   // Mark customer as having viewed the page once
   localStorage.setItem('franklin-visitor-returning', true);
 
+  await activateDataLayer();
   window.hlx.plugins.run('loadLazy');
 }
 

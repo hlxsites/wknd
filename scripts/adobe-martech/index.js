@@ -160,7 +160,10 @@ export async function initMartech(config = {}) {
     ...config,
   });
   loadedPromise
-    .then(getAndApplyRenderDecisions)
-    .then(loadDataLayer);
+    .then(getAndApplyRenderDecisions);
   return loadedPromise;
+}
+
+export async function activateDataLayer() {
+  return loadDataLayer();
 }
