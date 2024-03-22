@@ -14,8 +14,10 @@ import {
 } from './lib-franklin.js';
 import {
   initMartech,
-  activateDataLayer,
   updateUserConsent,
+  martechEager,
+  martechLazy,
+  martechDelayed,
 } from './adobe-martech/index.js';
 
 const LCP_BLOCKS = ['carousel']; // add your LCP blocks to the list
@@ -35,6 +37,7 @@ const martechLoadedPromise = initMartech({
     };
   },
 });
+
 window.addEventListener('consent', (ev) => {
   updateUserConsent(ev.detail.categories.includes('CC_TARGETING'));
 });
@@ -191,7 +194,7 @@ async function loadEager(doc) {
   if (main) {
     decorateMain(main);
     await Promise.all([
-      martechLoadedPromise,
+      martechLoadedPromise.then(martechEager),
       waitForLCP(LCP_BLOCKS),
     ]);
   }
@@ -250,7 +253,7 @@ async function loadLazy(doc) {
   // Mark customer as having viewed the page once
   localStorage.setItem('franklin-visitor-returning', true);
 
-  await activateDataLayer();
+  await martechLazy();
   window.hlx.plugins.run('loadLazy');
 }
 
@@ -263,6 +266,9 @@ function loadDelayed() {
   window.setTimeout(() => {
     window.hlx.plugins.load('delayed');
     window.hlx.plugins.run('loadDelayed');
+    martechDelayed({
+      launchUrl: 'https://assets.adobedtm.com/51b39232f128/2609377b4aba/launch-6c3a8fffe137-development.min.js'
+    });
     return import('./delayed.js');
   }, 3000);
   // load anything that can be postponed to the latest here
