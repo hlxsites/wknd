@@ -194,9 +194,10 @@ async function loadEager(doc) {
   if (main) {
     decorateMain(main);
     await Promise.all([
-      martechLoadedPromise.then(martechEager),
+      martechLoadedPromise,
       waitForLCP(LCP_BLOCKS),
     ]);
+    requestAnimationFrame(martechEager);
   }
 }
 
