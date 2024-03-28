@@ -1313,7 +1313,7 @@ window.adobe.target = (function () {
 	function parseQueryString(value) {
 	  try {
 	    if (window.URLSearchParams) {
-	      return [...new URLSearchParams(value).entries()].reduce((res, _ref) => {
+	      return [...new URLSearchParams(decodeURIComponent(value)).entries()].reduce((res, _ref) => {
 	        let [k, v] = _ref;
 	        res[k] = v;
 	        return res;
@@ -1349,21 +1349,17 @@ window.adobe.target = (function () {
 	  if (CACHE$1[url]) {
 	    return CACHE$1[url];
 	  }
-	  if (window.URL) {
-	    CACHE$1[url] = new URL(url, window.location);
-	  } else {
-	    ANCHOR.href = url;
-	    const parsedUri = src$1(ANCHOR.href);
-	    parsedUri.queryKey = parseQueryString(parsedUri.query);
-	    CACHE$1[url] = parsedUri;
-	  }
+	  ANCHOR.href = url;
+	  const parsedUri = src$1(ANCHOR.href);
+	  parsedUri.queryKey = parseQueryString(parsedUri.query);
+	  CACHE$1[url] = parsedUri;
 	  return CACHE$1[url];
 	}
 
 	const {
 	  get: _getCookie,
 	  set: _setCookie,
-	  remove: removeCookie
+	  remove: _removeCookie
 	} = reactorCookie;
 	const MBOX_COOKIE = "mbox";
 	function createCookie(name, value, expires) {
@@ -1376,18 +1372,18 @@ window.adobe.target = (function () {
 	const cookieCache = {};
 	function setCookie(name, serializedValue, attributes) {
 	  _setCookie(name, serializedValue, attributes);
-	  cookieCache[name] = serializedValue;
+	  cookieCache[name] = serializedValue.toString();
 	}
 	function getCookie(name) {
-	  if (cookieCache[name]) {
+	  if (cookieCache[name] !== undefined) {
 	    return cookieCache[name];
 	  }
-	  if (window.cookieStore) {
-	    cookieCache[name] = window.cookieStore.get(name);
-	  } else {
-	    cookieCache[name] = _getCookie(name);
-	  }
+	  cookieCache[name] = _getCookie(name);
 	  return cookieCache[name];
+	}
+	function removeCookie(name) {
+	  _removeCookie(name);
+	  delete cookieCache[name];
 	}
 	function deserialize(str) {
 	  const parts = split("#", str);
@@ -1405,21 +1401,27 @@ window.adobe.target = (function () {
 	  }
 	  return split("|", cookieValue);
 	}
+	let cookieObjectCache = {};
+	let rawCookieCache;
 	function readCookies() {
-	  const cookies = map(deserialize, getInternalCookies(getCookie(MBOX_COOKIE)));
+	  const rawCookie = getCookie(MBOX_COOKIE);
+	  if (rawCookieCache === rawCookie) {
+	    return cookieObjectCache;
+	  }
+	  rawCookieCache = rawCookie;
+	  const cookies = map(deserialize, getInternalCookies(rawCookie));
 	  const nowInSeconds = Math.ceil(now() / 1000);
 	  const isExpired = val => isObject(val) && nowInSeconds <= val.expires;
-	  return reduce((acc, val) => {
+	  cookieObjectCache = reduce((acc, val) => {
 	    acc[val.name] = val;
 	    return acc;
 	  }, {}, filter(isExpired, cookies));
+	  return cookieObjectCache;
 	}
 
-	let cookiesMap;
+	let cookiesMap = {};
 	function getTargetCookie(name) {
-	  if (!cookiesMap || !cookiesMap[name]) {
-	    cookiesMap = readCookies();
-	  }
+	  cookiesMap = readCookies();
 	  const cookie = cookiesMap[name];
 	  return isObject(cookie) ? cookie.value : "";
 	}
@@ -1459,7 +1461,7 @@ window.adobe.target = (function () {
 	  if (!cookiesMap) {
 	    cookiesMap = readCookies();
 	  }
-	  cookiesMap[name] = createCookie(name, value, Math.ceil(expires + now() / 1000));
+	  cookiesMap[name] = createCookie(name, value.toString(), Math.ceil(expires + now() / 1000));
 	  saveCookies(cookiesMap, domain, secure);
 	}
 
@@ -1480,10 +1482,10 @@ window.adobe.target = (function () {
 	  const {
 	    referrer
 	  } = doc;
-	  const parsedUri = parseUri(referrer);
 	  if (window.URL) {
-	    return parsedUri.searchParams.get(name);
+	    return new URL(referrer, window.location).searchParams.has(name);
 	  }
+	  const parsedUri = parseUri(referrer);
 	  const refParams = parsedUri.queryKey;
 	  return isNil(refParams) ? false : isNotBlank(refParams[name]);
 	}
@@ -1514,13 +1516,8 @@ window.adobe.target = (function () {
 	  const enabled = config[ENABLED];
 	  return enabled && isCookieEnabled() && !isDeliveryDisabled();
 	}
-	let _isDebugEnabled;
 	function isDebugEnabled() {
-	  if (_isDebugEnabled !== undefined) {
-	    return _isDebugEnabled;
-	  }
-	  _isDebugEnabled = exists$2(window$1, document$1, DEBUG);
-	  return _isDebugEnabled;
+	  return exists$2(window$1, document$1, DEBUG);
 	}
 	function isAuthoringEnabled() {
 	  return exists$2(window$1, document$1, AUTHORING);
@@ -5246,8 +5243,8 @@ window.adobe.target = (function () {
 	  return uri.queryKey;
 	}
 	function createUrlInternal(url, params, uriParamsFunc) {
-	  const parsedUri = parseUri(url);
 	  if (window.URL) {
+	    const parsedUri = new URL(url, window.location);
 	    parsedUri.search = uriParamsFunc(parsedUri);
 	    Object.entries(params).forEach(_ref => {
 	      let [k, v] = _ref;
@@ -5255,6 +5252,7 @@ window.adobe.target = (function () {
 	    });
 	    return url.href;
 	  }
+	  const parsedUri = parseUri(url);
 	  const {
 	    protocol
 	  } = parsedUri;
