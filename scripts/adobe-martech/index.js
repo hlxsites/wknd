@@ -136,12 +136,11 @@ export function pushEventToDataLayer(event, payload) {
 
 /**
  * Sends an analytics event to alloy
- * @param {String} type the event type to send
  * @param {Object} xdmData the xdm data object to send
- * @param {Object} [xdmData] additional data mapping for the event
+ * @param {Object} [dataMapping] additional data mapping for the event
  * @returns {Promise<*>}
  */
-async function sendAnalyticsEvent(xdmData, dataMapping) {
+export async function sendAnalyticsEvent(xdmData, dataMapping) {
   // eslint-disable-next-line no-console
   console.assert(config.alloyInstanceName && window[config.alloyInstanceName], 'Martech needs to be initialized before the `sendAnalyticsEvent` method is called');
   // eslint-disable-next-line no-undef
