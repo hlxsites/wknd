@@ -1,4 +1,25 @@
+export const DEFAULT_CONFIG = {
+  adobeAnalytics: true,
+  alloyInstanceName: 'alloy',
+  dataLayer: true,
+  dataLayerInstanceName: 'adobeDataLayer',
+  target: true,
+};
+
 let config;
+
+function hashCode(str) {
+  let hash = 0;
+  let char;
+  for (let i = 0, len = str.length; i < len; i += 1) {
+    char = str.charCodeAt(i);
+    // eslint-disable-next-line no-bitwise
+    hash = (hash << 5) - hash + char;
+    // eslint-disable-next-line no-bitwise
+    hash |= 0;
+  }
+  return hash;
+}
 
 /**
  * Error handler for rejected promises.
@@ -93,37 +114,73 @@ function onDecoratedElement(fn) {
 }
 
 /**
+ * Pushes data to the data layer
+ * @param {Object} payload the data to push
+ */
+export function pushToDataLayer(payload) {
+  // eslint-disable-next-line no-console
+  console.assert(config.dataLayerInstanceName && window[config.dataLayerInstanceName], 'Martech needs to be initialized before the `pushToDataLayer` method is called');
+  window[config.dataLayerInstanceName].push(payload);
+}
+
+/**
+ * Pushes data to the data layer
+ * @param {String} event the name of the event to push
+ * @param {Object} payload the payload to push
+ */
+export function pushEventToDataLayer(event, payload) {
+  // eslint-disable-next-line no-console
+  console.assert(config.dataLayerInstanceName && window[config.dataLayerInstanceName], 'Martech needs to be initialized before the `pushToDataLayer` method is called');
+  window[config.dataLayerInstanceName].push({ event, eventInfo: payload });
+}
+
+/**
+ * Sends an analytics event to alloy
+ * @param {String} type the event type to send
+ * @param {Object} xdmData the xdm data object to send
+ * @param {Object} [xdmData] additional data mapping for the event
+ * @returns {Promise<*>}
+ */
+async function sendAnalyticsEvent(xdmData, dataMapping) {
+  // eslint-disable-next-line no-console
+  console.assert(config.alloyInstanceName && window[config.alloyInstanceName], 'Martech needs to be initialized before the `sendAnalyticsEvent` method is called');
+  // eslint-disable-next-line no-undef
+  return window[config.alloyInstanceName]('sendEvent', {
+    documentUnloading: true,
+    xdm: xdmData,
+    data: dataMapping,
+  });
+}
+
+/**
  * Loads the ACDL library.
  * @returns the ACDL instance
  */
 async function loadAndConfigureDataLayer() {
   return import('./acdl.min.js')
+    .then(() => {
+      window[config.dataLayerInstanceName].push((dl) => {
+        dl.addEventListener('adobeDataLayer:event', (event) => {
+          sendAnalyticsEvent({ eventType: event.event, ...event.eventInfo });
+        });
+      });
+      [...document.querySelectorAll('[data-block-data-layer]')].forEach((el) => {
+        let data;
+        try {
+          data = JSON.parse(el.dataset.blockDataLayer);
+        } catch (err) {
+          data = {};
+        }
+        if (!el.id) {
+          const index = [...document.querySelectorAll(`.${el.classList[0]}`)].indexOf(el)
+          el.id = `${data.parentId ? `${data.parentId}-` : ''}${index + 1}`;
+        }
+        window[config.dataLayerInstanceName].push({
+          blocks: { [el.id]: data },
+        });
+      });
+    })
     .catch((err) => handleRejectedPromise(new Error(err)));
-}
-
-/**
- * Pushes data to the data layer
- * @param {Object} data the data to push
- */
-export function pushToDataLayer(data) {
-  // eslint-disable-next-line no-console
-  console.assert(config.dataLayerInstanceName, 'Martech needs to be initialized before the `pushToDataLayer` method is called');
-  window[config.dataLayerInstanceName].push(data);
-}
-
-/**
- * Sends an analytics event to alloy
- * @param xdmData - the xdm data object
- * @returns {Promise<*>}
- */
-export async function sendAnalyticsEvent(xdmData) {
-  // eslint-disable-next-line no-console
-  console.assert(config.alloyInstanceName, 'Martech needs to be initialized before the `sendAnalyticsEvent` method is called');
-  // eslint-disable-next-line no-undef
-  return window[config.alloyInstanceName]('sendEvent', {
-    documentUnloading: true,
-    xdm: xdmData,
-  });
 }
 
 /**
@@ -185,6 +242,7 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
   console.assert(webSDKConfig?.orgId, 'Please set your "orgId" for the WebSDK config.');
 
   config = {
+    ...DEFAULT_CONFIG,
     alloyInstanceName: 'alloy',
     dataLayerInstanceName: 'adobeDataLayer',
     launchUrls: [],
@@ -192,7 +250,9 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
   };
 
   initAlloyQueue(config.alloyInstanceName);
-  initDatalayer(config.dataLayerInstanceName);
+  if (config.dataLayer) {
+    initDatalayer(config.dataLayerInstanceName);
+  }
 
   return loadAndConfigureAlloy(config.alloyInstanceName, {
     ...getDefaultAlloyConfiguration(),
@@ -211,6 +271,7 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
  */
 async function reportDisplayedPropositions(instanceName, propositions) {
   return window[instanceName]('sendEvent', {
+    documentUnloading: true,
     xdm: {
       eventType: 'decisioning.propositionDisplay',
       _experience: {
@@ -227,7 +288,10 @@ async function reportDisplayedPropositions(instanceName, propositions) {
 export async function martechEager() {
   // eslint-disable-next-line no-console
   console.assert(response, 'Martech needs to be initialized before the `martechEager` method is called');
-  return applyPropositions('alloy');
+  if (config.target) {
+    return applyPropositions('alloy');
+  }
+  return Promise.resolve();
 }
 
 /**
@@ -237,8 +301,13 @@ export async function martechEager() {
 export async function martechLazy() {
   // eslint-disable-next-line no-console
   console.assert(response, 'Martech needs to be initialized before the `martechLazy` method is called');
-  await reportDisplayedPropositions('alloy', response.propositions);
-  return loadAndConfigureDataLayer({});
+  if (config.target && response.propositions?.length) {
+    await reportDisplayedPropositions('alloy', response.propositions);
+  }
+  if (config.dataLayer) {
+    return loadAndConfigureDataLayer({});
+  }
+  return Promise.resolve();
 }
 
 /**

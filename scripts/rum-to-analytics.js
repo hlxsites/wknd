@@ -1,5 +1,5 @@
 import { sampleRUM } from './lib-franklin.js';
-import { sendAnalyticsEvent } from './adobe-martech/index.js';
+import { pushEventToDataLayer } from './adobe-martech/index.js';
 
 const { hostname } = window.location;
 const debug = (...args) => {
@@ -11,8 +11,7 @@ const debug = (...args) => {
 
 sampleRUM.always.on('lazy', (data) => {
   debug('lazy', data);
-  sendAnalyticsEvent({
-    eventType: 'web.webpagedetails.pageViews',
+  pushEventToDataLayer('web.webpagedetails.pageViews', {
     web: {
       webPageDetails: {
         pageViews: {
@@ -29,15 +28,13 @@ sampleRUM.always.on('cwv', (data) => {
   if (!data.cwv) {
     return;
   }
-  sendAnalyticsEvent({
-    eventType: 'web.performance.measurements',
+  pushEventToDataLayer('web.performance.measurements', {
     _sitesinternal: { cwv: data.cwv },
   });
 });
 sampleRUM.always.on('404', (data) => {
   debug('404', data);
-  sendAnalyticsEvent({
-    eventType: 'web.webpagedetails.pageViews',
+  pushEventToDataLayer('web.webpagedetails.pageViews', {
     web: {
       webPageDetails: {
         pageViews: { value: 0 },
@@ -48,8 +45,7 @@ sampleRUM.always.on('404', (data) => {
 });
 sampleRUM.always.on('error', (data) => {
   debug('error', data);
-  sendAnalyticsEvent({
-    eventType: 'web.webpagedetails.pageViews',
+  pushEventToDataLayer('web.webpagedetails.pageViews', {
     web: {
       webPageDetails: {
         pageViews: { value: 0 },
@@ -63,8 +59,7 @@ sampleRUM.always.on('formsubmit', (data) => {
   debug('formsubmit', data);
   const element = { data };
   const formId = element?.id || element?.dataset?.action;
-  return sendAnalyticsEvent({
-    eventType: 'web.formFilledOut',
+  return pushEventToDataLayer('web.formFilledOut', {
     _sitesinternal: {
       form: {
         ...(formId && { formId }),
@@ -76,8 +71,7 @@ sampleRUM.always.on('formsubmit', (data) => {
 sampleRUM.always.on('click', (data) => {
   debug('click', data);
   const element = { data };
-  sendAnalyticsEvent({
-    eventType: 'web.webinteraction.linkClicks',
+  pushEventToDataLayer('web.webinteraction.linkClicks', {
     web: {
       webInteraction: {
         URL: element.href,
@@ -144,7 +138,7 @@ sampleRUM.always.on('convert', (data) => {
         },
       };
     }
-    sendAnalyticsEvent(xdmData);
+    pushEventToDataLayer(xdmData);
   }
 
   if (element.tagName === 'FORM') {

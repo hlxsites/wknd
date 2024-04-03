@@ -268,7 +268,7 @@ function loadDelayed() {
     window.hlx.plugins.load('delayed');
     window.hlx.plugins.run('loadDelayed');
     martechDelayed({
-      launchUrl: 'https://assets.adobedtm.com/51b39232f128/2609377b4aba/launch-6c3a8fffe137-development.min.js'
+      launchUrls: ['https://assets.adobedtm.com/51b39232f128/2609377b4aba/launch-6c3a8fffe137-development.min.js'],
     });
     return import('./delayed.js');
   }, 3000);
