@@ -18,6 +18,7 @@ sampleRUM.always.on('lazy', (data) => {
           value: 1,
         },
         name: document.title,
+        isHomePage: window.location.pathname === '/',
       },
     },
     _sitesinternal: {},
@@ -38,6 +39,7 @@ sampleRUM.always.on('404', (data) => {
     web: {
       webPageDetails: {
         pageViews: { value: 0 },
+        isErrorPage: true,
       },
     },
     _sitesinternal: { isPageNotFound: true },
@@ -49,7 +51,6 @@ sampleRUM.always.on('error', (data) => {
     web: {
       webPageDetails: {
         pageViews: { value: 0 },
-        isErrorPage: true,
       },
     },
     _sitesinternal: {},

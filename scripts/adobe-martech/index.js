@@ -1,5 +1,19 @@
+/**
+ * Default configuration for the library.
+ * @typedef {Object} MartechConfig
+ * @property {Boolean} analytics Indicates whether analytics tracking should be enabled
+ *                               (defaults to true)
+ * @property {String} alloyInstanceName The name of the alloy instance in the global scope
+ *                                      (defaults to "alloy")
+ * @property {Boolean} dataLayer Indicates whether the data layer should be used
+ *                               (defaults to true)
+ * @property {String} dataLayerInstanceName The name of the data ayer instance in the global scope
+ *                                          (defaults to "adobeDataLayer")
+ * @property {Boolean} target Indicates whether Adobe Target should be enabled
+ *                            (defaults to true)
+ */
 export const DEFAULT_CONFIG = {
-  adobeAnalytics: true,
+  analytics: true,
   alloyInstanceName: 'alloy',
   dataLayer: true,
   dataLayerInstanceName: 'adobeDataLayer',
@@ -7,19 +21,6 @@ export const DEFAULT_CONFIG = {
 };
 
 let config;
-
-function hashCode(str) {
-  let hash = 0;
-  let char;
-  for (let i = 0, len = str.length; i < len; i += 1) {
-    char = str.charCodeAt(i);
-    // eslint-disable-next-line no-bitwise
-    hash = (hash << 5) - hash + char;
-    // eslint-disable-next-line no-bitwise
-    hash |= 0;
-  }
-  return hash;
-}
 
 /**
  * Error handler for rejected promises.
@@ -124,25 +125,25 @@ export function pushToDataLayer(payload) {
 }
 
 /**
- * Pushes data to the data layer
+ * Pushes an event to the data layer
  * @param {String} event the name of the event to push
  * @param {Object} payload the payload to push
  */
 export function pushEventToDataLayer(event, payload) {
-  // eslint-disable-next-line no-console
-  console.assert(config.dataLayerInstanceName && window[config.dataLayerInstanceName], 'Martech needs to be initialized before the `pushToDataLayer` method is called');
-  window[config.dataLayerInstanceName].push({ event, eventInfo: payload });
+  pushToDataLayer({ event, eventInfo: payload });
 }
 
 /**
  * Sends an analytics event to alloy
  * @param {Object} xdmData the xdm data object to send
  * @param {Object} [dataMapping] additional data mapping for the event
- * @returns {Promise<*>}
+ * @returns {Promise<*>} a 
  */
 export async function sendAnalyticsEvent(xdmData, dataMapping) {
   // eslint-disable-next-line no-console
   console.assert(config.alloyInstanceName && window[config.alloyInstanceName], 'Martech needs to be initialized before the `sendAnalyticsEvent` method is called');
+  // eslint-disable-next-line no-console
+  console.assert(config.analytics, 'Analytics tracking is disabled in the martech config');
   // eslint-disable-next-line no-undef
   return window[config.alloyInstanceName]('sendEvent', {
     documentUnloading: true,
@@ -158,11 +159,13 @@ export async function sendAnalyticsEvent(xdmData, dataMapping) {
 async function loadAndConfigureDataLayer() {
   return import('./acdl.min.js')
     .then(() => {
-      window[config.dataLayerInstanceName].push((dl) => {
-        dl.addEventListener('adobeDataLayer:event', (event) => {
-          sendAnalyticsEvent({ eventType: event.event, ...event.eventInfo });
+      if (config.analytics) {
+        window[config.dataLayerInstanceName].push((dl) => {
+          dl.addEventListener('adobeDataLayer:event', (event) => {
+            sendAnalyticsEvent({ eventType: event.event, ...event.eventInfo });
+          });
         });
-      });
+      }
       [...document.querySelectorAll('[data-block-data-layer]')].forEach((el) => {
         let data;
         try {
@@ -204,6 +207,27 @@ export async function updateUserConsent(isConsented) {
 }
 
 /**
+ * Converts an internal element selector to a proper CSS selector.
+ * @param {String} selector the internal selector
+ * @returns {String} the corresponding CSS selector
+ */
+function toCssSelector(selector) {
+  return selector.replace(/(\.\S+)?:eq\((\d+)\)/g, (_, clss, i) => `:nth-child(${Number(i) + 1}${clss ? ` of ${clss})` : ''}`);
+}
+
+/**
+ * Find the element for the specified proposition.
+ * @param {Object} proposition The proprosition for the element
+ * @param {String} [proposition.cssSelector] The CSS selector for the proposition
+ * @param {String} [proposition.selector] The internal selector for the proposition
+ * @returns {HTMLElement} The DOM element for the proposition
+ */
+async function getElementForProposition(proposition) {
+  const selector = proposition.data.prehidingSelector || toCssSelector(proposition.data.selector);
+  return document.querySelector(selector);
+}
+
+/**
  * Fetching propositions from the backend and applying the propositions as the AEM EDS page loads
  * its content async.
  * Documentation:
@@ -215,8 +239,13 @@ async function applyPropositions(instanceName) {
   // Get the decisions, but don't render them automatically
   // so we can hook up into the AEM EDS page load sequence
   const renderDecisionResponse = await window[instanceName]('sendEvent', { renderDecisions: false });
-
-  onDecoratedElement(() => window[instanceName]('applyPropositions', { propositions: renderDecisionResponse.propositions }));
+  const { propositions } = renderDecisionResponse;
+  onDecoratedElement(async () => {
+    await window[instanceName]('applyPropositions', { propositions });
+    propositions.forEach((p) => {
+      p.items = p.items.filter((i) => i.schema !== 'https://ns.adobe.com/personalization/dom-action' || !getElementForProposition(i));
+    });
+  });
   return renderDecisionResponse;
 }
 
