@@ -248,7 +248,7 @@ async function applyPropositions(instanceName) {
   // Get the decisions, but don't render them automatically
   // so we can hook up into the AEM EDS page load sequence
   const renderDecisionResponse = await window[instanceName]('sendEvent', { renderDecisions: false });
-  const { propositions } = renderDecisionResponse;
+  const propositions = window.structuredClone(renderDecisionResponse.propositions);
   onDecoratedElement(async () => {
     await window[instanceName]('applyPropositions', { propositions });
     propositions.forEach((p) => {
