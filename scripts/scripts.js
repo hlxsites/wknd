@@ -36,6 +36,10 @@ const martechLoadedPromise = initMartech({
       ...(experiment && { experiment }), // add experiment details, if existing, to all events
     };
   },
+}, {
+  launchUrls: [
+    'https://assets.adobedtm.com/51b39232f128/2609377b4aba/launch-6c3a8fffe137-development.min.js',
+  ],
 });
 
 window.addEventListener('consent', (ev) => {
@@ -267,9 +271,7 @@ function loadDelayed() {
   window.setTimeout(() => {
     window.hlx.plugins.load('delayed');
     window.hlx.plugins.run('loadDelayed');
-    martechDelayed({
-      launchUrls: ['https://assets.adobedtm.com/51b39232f128/2609377b4aba/launch-6c3a8fffe137-development.min.js'],
-    });
+    martechDelayed();
     return import('./delayed.js');
   }, 3000);
   // load anything that can be postponed to the latest here
