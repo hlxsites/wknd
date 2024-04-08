@@ -9,6 +9,7 @@
  *                               (defaults to true)
  * @property {String} dataLayerInstanceName The name of the data ayer instance in the global scope
  *                                          (defaults to "adobeDataLayer")
+ * @property {String[]} launchUrls A list of launch container URLs to load (defults to empty list)
  * @property {Boolean} target Indicates whether Adobe Target should be enabled
  *                            (defaults to true)
  */
@@ -17,10 +18,12 @@ export const DEFAULT_CONFIG = {
   alloyInstanceName: 'alloy',
   dataLayer: true,
   dataLayerInstanceName: 'adobeDataLayer',
+  launchUrls: [],
   target: true,
 };
 
 let config;
+let alloyConfig;
 
 /**
  * Error handler for rejected promises.
@@ -146,7 +149,7 @@ export function pushEventToDataLayer(event, payload) {
  * Sends an analytics event to alloy
  * @param {Object} xdmData the xdm data object to send
  * @param {Object} [dataMapping] additional data mapping for the event
- * @returns {Promise<*>} a 
+ * @returns {Promise<*>} a promise that the event was sent
  */
 export async function sendAnalyticsEvent(xdmData, dataMapping) {
   // eslint-disable-next-line no-console
@@ -280,9 +283,6 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
 
   config = {
     ...DEFAULT_CONFIG,
-    alloyInstanceName: 'alloy',
-    dataLayerInstanceName: 'adobeDataLayer',
-    launchUrls: [],
     ...martechConfig,
   };
 
@@ -291,13 +291,15 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
     initDatalayer(config.dataLayerInstanceName);
   }
 
-  return loadAndConfigureAlloy(config.alloyInstanceName, {
+  alloyConfig = {
     ...getDefaultAlloyConfiguration(),
     ...webSDKConfig,
-  })
-    .then((resp) => {
-      response = resp;
-    });
+  };
+  if (config.target) {
+    return loadAndConfigureAlloy(config.alloyInstanceName, alloyConfig)
+      .then((resp) => { response = resp; });
+  }
+  return Promise.resolve();
 }
 
 /**
@@ -340,6 +342,9 @@ export async function martechLazy() {
   console.assert(response, 'Martech needs to be initialized before the `martechLazy` method is called');
   if (config.target && response.propositions?.length) {
     await reportDisplayedPropositions('alloy', response.propositions);
+  } else if (!config.target) {
+    await loadAndConfigureAlloy(config.alloyInstanceName, alloyConfig)
+      .then((resp) => { response = resp; });
   }
   if (config.dataLayer) {
     return loadAndConfigureDataLayer({});
