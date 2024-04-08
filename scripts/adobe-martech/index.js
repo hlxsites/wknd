@@ -325,9 +325,9 @@ async function reportDisplayedPropositions(instanceName, propositions) {
  * @returns a promise that the eager logic was executed
  */
 export async function martechEager() {
-  // eslint-disable-next-line no-console
-  console.assert(response, 'Martech needs to be initialized before the `martechEager` method is called');
   if (config.target) {
+    // eslint-disable-next-line no-console
+    console.assert(response, 'Martech needs to be initialized before the `martechEager` method is called');
     return applyPropositions('alloy');
   }
   return Promise.resolve();
@@ -338,13 +338,12 @@ export async function martechEager() {
  * @returns a promise that the lazy logic was executed
  */
 export async function martechLazy() {
-  // eslint-disable-next-line no-console
-  console.assert(response, 'Martech needs to be initialized before the `martechLazy` method is called');
   if (config.target && response.propositions?.length) {
+    // eslint-disable-next-line no-console
+    console.assert(response, 'Martech needs to be initialized before the `martechLazy` method is called');
     await reportDisplayedPropositions('alloy', response.propositions);
   } else if (!config.target) {
-    await loadAndConfigureAlloy(config.alloyInstanceName, alloyConfig)
-      .then((resp) => { response = resp; });
+    await loadAndConfigureAlloy(config.alloyInstanceName, alloyConfig);
   }
   if (config.dataLayer) {
     return loadAndConfigureDataLayer({});
