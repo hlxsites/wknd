@@ -10,8 +10,8 @@
  * @property {String} dataLayerInstanceName The name of the data ayer instance in the global scope
  *                                          (defaults to "adobeDataLayer")
  * @property {String[]} launchUrls A list of launch container URLs to load (defults to empty list)
- * @property {Boolean} target Indicates whether Adobe Target should be enabled
- *                            (defaults to true)
+ * @property {Boolean} personalization Indicates whether Adobe Target should be enabled
+ *                                     (defaults to true)
  */
 export const DEFAULT_CONFIG = {
   analytics: true,
@@ -19,7 +19,7 @@ export const DEFAULT_CONFIG = {
   dataLayer: true,
   dataLayerInstanceName: 'adobeDataLayer',
   launchUrls: [],
-  target: true,
+  personalization: true,
 };
 
 let config;
@@ -78,8 +78,11 @@ function getDefaultAlloyConfiguration() {
   const { hostname } = window.location;
 
   return {
+    context: ['web', 'device', 'environment'],
     // enable while debugging
     debugEnabled: hostname === 'localhost' || hostname.endsWith('.hlx.page') || hostname.endsWith('.aem.page'),
+    // wait for exlicit consent before tracking anything
+    defaultConsent: 'pending',
   };
 }
 
@@ -295,7 +298,7 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
     ...getDefaultAlloyConfiguration(),
     ...webSDKConfig,
   };
-  if (config.target) {
+  if (config.personalization) {
     return loadAndConfigureAlloy(config.alloyInstanceName, alloyConfig)
       .then((resp) => { response = resp; });
   }
@@ -325,7 +328,7 @@ async function reportDisplayedPropositions(instanceName, propositions) {
  * @returns a promise that the eager logic was executed
  */
 export async function martechEager() {
-  if (config.target) {
+  if (config.personalization) {
     // eslint-disable-next-line no-console
     console.assert(response, 'Martech needs to be initialized before the `martechEager` method is called');
     return applyPropositions('alloy');
@@ -338,11 +341,11 @@ export async function martechEager() {
  * @returns a promise that the lazy logic was executed
  */
 export async function martechLazy() {
-  if (config.target && response.propositions?.length) {
+  if (config.personalization && response.propositions?.length) {
     // eslint-disable-next-line no-console
     console.assert(response, 'Martech needs to be initialized before the `martechLazy` method is called');
     await reportDisplayedPropositions('alloy', response.propositions);
-  } else if (!config.target) {
+  } else if (!config.personalization) {
     await loadAndConfigureAlloy(config.alloyInstanceName, alloyConfig)
       .then((resp) => { response = resp; });
   }

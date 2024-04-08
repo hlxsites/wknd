@@ -41,7 +41,7 @@ const martechLoadedPromise = initMartech({
   launchUrls: [
     'https://assets.adobedtm.com/51b39232f128/2609377b4aba/launch-6c3a8fffe137-development.min.js',
   ],
-  target: getMetadata('target') || new URLSearchParams(window.location.search).has('target'),
+  personalization: getMetadata('target') || new URLSearchParams(window.location.search).has('target'),
 });
 
 window.addEventListener('consent', (ev) => {
