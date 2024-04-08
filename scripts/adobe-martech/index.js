@@ -343,7 +343,8 @@ export async function martechLazy() {
     console.assert(response, 'Martech needs to be initialized before the `martechLazy` method is called');
     await reportDisplayedPropositions('alloy', response.propositions);
   } else if (!config.target) {
-    await loadAndConfigureAlloy(config.alloyInstanceName, alloyConfig);
+    await loadAndConfigureAlloy(config.alloyInstanceName, alloyConfig)
+      .then((resp) => { response = resp; });
   }
   if (config.dataLayer) {
     return loadAndConfigureDataLayer({});
