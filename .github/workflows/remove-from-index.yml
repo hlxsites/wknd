@@ -1,3 +1,5 @@
+name: Algolia - Remove a record
+
 on:
   repository_dispatch:
     types:
@@ -9,4 +11,6 @@ jobs:
       - run: |
           echo "Status: ${{ github.event.client_payload.status }}"
           echo "Path: ${{ github.event.client_payload.path }}"
+          echo "Title: ${{ github.event.client_payload.title }}"
+          echo "Description: ${{ github.event.client_payload.description }}"
           echo "Payload: ${{ github.event.client_payload }}"
