@@ -12,9 +12,40 @@
 
 const DOMAIN_KEY_NAME = 'aem-domainkey';
 
-function createPreviewOverlay(cls) {
-  const overlay = document.createElement('div');
-  overlay.className = cls;
+class AemExperimentationBar extends HTMLElement {
+  connectedCallback() {
+    // Create a shadow root
+    const shadow = this.attachShadow({ mode: 'open' });
+
+    const cssPath = new URL(new Error().stack.split('\n')[2].match(/[a-z]+:[^:]+/)[0]).pathname.replace('preview.js', 'preview.css');
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = cssPath;
+    link.onload = () => {
+      shadow.querySelector('.hlx-preview-overlay').removeAttribute('hidden');
+    };
+    shadow.append(link);
+
+    const el = document.createElement('div');
+    el.className = 'hlx-preview-overlay';
+    el.setAttribute('hidden', true);
+    shadow.append(el);
+  }
+}
+customElements.define('aem-experimentation-bar', AemExperimentationBar);
+
+function createPreviewOverlay() {
+  const overlay = document.createElement('aem-experimentation-bar');
+  return overlay;
+}
+
+function getOverlay() {
+  let overlay = document.querySelector('aem-experimentation-bar')?.shadowRoot.children[1];
+  if (!overlay) {
+    const el = createPreviewOverlay();
+    document.body.append(el);
+    [, overlay] = el.shadowRoot.children;
+  }
   return overlay;
 }
 
@@ -40,7 +71,7 @@ function createPopupItem(item) {
     ${item.description ? `<div class="hlx-popup-item-description">${item.description}</div>` : ''}
     ${actions.length ? `<div class="hlx-popup-item-actions">${actions}</div>` : ''}`;
   const buttons = [...div.querySelectorAll('.hlx-button a')];
-  item.actions.forEach((action, index) => {
+  item.actions?.forEach((action, index) => {
     if (action.onclick) {
       buttons[index].addEventListener('click', action.onclick);
     }
@@ -68,7 +99,7 @@ function createPopupDialog(header, items = []) {
     list.append(createPopupItem(item));
   });
   const buttons = [...popup.querySelectorAll('.hlx-popup-header-actions .hlx-button a')];
-  actions.forEach((action, index) => {
+  header.actions?.forEach((action, index) => {
     if (action.onclick) {
       buttons[index].addEventListener('click', action.onclick);
     }
@@ -101,15 +132,6 @@ function createToggleButton(label) {
     button.setAttribute('aria-pressed', button.getAttribute('aria-pressed') === 'false');
   });
   return button;
-}
-
-function getOverlay() {
-  let overlay = document.querySelector('.hlx-preview-overlay');
-  if (!overlay) {
-    overlay = createPreviewOverlay('hlx-preview-overlay');
-    document.body.append(overlay);
-  }
-  return overlay;
 }
 
 const percentformat = new Intl.NumberFormat('en-US', { style: 'percent', maximumSignificantDigits: 2 });
@@ -485,7 +507,6 @@ async function decorateAudiencesPill(overlay, options, context) {
  */
 export default async function decoratePreviewMode(document, options, context) {
   try {
-    context.loadCSS(`${options.basePath || window.hlx.codeBasePath}/plugins/experimentation/src/preview.css`);
     const overlay = getOverlay(options);
     await decorateAudiencesPill(overlay, options, context);
     await decorateCampaignPill(overlay, options, context);
