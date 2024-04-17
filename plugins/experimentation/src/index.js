@@ -89,12 +89,13 @@ async function replaceInner(path, main) {
     const html = await resp.text();
     // parse with DOMParser to guarantee valid HTML, and no script execution(s)
     const dom = new DOMParser().parseFromString(html, 'text/html');
-    // eslint-disable-next-line no-param-reassign
-    main.replaceWith(dom.querySelector('main'));
+    // do not use replaceWith API here since this would replace the main reference
+    // in scripts.js as well and prevent proper decoration of the sections/blocks
+    main.innerHTML = dom.querySelector('main').innerHTML;
     return path;
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.log(`error loading content: ${plainPath}`, e);
+    console.log(`error loading content: ${path}`, e);
   }
   return null;
 }
@@ -240,7 +241,10 @@ function getConfigForInstantExperiment(
     variantNames: [],
   };
 
-  const pages = instantExperiment.split(',').map((p) => new URL(p.trim(), window.location).pathname);
+  const nbOfVariants = Number(instantExperiment);
+  const pages = Number.isNaN(nbOfVariants)
+    ? instantExperiment.split(',').map((p) => new URL(p.trim(), window.location).pathname)
+    : new Array(nbOfVariants).fill(window.location.pathname);
 
   const splitString = context.getMetadata(`${pluginOptions.experimentsMetaTag}-split`);
   const splits = splitString
@@ -435,6 +439,8 @@ export async function runExperiment(document, options, context) {
   console.debug(`running experiment (${window.hlx.experiment.id}) -> ${window.hlx.experiment.selectedVariant}`);
 
   if (experimentConfig.selectedVariant === experimentConfig.variantNames[0]) {
+    document.body.classList.add(`experiment-${context.toClassName(experimentConfig.id)}`);
+    document.body.classList.add(`variant-${context.toClassName(experimentConfig.selectedVariant)}`);
     context.sampleRUM('experiment', {
       source: experimentConfig.id,
       target: experimentConfig.selectedVariant,
@@ -450,13 +456,18 @@ export async function runExperiment(document, options, context) {
   const currentPath = window.location.pathname;
   const control = experimentConfig.variants[experimentConfig.variantNames[0]];
   const index = control.pages.indexOf(currentPath);
-  if (index < 0 || pages[index] === currentPath) {
+  if (index < 0) {
     return false;
   }
 
   // Fullpage content experiment
   document.body.classList.add(`experiment-${context.toClassName(experimentConfig.id)}`);
-  const result = await replaceInner(pages[index], document.querySelector('main'));
+  let result;
+  if (pages[index] !== currentPath) {
+    result = await replaceInner(pages[index], document.querySelector('main'));
+  } else {
+    result = currentPath;
+  }
   experimentConfig.servedExperience = result || currentPath;
   if (!result) {
     // eslint-disable-next-line no-console
