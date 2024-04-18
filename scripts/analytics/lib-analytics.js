@@ -10,11 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
+const EVENT_TYPE_PROPOSITION_INTERACTION = 'propositionInteraction';
+const EXPERIENCE_STEP_EXPERIMENTATION = 'experimentation';
 /**
  * Customer's XDM schema namespace
  * @type {string}
  */
 const CUSTOM_SCHEMA_NAMESPACE = '_sitesinternal';
+
+/**
+ * Configure the cookie keys that should be mapped to the XDM schema and send with each event
+ * Ex: { 'funnelState': 'userState' }
+ * funnelState in the cookie will be sent as userState in the schema
+ */
+const COOKIE_MAPPING_TO_SCHEMA = {
+};
 
 /**
  * Returns experiment id and variant running
@@ -49,22 +59,62 @@ function getAlloyInitScript() {
 function getDatastreamConfiguration() {
   // Sites Internal
   return {
-    edgeConfigId: 'caad777c-c410-4ceb-8b36-167f1cecc3de',
+    edgeConfigId: '2324184b-260b-4d66-a8ca-897ab9374fb3', // TODO: change this to earlier after testing
     orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
   };
 }
 
 /**
- * Enhance all events with additional details, like experiment running,
+ * If the configured key in COOKIE_MAPPING_TO_SCHEMA exists in the cookie
+ * it'll be added to the XDM schema
+ * @param {*} xdmData
+ */
+function updateAlloyEventWithCookieData(xdmData) {
+  const cookieData = document.cookie.split(';').reduce((res, item) => {
+    const [key, val] = item.split('=');
+    res[key.trim()] = val;
+    return res;
+  }, {});
+  Object.keys(cookieData).forEach((key) => {
+    const mappedKey = COOKIE_MAPPING_TO_SCHEMA[key];
+    if (mappedKey && xdmData.xdm[CUSTOM_SCHEMA_NAMESPACE]) {
+      xdmData.xdm[CUSTOM_SCHEMA_NAMESPACE][mappedKey] = cookieData[key];
+    }
+  });
+}
+
+/**
+ * Enhance all events with additional details, like experiment running, mapped cookie data, etc.
  * before sending them to the edge
  * @param options event in the XDM schema format
  */
 function enhanceAnalyticsEvent(options) {
   const experiment = getExperimentDetails();
+  const experienceDecisioningXDM = experiment ? {
+    decisioning: {
+      propositionEventType: EVENT_TYPE_PROPOSITION_INTERACTION,
+      propositions: [
+        {
+          scopeDetails: {
+            strategies: [
+              {
+                strategyID: experiment.experimentId,
+                step: EXPERIENCE_STEP_EXPERIMENTATION,
+                treatmentID: experiment.experimentVariant,
+              },
+            ],
+          },
+        },
+      ],
+    },
+  } : {};
   options.xdm[CUSTOM_SCHEMA_NAMESPACE] = {
     ...options.xdm[CUSTOM_SCHEMA_NAMESPACE],
     ...(experiment && { experiment }), // add experiment details, if existing, to all events
   };
+  // eslint-disable-next-line no-underscore-dangle
+  options.xdm._experience = experienceDecisioningXDM;
+  updateAlloyEventWithCookieData(options);
   console.debug(`enhanceAnalyticsEvent complete: ${JSON.stringify(options)}`);
 }
 
@@ -178,26 +228,38 @@ export async function initAnalyticsTrackingQueue() {
   createInlineScript(document, document.body, getAlloyInitScript(), 'text/javascript');
 }
 
+export async function setupAlloy(document) {
+  // eslint-disable-next-line no-undef
+  if (!alloy) {
+    console.warn('alloy not initialized, cannot configure');
+    return;
+  }
+  // create a promise on window that resolves when alloy loading is complete
+  window.alloyLoader = new Promise((resolve) => {
+    window.alloyLoaderResolve = resolve;
+  });
+  // eslint-disable-next-line no-undef
+  const configurePromise = alloy('configure', getAlloyConfiguration(document));
+
+  await import('./alloy.min.js');
+  await configurePromise;
+  window.alloyLoaderResolve();
+}
+
 /**
  * Sets up analytics tracking with alloy (initializes and configures alloy)
  * @param document
  * @returns {Promise<void>}
  */
 export async function setupAnalyticsTrackingWithAlloy(document) {
-  // eslint-disable-next-line no-undef
-  if (!alloy) {
-    console.warn('alloy not initialized, cannot configure');
-    return;
+  if (window.alloyLoader) {
+    await window.alloyLoader;
+  } else {
+    await setupAlloy(document);
   }
-  // eslint-disable-next-line no-undef
-  const configurePromise = alloy('configure', getAlloyConfiguration(document));
-
   // Custom logic can be inserted here in order to support early tracking before alloy library
   // loads, for e.g. for page views
-  const pageViewPromise = analyticsTrackPageViews(document); // track page view early
-
-  await import('./alloy.min.js');
-  await Promise.all([configurePromise, pageViewPromise]);
+  await analyticsTrackPageViews(document); // track page view early
 }
 
 /**
@@ -394,4 +456,94 @@ export async function analyticsTrackVideo({
   }
 
   return sendAnalyticsEvent(baseXdm);
+}
+
+/**
+ * Sends custom data to analytics as additional fields in the custom name space
+ * @param element
+ * @param additionalXdmFields
+ * @returns {Promise<*>}
+ */
+export async function analyticsCustomData(additionalXdmFields = {}) {
+  const xdmData = {
+    eventType: 'web.webpagedetails.pageViews',
+    web: {
+      webPageDetails: {
+        pageViews: {
+          value: 0,
+        },
+      },
+    },
+    [CUSTOM_SCHEMA_NAMESPACE]: {
+      ...additionalXdmFields,
+    },
+  };
+
+  return sendAnalyticsEvent(xdmData);
+}
+
+/**
+ * Checks if the analytics cookie consent is set to ALLOW
+ * @returns {boolean}
+ */
+function isCookieConsentAllowed() {
+  // check if cookie cookieconsent_status_ANALYTICS is set to ALLOW
+  const cookies = document.cookie.split(';');
+  // eslint-disable-next-line no-restricted-syntax
+  for (const cookie of cookies) {
+    if (cookie.trim().startsWith('cookieconsent_status_ANALYTICS=ALLOW')) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function getSegmentsFromAlloyResponse(response) {
+  const segments = [];
+  if (response && response.destinations) {
+    Object.values(response.destinations).forEach((destination) => {
+      if (destination.segments) {
+        Object.values(destination.segments).forEach((segment) => {
+          segments.push(segment.id);
+        });
+      }
+    });
+  }
+  console.log('segments', segments);
+  return segments;
+}
+
+export async function getSegmentsFromAlloy() {
+  if (!window.alloy) {
+    return [];
+  }
+  // make sure that the cookie consent is available before making the call to alloy,
+  // otherwise the call will be queued and never executed
+  if (!isCookieConsentAllowed()) {
+    return [];
+  }
+  if (window.rtcdpSegments) {
+    return window.rtcdpSegments;
+  }
+  if (window.alloyLoader) {
+    await window.alloyLoader;
+  } else {
+    await setupAlloy(document);
+  }
+  let result;
+  // avoid multiple calls to alloy for render decisions from different audiences
+  if (window.renderDecisionsResult) {
+    result = await window.renderDecisionsResult;
+  } else {
+    // eslint-disable-next-line no-undef
+    window.renderDecisionsResult = alloy('sendEvent', {
+      renderDecisions: true,
+    }).catch((error) => {
+      console.error('Error sending event to alloy:', error);
+      return [];
+    });
+    result = await window.renderDecisionsResult;
+  }
+  window.rtcdpSegments = getSegmentsFromAlloyResponse(result);
+  return window.rtcdpSegments;
 }
