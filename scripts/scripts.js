@@ -85,8 +85,8 @@ let alloyLoadedPromise;
 const alloyVersion = new URLSearchParams(window.location.search).get('alloy');
 if (alloyVersion) {
   alloyLoadedPromise = initWebSDK(`./analytics/${alloyVersion}.js`, {
-    edgeConfigId: '0ea57121-f7e7-4706-bfaf-b0b7c14e9e7f',
-    orgId: 'D10D965A577677107F000101@AdobeOrg',
+    edgeConfigId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
+    orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
   });
   alloyLoadedPromise.then(() => getAndApplyRenderDecisions());
 }
