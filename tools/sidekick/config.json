@@ -28,7 +28,7 @@
     {
       "id": "generate-variations-dev",
       "title": "Generate Variations (Dev)",
-      "url": "https://experience.adobe.com/?shell_source=dev#/aem/generate-variations",
+      "url": "https://experience-qa.adobe.com/?shell_source=dev&devMode=true#/aem/generate-variations",
       "passConfig": true,
       "environments": [ "preview", "live", "edit" ],
       "includePaths": [ "/**" ]
