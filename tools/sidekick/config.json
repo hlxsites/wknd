@@ -20,7 +20,7 @@
     {
       "id": "generate-variations-local",
       "title": "Generate Variations (Local)",
-      "url": "https://experience.adobe.com/?shell_source=local&devMode=true#/aem/generate-variations",
+      "url": "https://experience-qa.adobe.com/?shell_source=local&devMode=true&shell_ims=prod#/aem/generate-variations",
       "passConfig": true,
       "environments": [ "preview", "live", "edit" ],
       "includePaths": [ "/**" ]
