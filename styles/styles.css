@@ -338,4 +338,5 @@ main .section[data-section-status='initialized'] {
 
 .cc-btn.cc-save {
   padding: 13px 29px;
+  color: red;
 }
