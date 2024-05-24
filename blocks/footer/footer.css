@@ -1,69 +1,96 @@
 /* stylelint-disable */
 
 footer {
-  background-color: #202020;
-  color: #ebebeb;
-  padding: 1rem 0 1.5rem;
-  margin-top: 3rem;
+  background-color: #333333;  /* Darker background for more contrast */
+  color: #ffffff;  /* Pure white text for better readability */
+  padding: 2rem 0 2.5rem;  /* Increased padding for more space */
+  margin-top: 5rem;  /* Increased margin-top for better separation */
+  border-top: 4px solid #f39c12;  /* Added a top border with a bright color */
 }
 
 footer .footer {
-  max-width: 1200px;
+  max-width: 1400px;  /* Increased max-width for a more expansive feel */
   margin: auto;
 }
 
 .footer > div {
   display: grid;
-  grid-template-columns: auto 50% auto;
-  grid-template-rows: auto;
+  grid-template-columns: 1fr 2fr 1fr;  /* Adjusted columns for better proportion */
   grid-template-areas:
           "brand nav follow"
           "disc disc disc";
+  gap: 2rem;  /* Added gap between grid items */
 }
 
 .footer .brand {
   grid-area: brand;
+  font-size: 1.5rem;  /* Increased font size */
+  font-weight: bold;  /* Made the brand bold */
 }
 
 .footer .nav {
   grid-area: nav;
+  display: flex;  /* Changed to flex for better control */
+  justify-content: space-around;  /* Spaced out nav items evenly */
 }
 
 .footer .follow {
   grid-area: follow;
-  display: block;
-  font-size: 14px;
+  font-size: 1rem;  /* Adjusted font size */
   text-transform: uppercase;
-  padding: 15px 17px;
-  text-decoration: none;
+  padding: 20px 25px;  /* Increased padding */
+  background-color: #f39c12;  /* Added a background color */
+  color: #333333;  /* Changed text color for contrast */
+  border-radius: 5px;  /* Added border radius */
+  text-align: center;  /* Centered text */
+  transition: background-color 0.3s ease;  /* Smooth transition for hover effect */
+}
+
+.footer .follow:hover {
+  background-color: #e67e22;  /* Darker shade on hover */
 }
 
 .footer .disc {
   grid-area: disc;
+  text-align: center;  /* Centered disclaimer text */
+  margin-top: 1rem;  /* Added top margin */
 }
 
 footer ul {
   list-style: none;
   margin: 0;
   padding-inline-start: 0;
+  display: flex;  /* Changed to flex layout */
+  justify-content: space-around;  /* Spaced out list items evenly */
 }
 
 footer li {
-  display: block;
-  float: left;
-  color: #202020;
-  font-size: 14px;
+  display: inline;  /* Changed display to inline */
+  color: #ffffff;  /* Changed text color to white */
+  font-size: 1rem;  /* Adjusted font size */
   text-transform: uppercase;
-  padding: 15px 17px;
+  padding: 10px 15px;  /* Adjusted padding */
   text-decoration: none;
 }
 
+footer li:hover {
+  background-color: #f39c12;  /* Added hover background color */
+  border-radius: 5px;  /* Added border radius on hover */
+}
+
 .footer a {
-  color: white;
+  color: #f39c12;  /* Changed link color for more vibrancy */
+  transition: color 0.3s ease;  /* Smooth transition for hover effect */
+}
+
+.footer a:hover {
+  color: #e67e22;  /* Darker shade on hover */
 }
 
 footer .footer p {
   margin: 0;
-  font-size: var(--body-font-size-xs);
-  line-height: 1.25;
+  font-size: 1rem;  /* Adjusted font size */
+  line-height: 1.5;  /* Increased line-height for better readability */
+  color: #cccccc;  /* Changed text color */
 }
+

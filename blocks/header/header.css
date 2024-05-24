@@ -8,34 +8,43 @@ header nav {
   align-items: center;
   position: fixed;
   z-index: 2;
-  background-color: var(--background-color);
+  background-color: #f0f0f0; /* Lightened background color */
   width: 100vw;
   height: var(--nav-height);
   box-sizing: border-box;
-  font-family: var(--body-font-family);
-  transition: padding-bottom 0s ease-out,padding-top 0s ease-out 0s;
+  font-family: 'Helvetica Neue', sans-serif; /* Updated font family */
+  transition: padding-bottom 0s ease-out, padding-top 0s ease-out 0s;
   margin-top: 0;
   padding: 0 16px;
   top: 25px;
+  border-bottom: 1px solid #ccc; /* Added subtle bottom border */
 }
 
 header nav a:any-link {
-  color: currentcolor;
+  color: #333; /* Darkened link color for contrast */
+  text-decoration: none; /* Removed underline for cleaner look */
+  transition: color 0.3s ease; /* Added transition for hover effect */
+}
+
+header nav a:any-link:hover {
+  color: #000; /* Darkened color on hover */
 }
 
 header nav[aria-expanded='true'] {
   grid-template: 'hamburger brand' 'sections sections' 'tools tools';
-  grid-template-columns:  56px 1fr;
+  grid-template-columns: 56px 1fr;
   overflow-y: scroll;
   min-height: 100vh;
+  background-color: #e0e0e0; /* Slightly darker background when expanded */
 }
 
 /* brand */
 header .nav-brand {
   grid-area: brand;
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 24px; /* Increased font size */
+  font-weight: 800; /* Made font bolder */
   line-height: 1em;
+  color: #333; /* Darkened brand color */
 }
 
 header nav .nav-brand p {
@@ -43,13 +52,13 @@ header nav .nav-brand p {
 }
 
 header nav .nav-brand img {
-  width: 128px;
+  width: 140px; /* Increased logo size */
 }
 
 /* hamburger */
 header nav .nav-hamburger {
   grid-area: hamburger;
-  height: 22px;
+  height: 28px; /* Increased size */
   padding-top: 3px;
   cursor: pointer;
 }
@@ -61,29 +70,29 @@ header nav[aria-expanded='false'] .nav-hamburger-icon::before {
   position: relative;
   display: block;
   top: 8px;
-  width: 20px;
-  height: 2px;
+  width: 24px; /* Increased size */
+  height: 3px; /* Increased size */
   border-radius: 3px;
-  background: currentcolor;
+  background: #333; /* Changed color for contrast */
 }
 
 header nav[aria-expanded='false'] .nav-hamburger-icon::after,
 header nav[aria-expanded='false'] .nav-hamburger-icon::before {
   content: '';
   position: absolute;
-  top: -6px;
+  top: -8px; /* Adjusted for new size */
 }
 
 header nav[aria-expanded='false'] .nav-hamburger-icon::after {
-  top: 6px;
+  top: 8px; /* Adjusted for new size */
 }
 
 header nav[aria-expanded='true'] .nav-hamburger-icon {
   box-sizing: border-box;
   position: relative;
   display: block;
-  width: 22px;
-  height: 22px;
+  width: 24px; /* Increased size */
+  height: 24px; /* Increased size */
   border: 2px solid transparent;
   border-radius: 5px;
   transform: translate(-3px, -2px);
@@ -95,17 +104,17 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::before {
   display: block;
   box-sizing: border-box;
   position: absolute;
-  width: 22px;
-  height: 2px;
-  background: currentcolor;
+  width: 24px; /* Increased size */
+  height: 3px; /* Increased size */
+  background: #333; /* Changed color for contrast */
   transform: rotate(45deg);
   border-radius: 5px;
-  top: 8px;
+  top: 10px; /* Adjusted for new size */
   left: 1px
 }
 
 header nav[aria-expanded='true'] .nav-hamburger-icon::after {
-  transform: rotate(-45deg)
+  transform: rotate(-45deg);
 }
 
 /* sections */
@@ -113,36 +122,41 @@ header nav .nav-sections {
   grid-area: sections;
   flex-direction: column;
   display: none;
-  background-color: var(--overlay-color);
+  background-color: #fff; /* White background for contrast */
   flex: 1 1 auto;
 }
 
-header nav .nav-sections ul  {
-  font-size: 16px;
+header nav .nav-sections ul {
+  font-size: 18px; /* Increased font size */
   font-weight: 500;
   list-style: none;
   padding-left: 0;
 }
 
 header nav .nav-sections li {
-  font-size: 20px;
-  font-weight: 500;
+  font-size: 20px; /* Increased font size */
+  font-weight: 600; /* Made font bolder */
+  margin: 12px 0; /* Added margin for spacing */
+  color: #333; /* Darkened section item color */
 }
 
 header nav[aria-expanded='true'] .nav-sections {
   display: block;
   align-self: flex-start;
+  padding: 16px; /* Added padding */
+  border-top: 1px solid #ccc; /* Added top border for separation */
 }
 
 /* tools */
 header nav .nav-tools {
   grid-area: tools;
   flex: 0 0 auto;
-  height: 22px;
+  height: 28px; /* Increased size */
 }
 
 header nav .nav-tools p {
   margin: 0;
+  color: #333; /* Darkened tool text color */
 }
 
 header nav[aria-expanded='true'] .nav-tools img {
@@ -165,6 +179,8 @@ header nav[aria-expanded='true'] .nav-tools li {
     justify-content: space-between;
     height: var(--nav-height);
     padding: 16px;
+    background-color: #f0f0f0; /* Ensure consistent color */
+    border-bottom: 1px solid #ccc; /* Added bottom border */
   }
 
   header nav .nav-sections > ul > li.nav-drop {
@@ -174,7 +190,7 @@ header nav[aria-expanded='true'] .nav-tools li {
 
   header nav .nav-drop::after {
     content: ' ';
-    border: 1px solid currentolor;
+    border: 1px solid currentColor;
     transform: rotate(135deg);
     border-width: 2px 2px 0 0;
     display: inline-block;
@@ -194,7 +210,7 @@ header nav[aria-expanded='true'] .nav-tools li {
   }
 
   header nav .nav-brand {
-    flex: 0 0 150px;
+    flex: 0 0 180px; /* Increased size */
   }
 
   header nav .nav-sections ul {
@@ -211,12 +227,17 @@ header nav[aria-expanded='true'] .nav-tools li {
   }
 
   header nav .nav-sections > ul > li {
-    padding: 0 16px;
+    padding: 0 20px; /* Increased padding */
     position: relative;
-    font-size: 16px;
+    font-size: 18px; /* Increased font size */
     margin: 0;
     cursor: pointer;
     padding-top: 0;
+    transition: color 0.3s ease; /* Added transition for hover effect */
+  }
+
+  header nav .nav-sections > ul > li:hover {
+    color: #000; /* Darkened color on hover */
   }
 
   header nav .nav-sections > ul > li > p {
@@ -240,41 +261,42 @@ header nav[aria-expanded='true'] .nav-tools li {
     position: absolute;
     border-left: 15px solid transparent;
     border-right: 15px solid transparent;
-    border-bottom: 15px solid var(--highlight-background-color);
+    border-bottom: 15px solid #fff; /* Adjusted color */
     top: -15px;
     left: 20px;
   }
 
-
   header nav .nav-sections > ul > li > ul > li {
     font-size: 18px;
     padding: 8px 16px;
+    color: #333; /* Darkened dropdown item color */
   }
 
   header nav .nav-sections > ul > li[aria-expanded='true'] ul {
     display: block;
     position: absolute;
-    background-color: var(--highlight-background-color);
+    background-color: #fff; /* White background for dropdown */
     width: 300px;
     left: 0;
     padding: 16px;
-    box-shadow: 0 0 5px var(text-color);
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Subtle shadow for dropdown */
   }
 }
 
 header .header-topbar {
-  height: 25px;
-  background-color: black;
-  color: var(--text-color-light);
+  height: 30px; /* Increased height */
+  background-color: #333; /* Darkened background color */
+  color: #fff; /* Lightened text color */
   display: flex;
   justify-content: space-between;
-  font-size: var(--body-font-size-xs);
+  font-size: 12px; /* Set specific font size */
   text-transform: uppercase;
   padding: 0 16px;
   position: fixed;
   z-index: 2;
   right: 0;
   left: 0;
+  border-bottom: 1px solid #444; /* Added bottom border for separation */
 }
 
 header .header-topbar .icon {
@@ -284,33 +306,37 @@ header .header-topbar .icon {
 }
 
 header .header-chevron-down {
-    box-sizing: border-box;
-    position: relative;
-    display: block;
-    width: 22px;
-    height: 22px;
-    border: 2px solid transparent;
-    border-radius: 100px
+  box-sizing: border-box;
+  position: relative;
+  display: block;
+  width: 24px; /* Increased size */
+  height: 24px; /* Increased size */
+  border: 2px solid transparent;
+  border-radius: 100px;
 }
+
 header .header-chevron-down::after {
-    content: "";
-    display: block;
-    box-sizing: border-box;
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border-bottom: 1px solid;
-    border-right: 1px solid;
-    transform: rotate(45deg);
-    left: 4px;
-    top: 2px
+  content: "";
+  display: block;
+  box-sizing: border-box;
+  position: absolute;
+  width: 12px; /* Increased size */
+  height: 12px; /* Increased size */
+  border-bottom: 1px solid #fff; /* Lightened color */
+  border-right: 1px solid #fff; /* Lightened color */
+  transform: rotate(45deg);
+  left: 4px;
+  top: 4px; /* Adjusted for new size */
 }
 
 header .header-markets {
   display: flex;
   align-items: center;
+  color: #fff; /* Lightened text color */
 }
 
 header .header-topbar .icon svg {
   height: 100%;
+  fill: #fff; /* Lightened icon color */
 }
+

@@ -1,44 +1,66 @@
-/* block specific CSS goes here */
-
 main .hero-container > div {
-    max-width: unset;
+    max-width: 100%;
 }
-  
+
 main .hero-container {
-    padding: 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #f06595 100%);
 }
-  
+
 main .hero {
     position: relative;
-    padding: 32px;
-    min-height: 300px;
-    color: var(--background-color);
+    padding: 50px;
+    min-height: 400px;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+main .hero:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 main .hero .hero-body {
-    max-width: 1200px;
+    max-width: 1000px;
     margin-left: auto;
     margin-right: auto;
     position: relative;
     z-index: 1;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
 }
 
-
 main .hero picture {
+    display: hidden;
     position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 main .hero img {
     object-fit: cover;
     width: 100%;
     height: 100%;
+    filter: brightness(70%);
+    transition: filter 0.3s ease;
+}
+
+main .hero img:hover {
+    filter: brightness(100%);
 }
 
 .hero [data-align="center"] {
     text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #ffffff;
 }

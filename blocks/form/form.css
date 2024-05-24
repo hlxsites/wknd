@@ -50,7 +50,8 @@
 form output {
     display: block;
     font-weight: 700;
-    font-size: 1.625rem;
+    font-size: 2rem;
+    color: #333;
 }
 
 form [data-hidden="true"] {
@@ -58,81 +59,92 @@ form [data-hidden="true"] {
 }
 
 main .form-container {
-    background-color: var(--mt-background-color-primary);
-    padding: var(--form-padding);
-    width: var(--form-width);
-    margin: var(--nav-height) auto;
+    background-color: #f9f9f9;
+    padding: 2rem;
+    width: 80%;
+    max-width: 1000px;
+    margin: 2rem auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 main .form {
-    background-color: var(--form-background-color);
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 main .form > div:not(:first-child) {
-    display: none;
+    display: block;
 }
 
 main .form form {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--form-field-vert-gap) var(--form-field-horz-gap);
+    gap: 1rem;
     align-items: start;
 }
 
 main .form form fieldset {
-    border: var(--form-fieldset-border);
-    margin: var(--form-fieldset-marign);
+    border: 2px solid #e0e0e0;
+    margin: 1rem 0;
+    padding: 1rem;
+    border-radius: 4px;
     width: 100%;
 }
 
 main .form form fieldset fieldset {
     padding: 0;
+    border: none;
 }
 
 main .form .field-description {
-    color: var(--form-label-color);
-    font-size: var(--form-font-size-xs);
+    color: #666;
+    font-size: 0.875rem;
 }
 
 main .form input, main .form textarea, main .form select {
-    background-color: var(--form-input-background-color);
-    border: var(--form-input-border-size) solid var(--form-input-border-color);
+    background-color: #f3f3f3;
+    border: 2px solid #ccc;
     width: 100%;
-    height: 42px;
-    color: var(--form-label-color);
-    padding: var(--form-input-padding);
-    font-size: var(--form-input-font-size);
-    max-width: unset;
+    height: 48px;
+    color: #333;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    transition: border-color 0.3s, background-color 0.3s;
 }
 
 main .form input[type='file'] {
     border: none;
-    padding-inline-start:0;
+    padding-inline-start: 0;
 }
 
 main .form input[type='checkbox'],
 main .form input[type='radio'] {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     flex: none;
     margin: 0;
 }
 
 main .form textarea {
-    min-height: 100px;
+    min-height: 120px;
 }
 
 main .form input:hover, main .form select:hover {
-    border-color: rgb(90 92 96);
+    border-color: #777;
+    background-color: #fafafa;
 }
 
 main .form fieldset legend {
-    font-weight: var(--form-fieldset-legend-font-weight);
-    font-size: var(--form-fieldset-legend-font-size);
-    color: var(--form-fieldset-legend-color);
-    border-bottom: var(--form-fieldset-legend-border);
+    font-weight: bold;
+    font-size: 1.25rem;
+    color: #444;
+    border-bottom: 2px solid #ddd;
     width: 100%;
-    padding: var(--form-fieldset-legend-padding);
+    padding: 0.5rem 0;
     margin-bottom: 10px;
 }
 
@@ -141,80 +153,91 @@ main .innovate form > fieldset > legend {
 }
 
 main .form label {
-    font-weight: var(--form-label-font-weight);
-    font-size: var(--form-label-font-size);
-    color: var(--form-label-color);
+    font-weight: bold;
+    font-size: 1rem;
+    color: #333;
 }
 
 main .form label.required::after {
     content: "*";
-    color: var(--form-label-color);
+    color: red;
     padding-inline-start: 5px;
 }
 
 main .form form p,
 main .form form .field-wrapper {
-    margin: var(--form-field-gap);
-    color: var(--form-label-color);
-    flex: 1 0 calc(100%/var(--form-columns) - var(--form-field-horz-gap));
+    margin: 1rem 0;
+    color: #333;
+    flex: 1 0 calc(50% - 1rem);
 }
 
 main .form form p {
-    font-size: var(--form-paragraph-font-size);
-    font-style: var(--form-paragraph-font-style);
-    color: var(--form-paragraph-color);
-    margin: var(--form-paragraph-margin);
+    font-size: 1rem;
+    font-style: normal;
+    color: #555;
+    margin: 0.5rem 0;
 }
 
 main .form form .form-checkbox-wrapper, main .form form .form-radio-wrapper {
     display: flex;
     align-items: baseline;
-    margin: 0;
+    margin: 0.5rem 0;
     gap: 8px;
 }
 
 main .form form fieldset > .form-radio-wrapper:first-of-type,
 main .form form fieldset > .form-checkbox-wrapper:first-of-type {
-    margin: var(--form-field-gap);
+    margin: 1rem 0;
 }
 
-main .form .form-radio-wrapper  label,
+main .form .form-radio-wrapper label,
 main .form .form-checkbox-wrapper label {
-    font-weight: var(--mt-font-weight-regular);
+    font-weight: normal;
     flex-basis: calc(100% - 28px);
 }
 
 input::file-selector-button {
-    color: var(--form-upload-color);
-    background: var(--form-upload-background-color);
-    font-size: var(--form-upload-font-size);
+    color: #333;
+    background: #eee;
+    font-size: 1rem;
     text-align: center;
+    border: 2px solid #ccc;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+input::file-selector-button:hover {
+    background-color: #ddd;
+    border-color: #bbb;
 }
 
 main .form button {
-    color: var(--form-button-color);
-    background: var(--form-button-background-color);
-    border: var(--form-button-border);
-    padding: var(--form-button-padding);
-    font-size: var(--form-button-font-size);
-    font-weight: var(--mt-font-weight-bold);
-    border-radius: unset;
+    color: #fff;
+    background: #007bff;
+    border: none;
+    padding: 1rem;
+    font-size: 1.125rem;
+    font-weight: bold;
+    border-radius: 4px;
     width: 100%;
+    transition: background-color 0.3s;
 }
 
 main .form button:hover {
-    background: var(--form-button-background-hover-color);
+    background: #0056b3;
 }
 
-main .form-submit-wrapper{
-    width: var(--form-submit-width);
+main .form-submit-wrapper {
+    width: 100%;
+    text-align: center;
 }
 
 main .form input:disabled,
 main .form textarea:disabled,
 main .form select:disabled,
 main .form button:disabled {
-    background-color: var(--form-input-disable-color);
+    background-color: #e9ecef;
 }
 
 main .form-file-wrapper input[type="file"] {
@@ -222,41 +245,46 @@ main .form-file-wrapper input[type="file"] {
 }
 
 main .form-file-wrapper .field-dropregion {
-    background: rgb(0 0 0 / 2%);
-    border: 1px dashed var(--mt-global-color-silver);
-    border-radius: 4px;
-    margin: 11px 0 8px;
-    padding: 32px;
+    background: rgba(0, 0, 0, 0.02);
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    margin: 1rem 0;
+    padding: 2rem;
     text-align: center;
+    transition: border-color 0.3s;
+}
+
+main .form-file-wrapper .field-dropregion:hover {
+    border-color: #bbb;
 }
 
 main .form-file-wrapper .file-description button {
-    --form-button-padding: 15px;
-
-    background: url('../../icons/delete.svg') no-repeat;
-    width: unset;
-    border: unset;
-    text-align: center;
+    background: url('../../icons/delete.svg') no-repeat center center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    cursor: pointer;
 }
 
 .section.wknd-registration {
-    padding: 0 32px;
+    padding: 0 2rem;
     margin: 0 auto;
+    max-width: 1000px;
 }
 
 @media (min-width: 576px) {
     :root {
-        --form-width: 540px;
+        --form-width: 600px;
     }
 }
 
 @media (min-width: 768px) {
     :root {
-        --form-width: 740px;
+        --form-width: 800px;
     }
 
     main .form button {
-        width: unset;
+        width: auto;
     }
 }
 
@@ -272,10 +300,6 @@ main form .form-fieldset-wrapper {
     flex-direction: column;
 }
 
-/* main form .form-fieldset-wrapper > .field-wrapper{
-    flex: 1 0 auto;
-} */
-
 @media (min-width: 1200px), (min-width: 992px) {
     :root {
         --form-columns: 2;
@@ -290,6 +314,7 @@ main form .form-fieldset-wrapper {
 
     main .form form .form-fieldset-wrapper {
         flex-flow: row wrap;
-        gap: 10px 15px;
+        gap: 1rem;
     }
 }
+
