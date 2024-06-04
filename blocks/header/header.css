@@ -1,5 +1,18 @@
-/* stylelint-disable */
-/* header and nav layout */
+/* New CSS Variables */
+:root {
+  --nav-background-gradient: linear-gradient(90deg, rgba(255,234,0,1) 0%, rgba(255,150,0,1) 100%);
+  --nav-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --nav-item-hover-color: rgba(255,150,0,0.8);
+  --nav-item-active-color: rgba(255,150,0,1);
+  --nav-brand-font-family: 'Montserrat', sans-serif;
+  --nav-brand-font-size: 28px;
+  --nav-item-font-size: 20px;
+  --nav-item-spacing: 1.5rem;
+  --nav-item-padding: 10px 15px;
+  --nav-item-border-radius: 4px;
+}
+
+/* Main Navigation */
 header nav {
   display: grid;
   grid-template:
@@ -8,45 +21,34 @@ header nav {
   align-items: center;
   position: fixed;
   z-index: 2;
-  background-color: var(--background-color);
+  background: var(--nav-background-gradient);
   width: 100vw;
   height: var(--nav-height);
-  box-sizing: border-box;
+  box-shadow: var(--nav-shadow);
   font-family: var(--body-font-family);
-  transition: padding-bottom 0s ease-out,padding-top 0s ease-out 0s;
-  margin-top: 0;
+  transition: all 0.3s ease;
   padding: 0 16px;
   top: 25px;
 }
 
-header nav a:any-link {
-  color: currentcolor;
-}
-
-header nav[aria-expanded='true'] {
-  grid-template: 'hamburger brand' 'sections sections' 'tools tools';
-  grid-template-columns:  56px 1fr;
-  overflow-y: scroll;
-  min-height: 100vh;
-}
-
-/* brand */
+/* Brand */
 header .nav-brand {
   grid-area: brand;
-  font-size: 22px;
+  font-size: var(--nav-brand-font-size);
   font-weight: 700;
-  line-height: 1em;
+  font-family: var(--nav-brand-font-family);
+  color: var(--link-color);
 }
 
-header nav .nav-brand p {
+header .nav-brand p {
   margin: 0;
 }
 
-header nav .nav-brand img {
+header .nav-brand img {
   width: 128px;
 }
 
-/* hamburger */
+/* Hamburger */
 header nav .nav-hamburger {
   grid-area: hamburger;
   height: 22px;
@@ -64,7 +66,7 @@ header nav[aria-expanded='false'] .nav-hamburger-icon::before {
   width: 20px;
   height: 2px;
   border-radius: 3px;
-  background: currentcolor;
+  background: var(--link-color);
 }
 
 header nav[aria-expanded='false'] .nav-hamburger-icon::after,
@@ -97,36 +99,49 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::before {
   position: absolute;
   width: 22px;
   height: 2px;
-  background: currentcolor;
+  background: var(--link-color);
   transform: rotate(45deg);
   border-radius: 5px;
   top: 8px;
-  left: 1px
+  left: 1px;
 }
 
 header nav[aria-expanded='true'] .nav-hamburger-icon::after {
-  transform: rotate(-45deg)
+  transform: rotate(-45deg);
 }
 
-/* sections */
+/* Sections */
 header nav .nav-sections {
   grid-area: sections;
   flex-direction: column;
   display: none;
-  background-color: var(--overlay-color);
+  background-color: var(--overlay-background-color);
   flex: 1 1 auto;
 }
 
-header nav .nav-sections ul  {
-  font-size: 16px;
-  font-weight: 500;
+header nav .nav-sections ul {
+  font-size: var(--nav-item-font-size);
   list-style: none;
   padding-left: 0;
+  display: flex;
+  justify-content: center;
 }
 
 header nav .nav-sections li {
-  font-size: 20px;
+  font-size: var(--nav-item-font-size);
   font-weight: 500;
+  margin: 0 var(--nav-item-spacing);
+  padding: var(--nav-item-padding);
+  border-radius: var(--nav-item-border-radius);
+  transition: background-color 0.3s;
+}
+
+header nav .nav-sections li:hover {
+  background-color: var(--nav-item-hover-color);
+}
+
+header nav .nav-sections li:active {
+  background-color: var(--nav-item-active-color);
 }
 
 header nav[aria-expanded='true'] .nav-sections {
@@ -134,7 +149,7 @@ header nav[aria-expanded='true'] .nav-sections {
   align-self: flex-start;
 }
 
-/* tools */
+/* Tools */
 header nav .nav-tools {
   grid-area: tools;
   flex: 0 0 auto;
@@ -158,7 +173,7 @@ header nav[aria-expanded='true'] .nav-tools li {
   padding: 0;
 }
 
-/* desktop nav styles */
+/* Desktop nav styles */
 @media (min-width: 1000px) {
   header nav {
     display: flex;
@@ -174,7 +189,7 @@ header nav[aria-expanded='true'] .nav-tools li {
 
   header nav .nav-drop::after {
     content: ' ';
-    border: 1px solid currentolor;
+    border: 1px solid currentcolor;
     transform: rotate(135deg);
     border-width: 2px 2px 0 0;
     display: inline-block;
@@ -245,7 +260,6 @@ header nav[aria-expanded='true'] .nav-tools li {
     left: 20px;
   }
 
-
   header nav .nav-sections > ul > li > ul > li {
     font-size: 18px;
     padding: 8px 16px;
@@ -262,6 +276,7 @@ header nav[aria-expanded='true'] .nav-tools li {
   }
 }
 
+/* Topbar */
 header .header-topbar {
   height: 25px;
   background-color: black;
@@ -284,26 +299,27 @@ header .header-topbar .icon {
 }
 
 header .header-chevron-down {
-    box-sizing: border-box;
-    position: relative;
-    display: block;
-    width: 22px;
-    height: 22px;
-    border: 2px solid transparent;
-    border-radius: 100px
+  box-sizing: border-box;
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 22px;
+  border: 2px solid transparent;
+  border-radius: 100px;
 }
+
 header .header-chevron-down::after {
-    content: "";
-    display: block;
-    box-sizing: border-box;
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border-bottom: 1px solid;
-    border-right: 1px solid;
-    transform: rotate(45deg);
-    left: 4px;
-    top: 2px
+  content: '';
+  display: block;
+  box-sizing: border-box;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+  transform: rotate(45deg);
+  left: 4px;
+  top: 2px;
 }
 
 header .header-markets {

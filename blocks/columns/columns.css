@@ -1,25 +1,79 @@
-.columns > div {
+:root {
+    --color-yellow: #ffea00;
+    --link-color: black;
+    --link-hover-color: black;
+    --background-color: #fff;
+    --overlay-background-color: #eee;
+    --highlight-background-color: #ccc;
+    --text-color: #202020;
+    --text-color-light: #ebebeb;
+    --heading-highlight-color: #ffea00;
+    --overlay-text-color: var(--text-color);
+    --highlight-text-color: var(--text-color);
+  
+    --body-font-family: 'Source Sans Pro', 'helvetica neue', helvetica, ubuntu, roboto, noto, sans-serif;
+    --heading-font-family: asar, georgia, 'Times New Roman', times, serif;
+    --fixed-font-family: 'Roboto Mono', menlo, consolas, 'Liberation Mono', monospace;
+  
+    --body-font-size-m: 22px;
+    --body-font-size-s: 18px;
+    --body-font-size-xs: 14px;
+  
+    --heading-font-size-xxl: 40px;
+    --heading-font-size-xl: 36px;
+    --heading-font-size-l: 32px;
+    --heading-font-size-m: 24px;
+    --heading-font-size-s: 20px;
+    --heading-font-size-xs: 18px;
+  
+    --nav-height: 115px;
+  
+    --button-background-color: var(--color-yellow);
+    --button-border-radius: 0;
+    --button-text-color: var(--text-color);
+    --button-padding: 1em 2.5em;
+  
+    --default-text-align: left;
+  
+    --highlight-border-color: #ffea00; /* New CSS variable */
+    --shadow-color: rgba(0, 0, 0, 0.2); /* New CSS variable */
+  }
+  
+  .columns > div {
     display: flex;
     flex-direction: column;
-}
-
-.columns img {
+    box-shadow: 0 4px 8px var(--shadow-color); /* Adding shadow to the articles */
+    border: 2px solid var(--highlight-border-color); /* Adding border to highlight sections */
+    transition: transform 0.3s ease-in-out; /* Smooth transition for hover effect */
+  }
+  
+  .columns img {
     width: 100%;
-}
-
-@media (min-width: 900px) {
+    border-bottom: 2px solid var(--highlight-border-color); /* Adding border below images */
+  }
+  
+  .columns > div:hover {
+    transform: scale(1.05); /* Slight zoom on hover */
+  }
+  
+  .columns > div > div {
+    padding: 16px; /* Adding padding inside the article divs */
+  }
+  
+  @media (min-width: 900px) {
     .columns > div {
-        display: flex;
-        align-items: center;
-        flex-direction: unset;
+      display: flex;
+      align-items: center;
+      flex-direction: unset;
     }
-
+  
     .columns > div > div {
-        flex: 1;
-        margin-left: 32px;
+      flex: 1;
+      margin-left: 32px;
     }
-
+  
     .columns > div > div:first-of-type {
-        margin-left: unset;
+      margin-left: unset;
     }
-}
+  }
+  
