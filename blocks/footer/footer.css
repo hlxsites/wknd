@@ -1,21 +1,21 @@
-/* stylelint-disable */
-
 footer {
-  background-color: #202020;
-  color: #ebebeb;
-  padding: 1rem 0 1.5rem;
+  background-color: #1a1a1a;
+  color: #f5f5f5;
+  padding: 2rem 0 2.5rem;
   margin-top: 3rem;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
 }
 
 footer .footer {
   max-width: 1200px;
   margin: auto;
+  padding: 0 1rem;
 }
 
 .footer > div {
   display: grid;
-  grid-template-columns: auto 50% auto;
-  grid-template-rows: auto;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 2rem;
   grid-template-areas:
           "brand nav follow"
           "disc disc disc";
@@ -27,43 +27,123 @@ footer .footer {
 
 .footer .nav {
   grid-area: nav;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .footer .follow {
   grid-area: follow;
-  display: block;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
   font-size: 14px;
   text-transform: uppercase;
-  padding: 15px 17px;
-  text-decoration: none;
 }
 
 .footer .disc {
   grid-area: disc;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: 1.5rem;
 }
 
 footer ul {
   list-style: none;
   margin: 0;
   padding-inline-start: 0;
+  display: flex;
+  gap: 2rem;
 }
 
 footer li {
-  display: block;
-  float: left;
-  color: #202020;
-  font-size: 14px;
+  color: #f5f5f5;
+  font-size: 16px;
   text-transform: uppercase;
-  padding: 15px 17px;
-  text-decoration: none;
 }
 
 .footer a {
-  color: white;
+  color: #f5f5f5;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer a:hover {
+  color: #ff4081;
 }
 
 footer .footer p {
   margin: 0;
-  font-size: var(--body-font-size-xs);
-  line-height: 1.25;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.cc-btn {
+  background-color: #ff4081;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cc-btn:hover {
+  background-color: #e73570;
+}
+
+.cc-link {
+  color: #ff4081;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.cc-link:hover {
+  color: #e73570;
+}
+
+.cc-window {
+  background-color: #333;
+  color: #f5f5f5;
+  border: 1px solid #444;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.cc-message {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.cc-customize-header {
+  font-size: 18px;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.cc-customize-message {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.cc-category label {
+  font-size: 14px;
+}
+
+.cc-policies-links a {
+  color: #ff4081;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.cc-policies-links a:hover {
+  color: #e73570;
+}
+
+.cc-compliance {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
 }
