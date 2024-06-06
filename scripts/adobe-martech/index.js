@@ -189,7 +189,7 @@ async function loadAndConfigureDataLayer() {
           data = {};
         }
         if (!el.id) {
-          const index = [...document.querySelectorAll(`.${el.classList[0]}`)].indexOf(el)
+          const index = [...document.querySelectorAll(`.${el.classList[0]}`)].indexOf(el);
           el.id = `${data.parentId ? `${data.parentId}-` : ''}${index + 1}`;
         }
         window[config.dataLayerInstanceName].push({
@@ -202,20 +202,34 @@ async function loadAndConfigureDataLayer() {
 
 /**
  * Sets Adobe standard v2.0 consent for alloy based on the input
- * Documentation: https://experienceleague.adobe.com/docs/experience-platform/edge/consent/supporting-consent.html?lang=en#using-the-adobe-standard-version-1.0
- * @param approved
- * @returns {Promise<*>}
+ * Documentation:
+ * https://experienceleague.adobe.com/en/docs/experience-platform/landing/governance-privacy-security/consent/adobe/dataset#structure
+ * https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/consents
+ * @param {Object} config The consent config to use
+ * @param {Boolean} [config.collect] Whether data collection is allowed
+ * @param {Boolean} [config.marketing] Whether data can be used for marketing purposes
+ * @param {Boolean} [config.personalize] Whether data can be used for personalization purposes
+ * @param {Boolean} [config.share] Whether data can be shared/sold to 3rd parties
+ * @returns {Promise<*>} a promise that the consent setting shave been updated
  */
-export async function updateUserConsent(isConsented) {
+export async function updateUserConsent(consent) {
   // eslint-disable-next-line no-console
   console.assert(config.alloyInstanceName, 'Martech needs to be initialized before the `updateUserConsent` method is called');
+
   return window[config.alloyInstanceName]('setConsent', {
     consent: [{
       standard: 'Adobe',
       version: '2.0',
       value: {
-        collect: { val: isConsented ? 'y' : 'n' },
-        metadata: { time: new Date().toISOString() },
+        collect: { val: consent.collect ? 'y' : 'n' },
+        marketing: {
+          any: { val: consent.marketing ? 'y' : 'n' },
+          preferred: 'email',
+        },
+        personalize: {
+          content: { val: consent.personalize ? 'y' : 'n' },
+        },
+        share: { val: consent.share ? 'y' : 'n' },
       },
     }],
   });
@@ -280,6 +294,8 @@ async function applyPropositions(instanceName) {
 let response;
 export async function initMartech(webSDKConfig, martechConfig = {}) {
   // eslint-disable-next-line no-console
+  console.assert(!config, 'Martech already initialized.');
+  // eslint-disable-next-line no-console
   console.assert(webSDKConfig?.datastreamId || webSDKConfig?.edgeConfigId, 'Please set your "datastreamId" for the WebSDK config.');
   // eslint-disable-next-line no-console
   console.assert(webSDKConfig?.orgId, 'Please set your "orgId" for the WebSDK config.');
@@ -292,6 +308,25 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
   initAlloyQueue(config.alloyInstanceName);
   if (config.dataLayer) {
     initDatalayer(config.dataLayerInstanceName);
+    const usp = new URLSearchParams(window.location.search);
+    window.hlx?.rum?.sampleRUM.always.on('load', () => pushEventToDataLayer('rum:page-load', {
+      campaign: usp.get('utm_campaign') || usp.get('campaign'),
+      connectionType: navigator.connection.effectiveType,
+      cookiesEnabled: navigator.cookieEnabled,
+      pageName: document.head.querySelector('title').textContent,
+      pageType: document.head.querySelector('meta[name="template"]')?.content,
+      pageURL: document.head.querySelector('link[rel="canonical"]').href,
+      referrer: document.referrer,
+    }));
+    window.hlx?.rum?.sampleRUM.always.on('click', (ev) => pushEventToDataLayer('rum:click', { element: ev.source, value: ev.target }));
+    window.hlx?.rum?.sampleRUM.always.on('convert', (ev) => pushEventToDataLayer('rum:conversion', { element: ev.source, value: ev.target }));
+    window.hlx?.rum?.sampleRUM.always.on('viewblock', (ev) => pushEventToDataLayer('rum:block-viewed', { element: ev.source, value: ev.target }));
+    window.hlx?.rum?.sampleRUM.always.on('viewmedia', (ev) => pushEventToDataLayer('rum:media-viewed', { element: ev.source, value: ev.target }));
+    window.hlx?.rum?.sampleRUM.always.on('navigate', (ev) => pushEventToDataLayer('rum:internal-navigation', { url: ev.source }));
+    window.hlx?.rum?.sampleRUM.always.on('leave', () => pushEventToDataLayer('rum:page-lost-focus', { duration: performance.now() - performance.timeOrigin }));
+    window.hlx?.rum?.sampleRUM.always.on('cwv', (ev) => pushToDataLayer({ cwv: ev.cwv }));
+    window.hlx?.rum?.sampleRUM.always.on('formsubmit', (ev) => pushEventToDataLayer('rum:form-submit', { form: ev.source, url: ev.target }));
+    window.hlx?.rum?.sampleRUM.always.on('utm', (ev) => pushToDataLayer({ [ev.source]: ev.target }));
   }
 
   alloyConfig = {
@@ -350,6 +385,15 @@ export async function martechLazy() {
       .then((resp) => { response = resp; });
   }
   if (config.dataLayer) {
+    // use classic script to avoid CORS issues
+    if (window.hlx?.rum?.sampleRUM.baseURL) {
+      const script = document.createElement('script');
+      script.src = new URL(
+        '.rum/@adobe/helix-rum-enhancer@^1/src/index.js',
+        window.hlx.rum.sampleRUM.baseURL,
+      ).href;
+      document.head.appendChild(script);
+    }
     return loadAndConfigureDataLayer({});
   }
   return Promise.resolve();
