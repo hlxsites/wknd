@@ -308,9 +308,11 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
   initAlloyQueue(config.alloyInstanceName);
   if (config.dataLayer) {
     initDatalayer(config.dataLayerInstanceName);
+    const usp = new URLSearchParams(window.location.search);
     window.hlx?.rum?.sampleRUM.always.on('load', () => pushEventToDataLayer('rum:page-load', {
-      campaign: (Object.entries(config.campaigns)
-        .find(([k]) => window.location.pathname.match(k)) || {})[1] || null,
+      campaign: config.getCampaignId
+        ? config.getCampaignId()
+        : usp.get('utm_campaign') || usp.get('campaign') || usp.get('cid') || usp.get('cmp'),
       connectionType: navigator.connection.effectiveType,
       cookiesEnabled: navigator.cookieEnabled,
       pageName: window.location.pathname.split('/').slice(1).join(':') || 'homepage',
