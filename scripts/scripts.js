@@ -29,6 +29,7 @@ const martechLoadedPromise = initMartech({
   orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
   defaultConsent: 'in', // 'pending',
   onBeforeEventSend: (options) => {
+    /* enrich analytics data here */
     const { experiment } = window.hlx;
     // eslint-disable-next-line no-underscore-dangle
     options.xdm._sitesinternal = {
@@ -38,6 +39,7 @@ const martechLoadedPromise = initMartech({
     };
   },
 }, {
+  getPageMetadata: () => ({ /* return additional page metadata here */ }),
   launchUrls: [
     'https://assets.adobedtm.com/51b39232f128/2609377b4aba/launch-6c3a8fffe137-development.min.js',
   ],
