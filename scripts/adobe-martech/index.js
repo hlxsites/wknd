@@ -321,7 +321,7 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
       referrer: document.referrer,
       server: window.location.origin,
       language: document.documentElement.getAttribute('lang'),
-      isErrorPage: window.isErrorPage,
+      isErrorPage: window.isErrorPage || false,
       ...(config.getPageMetadata ? config.getPageMetadata() : {}),
     }));
     window.hlx?.rum?.sampleRUM.always.on('click', (ev) => pushEventToDataLayer('rum:click', { element: ev.source, value: ev.target }));
