@@ -308,13 +308,13 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
   initAlloyQueue(config.alloyInstanceName);
   if (config.dataLayer) {
     initDatalayer(config.dataLayerInstanceName);
-    const usp = new URLSearchParams(window.location.search);
     window.hlx?.rum?.sampleRUM.always.on('load', () => pushEventToDataLayer('rum:page-load', {
-      campaign: usp.get('utm_campaign') || usp.get('campaign'),
+      campaign: (Object.entries(config.campaigns)
+        .find(([k]) => window.location.pathname.match(k)) || {})[1] || null,
       connectionType: navigator.connection.effectiveType,
       cookiesEnabled: navigator.cookieEnabled,
-      pageName: document.head.querySelector('title').textContent,
-      pageType: document.head.querySelector('meta[name="template"]')?.content,
+      pageName: window.location.pathname.split('/').slice(1).join(':') || 'homepage',
+      pageType: document.head.querySelector('meta[name="template"]')?.content || 'default',
       pageURL: document.head.querySelector('link[rel="canonical"]').href,
       referrer: document.referrer,
     }));
@@ -324,9 +324,8 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
     window.hlx?.rum?.sampleRUM.always.on('viewmedia', (ev) => pushEventToDataLayer('rum:media-viewed', { element: ev.source, value: ev.target }));
     window.hlx?.rum?.sampleRUM.always.on('navigate', (ev) => pushEventToDataLayer('rum:internal-navigation', { url: ev.source }));
     window.hlx?.rum?.sampleRUM.always.on('leave', () => pushEventToDataLayer('rum:page-lost-focus', { duration: performance.now() - performance.timeOrigin }));
-    window.hlx?.rum?.sampleRUM.always.on('cwv', (ev) => pushToDataLayer({ cwv: ev.cwv }));
     window.hlx?.rum?.sampleRUM.always.on('formsubmit', (ev) => pushEventToDataLayer('rum:form-submit', { form: ev.source, url: ev.target }));
-    window.hlx?.rum?.sampleRUM.always.on('utm', (ev) => pushToDataLayer({ [ev.source]: ev.target }));
+    window.hlx?.rum?.sampleRUM.always.on('search', (ev) => pushEventToDataLayer('rum:search', { element: ev.source, query: ev.target }));
   }
 
   alloyConfig = {
