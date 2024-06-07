@@ -311,7 +311,7 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
     const { pathname, search } = window.location;
     const usp = new URLSearchParams(search);
     window.hlx?.rum?.sampleRUM.always.on('load', () => pushEventToDataLayer('rum:page-load', {
-      pageURL: document.head.querySelector('link[rel="canonical"]').href,
+      pageURL: new URL(document.head.querySelector('link[rel="canonical"]').href).pathname,
       pageName: pathname.split('/').slice(1).join(':') + (pathname.endsWith('/') ? 'home' : ''),
       section: pathname.split('/')[1] || null,
       campaign: usp.get('utm_campaign') || usp.get('campaign') || usp.get('cid') || usp.get('cmp'),
