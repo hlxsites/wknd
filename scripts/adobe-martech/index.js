@@ -308,17 +308,20 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
   initAlloyQueue(config.alloyInstanceName);
   if (config.dataLayer) {
     initDatalayer(config.dataLayerInstanceName);
-    const usp = new URLSearchParams(window.location.search);
+    const { pathname, search } = window.location;
+    const usp = new URLSearchParams(search);
     window.hlx?.rum?.sampleRUM.always.on('load', () => pushEventToDataLayer('rum:page-load', {
-      campaign: config.getCampaignId
-        ? config.getCampaignId()
-        : usp.get('utm_campaign') || usp.get('campaign') || usp.get('cid') || usp.get('cmp'),
+      pageURL: document.head.querySelector('link[rel="canonical"]').href,
+      pageName: pathname.split('/').slice(1).join(':') + (pathname.endsWith('/') ? 'home' : ''),
+      section: pathname.split('/')[1] || null,
+      campaign: usp.get('utm_campaign') || usp.get('campaign') || usp.get('cid') || usp.get('cmp'),
       connectionType: navigator.connection.effectiveType,
       cookiesEnabled: navigator.cookieEnabled,
-      pageName: window.location.pathname.split('/').slice(1).join(':') || 'homepage',
       pageType: document.head.querySelector('meta[name="template"]')?.content || 'default',
-      pageURL: document.head.querySelector('link[rel="canonical"]').href,
       referrer: document.referrer,
+      server: window.location.origin,
+      language: document.documentElement.getAttribute('lang'),
+      ...(config.getPageMetadata ? config.getPageMetadata() : {}),
     }));
     window.hlx?.rum?.sampleRUM.always.on('click', (ev) => pushEventToDataLayer('rum:click', { element: ev.source, value: ev.target }));
     window.hlx?.rum?.sampleRUM.always.on('convert', (ev) => pushEventToDataLayer('rum:conversion', { element: ev.source, value: ev.target }));
@@ -328,6 +331,7 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
     window.hlx?.rum?.sampleRUM.always.on('leave', () => pushEventToDataLayer('rum:page-lost-focus', { duration: performance.now() - performance.timeOrigin }));
     window.hlx?.rum?.sampleRUM.always.on('formsubmit', (ev) => pushEventToDataLayer('rum:form-submit', { form: ev.source, url: ev.target }));
     window.hlx?.rum?.sampleRUM.always.on('search', (ev) => pushEventToDataLayer('rum:search', { element: ev.source, query: ev.target }));
+    window.hlx?.rum?.sampleRUM.always.on('nullsearch', (ev) => pushEventToDataLayer('rum:search', { element: ev.source, query: ev.target, hasResults: false }));
   }
 
   alloyConfig = {
