@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /**
  * Default configuration for the library.
  * @typedef {Object} MartechConfig
@@ -94,10 +95,13 @@ function getDefaultAlloyConfiguration() {
  * @param {Object} webSDKConfig The configuration to use
  * @returns a promise that the library was loaded and configured
  */
-function loadAndConfigureAlloy(instanceName, webSDKConfig) {
-  return import('./alloy.min.js')
-    .then(() => window[instanceName]('configure', webSDKConfig))
-    .catch((err) => handleRejectedPromise(new Error(err)));
+async function loadAndConfigureAlloy(instanceName, webSDKConfig) {
+  await import('./alloy.min.js');
+  try {
+    await window[instanceName]('configure', webSDKConfig);
+  } catch (err) {
+    handleRejectedPromise(new Error(err));
+  }
 }
 
 /**
@@ -159,12 +163,17 @@ export async function sendAnalyticsEvent(xdmData, dataMapping) {
   console.assert(config.alloyInstanceName && window[config.alloyInstanceName], 'Martech needs to be initialized before the `sendAnalyticsEvent` method is called');
   // eslint-disable-next-line no-console
   console.assert(config.analytics, 'Analytics tracking is disabled in the martech config');
-  // eslint-disable-next-line no-undef
-  return window[config.alloyInstanceName]('sendEvent', {
-    documentUnloading: true,
-    xdm: xdmData,
-    data: dataMapping,
-  });
+  try {
+    // eslint-disable-next-line no-undef
+    return window[config.alloyInstanceName]('sendEvent', {
+      documentUnloading: true,
+      xdm: xdmData,
+      data: dataMapping,
+    });
+  } catch (err) {
+    handleRejectedPromise(new Error(err));
+    return Promise.reject(new Error(err));
+  }
 }
 
 /**
@@ -172,32 +181,29 @@ export async function sendAnalyticsEvent(xdmData, dataMapping) {
  * @returns the ACDL instance
  */
 async function loadAndConfigureDataLayer() {
-  return import('./acdl.min.js')
-    .then(() => {
-      if (config.analytics) {
-        window[config.dataLayerInstanceName].push((dl) => {
-          dl.addEventListener('adobeDataLayer:event', (event) => {
-            sendAnalyticsEvent({ eventType: event.event, ...event.eventInfo });
-          });
-        });
-      }
-      [...document.querySelectorAll('[data-block-data-layer]')].forEach((el) => {
-        let data;
-        try {
-          data = JSON.parse(el.dataset.blockDataLayer);
-        } catch (err) {
-          data = {};
-        }
-        if (!el.id) {
-          const index = [...document.querySelectorAll(`.${el.classList[0]}`)].indexOf(el);
-          el.id = `${data.parentId ? `${data.parentId}-` : ''}${index + 1}`;
-        }
-        window[config.dataLayerInstanceName].push({
-          blocks: { [el.id]: data },
-        });
+  await import('./acdl.min.js');
+  if (config.analytics) {
+    window[config.dataLayerInstanceName].push((dl) => {
+      dl.addEventListener('adobeDataLayer:event', (event) => {
+        sendAnalyticsEvent({ eventType: event.event, ...event.eventInfo });
       });
-    })
-    .catch((err) => handleRejectedPromise(new Error(err)));
+    });
+  }
+  [...document.querySelectorAll('[data-block-data-layer]')].forEach((el) => {
+    let data;
+    try {
+      data = JSON.parse(el.dataset.blockDataLayer);
+    } catch (err) {
+      data = {};
+    }
+    if (!el.id) {
+      const index = [...document.querySelectorAll(`.${el.classList[0]}`)].indexOf(el);
+      el.id = `${data.parentId ? `${data.parentId}-` : ''}${index + 1}`;
+    }
+    window[config.dataLayerInstanceName].push({
+      blocks: { [el.id]: data },
+    });
+  });
 }
 
 /**
@@ -256,6 +262,8 @@ async function getElementForProposition(proposition) {
   return document.querySelector(selector);
 }
 
+let response;
+
 /**
  * Fetching propositions from the backend and applying the propositions as the AEM EDS page loads
  * its content async.
@@ -267,9 +275,19 @@ async function getElementForProposition(proposition) {
 async function applyPropositions(instanceName) {
   // Get the decisions, but don't render them automatically
   // so we can hook up into the AEM EDS page load sequence
-  const renderDecisionResponse = await window[instanceName]('sendEvent', { renderDecisions: false });
+  const renderDecisionResponse = await window[instanceName]('sendEvent', {
+    type: 'decisioning.propositionFetch',
+    renderDecisions: false,
+    personalization: {
+      sendDisplayEvent: false,
+    },
+  });
+  response = renderDecisionResponse;
   const propositions = window.structuredClone(renderDecisionResponse.propositions);
   onDecoratedElement(async () => {
+    if (!propositions.length) {
+      return;
+    }
     await window[instanceName]('applyPropositions', { propositions });
     propositions.forEach((p) => {
       p.items = p.items.filter((i) => i.schema !== 'https://ns.adobe.com/personalization/dom-action' || !getElementForProposition(i));
@@ -291,7 +309,6 @@ async function applyPropositions(instanceName) {
  * @param {String[]} [martechConfig.launchUrls] a list of Launch configurations to load
  * @returns a promise that the library was loaded and configured
  */
-let response;
 export async function initMartech(webSDKConfig, martechConfig = {}) {
   // eslint-disable-next-line no-console
   console.assert(!config, 'Martech already initialized.');
@@ -308,60 +325,79 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
   initAlloyQueue(config.alloyInstanceName);
   if (config.dataLayer) {
     initDatalayer(config.dataLayerInstanceName);
-    const { pathname, search } = window.location;
-    const usp = new URLSearchParams(search);
-    window.hlx?.rum?.sampleRUM.always.on('load', () => pushEventToDataLayer('rum:page-load', {
-      pageURL: new URL(document.head.querySelector('link[rel="canonical"]').href).pathname,
-      pageName: pathname.split('/').slice(1).join(':') + (pathname.endsWith('/') ? 'home' : ''),
-      section: pathname.split('/')[1] || null,
-      campaign: usp.get('utm_campaign') || usp.get('campaign') || usp.get('cid') || usp.get('cmp'),
-      connectionType: navigator.connection.effectiveType,
-      cookiesEnabled: navigator.cookieEnabled,
-      pageType: document.head.querySelector('meta[name="template"]')?.content || 'default',
-      referrer: document.referrer,
-      server: window.location.origin,
-      language: document.documentElement.getAttribute('lang'),
-      isErrorPage: window.isErrorPage || false,
-      ...(config.getPageMetadata ? config.getPageMetadata() : {}),
-    }));
-    window.hlx?.rum?.sampleRUM.always.on('click', (ev) => pushEventToDataLayer('rum:click', { element: ev.source, value: ev.target }));
-    window.hlx?.rum?.sampleRUM.always.on('convert', (ev) => pushEventToDataLayer('rum:conversion', { element: ev.source, value: ev.target }));
-    window.hlx?.rum?.sampleRUM.always.on('viewblock', (ev) => pushEventToDataLayer('rum:block-viewed', { element: ev.source, value: ev.target }));
-    window.hlx?.rum?.sampleRUM.always.on('viewmedia', (ev) => pushEventToDataLayer('rum:media-viewed', { element: ev.source, value: ev.target }));
-    window.hlx?.rum?.sampleRUM.always.on('navigate', (ev) => pushEventToDataLayer('rum:internal-navigation', { url: ev.source }));
-    window.hlx?.rum?.sampleRUM.always.on('leave', () => pushEventToDataLayer('rum:page-lost-focus', { duration: performance.now() - performance.timeOrigin }));
-    window.hlx?.rum?.sampleRUM.always.on('formsubmit', (ev) => pushEventToDataLayer('rum:form-submit', { form: ev.source, url: ev.target }));
-    window.hlx?.rum?.sampleRUM.always.on('search', (ev) => pushEventToDataLayer('rum:search', { element: ev.source, query: ev.target }));
-    window.hlx?.rum?.sampleRUM.always.on('nullsearch', (ev) => pushEventToDataLayer('rum:search', { element: ev.source, query: ev.target, hasResults: false }));
   }
 
   alloyConfig = {
     ...getDefaultAlloyConfiguration(),
     ...webSDKConfig,
+    onBeforeEventSend: (data) => {
+      if (data.xdm?.eventType === 'web.webpagedetails.pageViews') {
+        const { pathname } = window.location;
+        data.data ||= {};
+        data.data._adobe ||= {};
+        data.data._adobe.analytics = {
+          channel: pathname.split('/')[1] || 'home',
+          connectionType: navigator.connection.effectiveType,
+          cookiesEnabled: navigator.cookieEnabled,
+          pageName: pathname.split('/').slice(1).join(':') + (pathname.endsWith('/') ? 'home' : ''),
+          pageURL: new URL(document.head.querySelector('link[rel="canonical"]').href).pathname,
+          pageType: document.head.querySelector('meta[name="template"]')?.content || 'default',
+          referrer: document.referrer,
+          server: window.location.origin,
+          language: document.documentElement.getAttribute('lang'),
+          isErrorPage: window.isErrorPage || false,
+        };
+      }
+
+      // Let project override the data if needed
+      webSDKConfig?.onBeforeEventSend(data);
+
+      if (data.xdm?.eventType === 'web.webpagedetails.pageViews') {
+        data.xdm._experience = {
+          decisioning: {
+            propositions: response.propositions
+              .map((p) => ({ id: p.id, scope: p.scope, scopeDetails: p.scopeDetails })),
+            propositionEventType: { display: 1 },
+          },
+        };
+      }
+    },
   };
   if (config.personalization) {
-    return loadAndConfigureAlloy(config.alloyInstanceName, alloyConfig)
-      .then((resp) => { response = resp; });
+    await loadAndConfigureAlloy(config.alloyInstanceName, alloyConfig);
   }
   return Promise.resolve();
 }
 
-/**
- * Reports the displayed propositions so they can be tracked in Analytics
- * @param {String} instanceName The name of the instance in the blobal scope
- * @param {Object[]} propositions The list of propositions that were shown
- * @returns a promise the the displayed propositions have been reported
- */
-async function reportDisplayedPropositions(instanceName, propositions) {
-  return window[instanceName]('sendEvent', {
-    documentUnloading: true,
-    xdm: {
-      eventType: 'decisioning.propositionDisplay',
-      _experience: {
-        decisioning: { propositions },
-      },
-    },
-  });
+const debug = (label = 'martech', ...args) => {
+  if (alloyConfig.debugEnabled) {
+    // eslint-disable-next-line no-console
+    console.debug.call(null, `[${label}]`, ...args);
+  }
+};
+
+export function initRumTracking(sampleRUM, loadRumEnhancer = false) {
+  // Load the RUM enhancer so we can map all RUM events even on non-sampled pages
+  if (loadRumEnhancer) {
+    const script = document.createElement('script');
+    script.src = new URL('.rum/@adobe/helix-rum-enhancer@^1/src/index.js', sampleRUM.baseURL).href;
+    document.head.appendChild(script);
+  }
+
+  // Define RUM tracking function
+  let track;
+  if (sampleRUM.always) {
+    track = (ev, cb) => sampleRUM.always.on(ev, (data) => {
+      debug('rum', ev, data);
+      cb(data);
+    });
+  } else {
+    track = (ev, cb) => document.addEventListener('rum', (data) => {
+      debug('rum', ev, data);
+      cb(data);
+    });
+  }
+  return track;
 }
 
 /**
@@ -371,8 +407,8 @@ async function reportDisplayedPropositions(instanceName, propositions) {
 export async function martechEager() {
   if (config.personalization) {
     // eslint-disable-next-line no-console
-    console.assert(response, 'Martech needs to be initialized before the `martechEager` method is called');
-    return applyPropositions('alloy');
+    console.assert(window.alloy, 'Martech needs to be initialized before the `martechEager` method is called');
+    return applyPropositions(config.alloyInstanceName);
   }
   return Promise.resolve();
 }
@@ -382,27 +418,13 @@ export async function martechEager() {
  * @returns a promise that the lazy logic was executed
  */
 export async function martechLazy() {
-  if (config.personalization && response.propositions?.length) {
-    // eslint-disable-next-line no-console
-    console.assert(response, 'Martech needs to be initialized before the `martechLazy` method is called');
-    await reportDisplayedPropositions('alloy', response.propositions);
-  } else if (!config.personalization) {
-    await loadAndConfigureAlloy(config.alloyInstanceName, alloyConfig)
-      .then((resp) => { response = resp; });
-  }
   if (config.dataLayer) {
-    // use classic script to avoid CORS issues
-    if (window.hlx?.rum?.sampleRUM.baseURL) {
-      const script = document.createElement('script');
-      script.src = new URL(
-        '.rum/@adobe/helix-rum-enhancer@^1/src/index.js',
-        window.hlx.rum.sampleRUM.baseURL,
-      ).href;
-      document.head.appendChild(script);
-    }
-    return loadAndConfigureDataLayer({});
+    await loadAndConfigureDataLayer({});
   }
-  return Promise.resolve();
+
+  if (!config.personalization) {
+    await loadAndConfigureAlloy(config.alloyInstanceName, alloyConfig);
+  }
 }
 
 /**
@@ -411,7 +433,7 @@ export async function martechLazy() {
  */
 export async function martechDelayed() {
   // eslint-disable-next-line no-console
-  console.assert(response, 'Martech needs to be initialized before the `martechDelayed` method is called');
+  console.assert(window.alloy, 'Martech needs to be initialized before the `martechDelayed` method is called');
 
   const { launchUrls } = config;
   return Promise.all(launchUrls.map((url) => import(url)))

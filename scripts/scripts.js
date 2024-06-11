@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   sampleRUM,
   buildBlock,
@@ -29,17 +30,18 @@ const martechLoadedPromise = initMartech({
   orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
   defaultConsent: 'in', // 'pending',
   onBeforeEventSend: (options) => {
+    const usp = new URLSearchParams(window.Location.search);
+    if (options.data?.__adobe?.analytics) {
+      options.data.__adobe.analytics.campaign = usp.get('utm_campaign') || null;
+    }
     /* enrich analytics data here */
     const { experiment } = window.hlx;
-    // eslint-disable-next-line no-underscore-dangle
     options.xdm._sitesinternal = {
-      // eslint-disable-next-line no-underscore-dangle
       ...options.xdm._sitesinternal,
       ...(experiment && { experiment }), // add experiment details, if existing, to all events
     };
   },
 }, {
-  getPageMetadata: () => ({ /* return additional page metadata here */ }),
   launchUrls: [
     'https://assets.adobedtm.com/51b39232f128/2609377b4aba/launch-6c3a8fffe137-development.min.js',
   ],
@@ -254,6 +256,7 @@ async function loadLazy(doc) {
   }
   addFavIcon(`${window.wknd.demoConfig.demoBase || window.hlx.codeBasePath}/favicon.png`);
   await import('./rum-to-analytics.js');
+  await martechLazy();
   sampleRUM('lazy');
   sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
   sampleRUM.observe(main.querySelectorAll('picture > img'));
@@ -261,7 +264,6 @@ async function loadLazy(doc) {
   // Mark customer as having viewed the page once
   localStorage.setItem('franklin-visitor-returning', true);
 
-  await martechLazy();
   window.hlx.plugins.run('loadLazy');
 }
 
