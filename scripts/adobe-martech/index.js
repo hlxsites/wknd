@@ -146,10 +146,11 @@ export function pushToDataLayer(payload) {
 /**
  * Pushes an event to the data layer
  * @param {String} event the name of the event to push
- * @param {Object} payload the payload to push
+ * @param {Object} xdm the xdm data object to send
+ * @param {Object} [data] additional data mapping for the event
  */
-export function pushEventToDataLayer(event, payload) {
-  pushToDataLayer({ event, eventInfo: payload });
+export function pushEventToDataLayer(event, xdm, data) {
+  pushToDataLayer({ event, xdm, data });
 }
 
 /**
@@ -185,7 +186,7 @@ async function loadAndConfigureDataLayer() {
   if (config.analytics) {
     window[config.dataLayerInstanceName].push((dl) => {
       dl.addEventListener('adobeDataLayer:event', (event) => {
-        sendAnalyticsEvent({ eventType: event.event, ...event.eventInfo });
+        sendAnalyticsEvent({ eventType: event.event, ...event.xdm }, event.data);
       });
     });
   }
@@ -331,24 +332,6 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
     ...getDefaultAlloyConfiguration(),
     ...webSDKConfig,
     onBeforeEventSend: (data) => {
-      if (data.xdm?.eventType === 'web.webpagedetails.pageViews') {
-        const { pathname } = window.location;
-        data.data ||= {};
-        data.data._adobe ||= {};
-        data.data._adobe.analytics = {
-          channel: pathname.split('/')[1] || 'home',
-          connectionType: navigator.connection.effectiveType,
-          cookiesEnabled: navigator.cookieEnabled,
-          pageName: pathname.split('/').slice(1).join(':') + (pathname.endsWith('/') ? 'home' : ''),
-          pageURL: new URL(document.head.querySelector('link[rel="canonical"]').href).pathname,
-          pageType: document.head.querySelector('meta[name="template"]')?.content || 'default',
-          referrer: document.referrer,
-          server: window.location.origin,
-          language: document.documentElement.getAttribute('lang'),
-          isErrorPage: window.isErrorPage || false,
-        };
-      }
-
       // Let project override the data if needed
       webSDKConfig?.onBeforeEventSend(data);
 
@@ -376,9 +359,9 @@ const debug = (label = 'martech', ...args) => {
   }
 };
 
-export function initRumTracking(sampleRUM, loadRumEnhancer = false) {
+export function initRumTracking(sampleRUM, options = {}) {
   // Load the RUM enhancer so we can map all RUM events even on non-sampled pages
-  if (loadRumEnhancer) {
+  if (options.withRumEnhancer) {
     const script = document.createElement('script');
     script.src = new URL('.rum/@adobe/helix-rum-enhancer@^1/src/index.js', sampleRUM.baseURL).href;
     document.head.appendChild(script);

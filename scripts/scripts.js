@@ -30,11 +30,13 @@ const martechLoadedPromise = initMartech({
   orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
   defaultConsent: 'in', // 'pending',
   onBeforeEventSend: (options) => {
-    const usp = new URLSearchParams(window.Location.search);
-    if (options.data?.__adobe?.analytics) {
-      options.data.__adobe.analytics.campaign = usp.get('utm_campaign') || null;
+    /* add marketing campaign detail to analytics */
+    if (options.xdm.eventType === 'web.webpagedetails.pageViews' && options.data?._adobe?.analytics) {
+      const usp = new URLSearchParams(window.Location.search);
+      options.data._adobe.analytics.campaign = usp.get('utm_campaign') || null;
     }
-    /* enrich analytics data here */
+
+    /* add experiment details to XDM */
     const { experiment } = window.hlx;
     options.xdm._sitesinternal = {
       ...options.xdm._sitesinternal,

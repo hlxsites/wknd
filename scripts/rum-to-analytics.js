@@ -2,12 +2,13 @@ import { sampleRUM } from './lib-franklin.js';
 import { initRumTracking, pushEventToDataLayer } from './adobe-martech/index.js';
 
 // Define RUM tracking function
-const track = initRumTracking(sampleRUM, true);
+const track = initRumTracking(sampleRUM, { withRumEnhancer: true });
 
 // Track page views when the page is fully rendered
 // The data will be automatically enriched with default page metadata,
 // and applied propositions for personalization use cases
 track('lazy', () => {
+  const { pathname } = window.location;
   pushEventToDataLayer('web.webpagedetails.pageViews', {
     web: {
       webPageDetails: {
@@ -16,6 +17,21 @@ track('lazy', () => {
         },
         name: document.title,
         isHomePage: window.location.pathname === '/',
+      },
+    },
+  }, {
+    _adobe: {
+      analytics: {
+        channel: pathname.split('/')[1] || 'home',
+        connectionType: navigator.connection.effectiveType,
+        cookiesEnabled: navigator.cookieEnabled,
+        pageName: pathname.split('/').slice(1).join(':') + (pathname.endsWith('/') ? 'home' : ''),
+        pageURL: new URL(document.head.querySelector('link[rel="canonical"]').href).pathname,
+        pageType: document.head.querySelector('meta[name="template"]')?.content || 'default',
+        referrer: document.referrer,
+        server: window.location.origin,
+        language: document.documentElement.getAttribute('lang'),
+        isErrorPage: window.isErrorPage || false,
       },
     },
   });
