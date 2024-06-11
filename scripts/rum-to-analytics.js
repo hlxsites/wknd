@@ -5,8 +5,7 @@ import { initRumTracking, pushEventToDataLayer } from './adobe-martech/index.js'
 const track = initRumTracking(sampleRUM, { withRumEnhancer: true });
 
 // Track page views when the page is fully rendered
-// The data will be automatically enriched with default page metadata,
-// and applied propositions for personalization use cases
+// The data will be automatically enriched with applied propositions for personalization use cases
 track('lazy', () => {
   const { pathname } = window.location;
   pushEventToDataLayer('web.webpagedetails.pageViews', {
@@ -15,7 +14,6 @@ track('lazy', () => {
         pageViews: {
           value: window.isErrorPage ? 0 : 1,
         },
-        name: document.title,
         isHomePage: window.location.pathname === '/',
       },
     },
@@ -66,9 +64,13 @@ track('click', (data) => {
       webInteraction: {
         URL: element.href,
         // eslint-disable-next-line no-nested-ternary
-        name: element.text ? element.text.trim() : (element.innerHTML ? element.innerHTML.trim() : ''),
+        name: element.text
+          ? element.text.trim()
+          : (element.innerHTML ? element.innerHTML.trim() : ''),
         linkClicks: { value: 1 },
-        type: 'other',
+        type: new URL(element.href).origin !== window.location.origin
+          ? 'exit'
+          : 'other',
       },
     },
   });
