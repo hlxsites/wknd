@@ -30,10 +30,19 @@ const martechLoadedPromise = initMartech({
   orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
   defaultConsent: 'in', // 'pending',
   onBeforeEventSend: (options) => {
+    if (options.xdm.eventType === 'decisioning.propositionFetch') {
+      options.data ||= {};
+      options.data.__adobe ||= {};
+      options.data.__adobe.target = {
+        /* add target parameters here.
+           documentation: https://experienceleague.adobe.com/en/docs/platform-learn/migrate-target-to-websdk/send-parameters#parameter-mapping-summary */
+      };
+    }
+
     /* add marketing campaign detail to analytics */
-    if (options.xdm.eventType === 'web.webpagedetails.pageViews' && options.data?._adobe?.analytics) {
+    if (options.xdm.eventType === 'web.webpagedetails.pageViews' && options.data?.__adobe?.analytics) {
       const usp = new URLSearchParams(window.Location.search);
-      options.data._adobe.analytics.campaign = usp.get('utm_campaign') || null;
+      options.data.__adobe.analytics.campaign = usp.get('utm_campaign') || null;
     }
 
     /* add experiment details to XDM */

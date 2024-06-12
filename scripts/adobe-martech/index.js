@@ -335,7 +335,9 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
       // Let project override the data if needed
       webSDKConfig?.onBeforeEventSend(data);
 
-      if (data.xdm?.eventType === 'web.webpagedetails.pageViews') {
+      // Automatically track displayed propositions as part of the pageview event
+      if (data.xdm?.eventType === 'web.webpagedetails.pageViews' && config.personalization) {
+        data.xdm.eventType = 'decisioning.propositionDisplay';
         data.xdm._experience = {
           decisioning: {
             propositions: response.propositions

@@ -18,7 +18,7 @@ track('lazy', () => {
       },
     },
   }, {
-    _adobe: {
+    __adobe: {
       analytics: {
         channel: pathname.split('/')[1] || 'home',
         connectionType: navigator.connection.effectiveType,
@@ -44,31 +44,16 @@ track('cwv', (data) => {
   });
 });
 
-track('formsubmit', (data) => {
-  const element = { data };
-  const formId = element?.id || element?.dataset?.action;
-  return pushEventToDataLayer('web.formFilledOut', {
-    _sitesinternal: {
-      form: {
-        ...(formId && { formId }),
-        formComplete: 1,
-      },
-    },
-  });
-});
-
 track('click', (data) => {
-  const element = { data };
+  const { source, target } = data;
   pushEventToDataLayer('web.webinteraction.linkClicks', {
     web: {
       webInteraction: {
-        URL: element.href,
+        URL: target,
         // eslint-disable-next-line no-nested-ternary
-        name: element.text
-          ? element.text.trim()
-          : (element.innerHTML ? element.innerHTML.trim() : ''),
+        name: source,
         linkClicks: { value: 1 },
-        type: new URL(element.href).origin !== window.location.origin
+        type: target && new URL(target).origin !== window.location.origin
           ? 'exit'
           : 'other',
       },
@@ -168,6 +153,7 @@ track('click', (data) => {
 // });
 
 track('convert', (ev) => pushEventToDataLayer('rum:conversion', { element: ev.source, value: ev.target }));
+track('formsubmit', (ev) => pushEventToDataLayer('rum:form-submitted', { element: ev.source, url: ev.target }));
 track('navigate', (ev) => pushEventToDataLayer('rum:internal-navigation', { url: ev.source }));
 track('search', (ev) => pushEventToDataLayer('rum:search', { element: ev.source, query: ev.target }));
 track('nullsearch', (ev) => pushEventToDataLayer('rum:search', { element: ev.source, query: ev.target, hasResults: false }));
