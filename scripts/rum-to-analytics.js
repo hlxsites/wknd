@@ -28,8 +28,6 @@ track('lazy', () => {
         pageType: document.head.querySelector('meta[name="template"]')?.content || 'default',
         referrer: document.referrer,
         server: window.location.origin,
-        language: document.documentElement.getAttribute('lang'),
-        isErrorPage: window.isErrorPage || false,
       },
     },
   });
