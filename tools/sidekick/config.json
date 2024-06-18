@@ -24,12 +24,6 @@
       "passConfig": true,
       "environments": [ "preview", "live", "edit" ],
       "includePaths": ["**.docx**"]
-    },
-    {
-      "id": "mystique",
-      "title": "Mystique",
-      "event": "mystique",
-      "environments": [ "dev", "preview" ]
     }
   ]
 }
