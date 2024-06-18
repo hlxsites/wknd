@@ -21,13 +21,15 @@ track('lazy', () => {
     __adobe: {
       analytics: {
         channel: pathname.split('/')[1] || 'home',
-        connectionType: navigator.connection.effectiveType,
-        cookiesEnabled: navigator.cookieEnabled,
+        cookiesEnabled: navigator.cookieEnabled ? 'Y' : 'N',
         pageName: pathname.split('/').slice(1).join(':') + (pathname.endsWith('/') ? 'home' : ''),
-        pageURL: new URL(document.head.querySelector('link[rel="canonical"]').href).pathname,
-        pageType: document.head.querySelector('meta[name="template"]')?.content || 'default',
-        referrer: document.referrer,
-        server: window.location.origin,
+        pageType: window.isErrorPage ? 'errorPage' : undefined,
+        server: window.location.hostname,
+        contextData: {
+          canonical: new URL(document.head.querySelector('link[rel="canonical"]').href).pathname,
+          language: document.documentElement.getAttribute('lang'),
+          template: document.head.querySelector('meta[name="template"]')?.content || 'default',
+        },
       },
     },
   });
