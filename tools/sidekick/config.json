@@ -24,6 +24,12 @@
       "passConfig": true,
       "environments": [ "preview", "live", "edit" ],
       "includePaths": ["**.docx**"]
+    },
+    {
+      "id": "mystique-playground",
+      "title": "Mystique Playground",
+      "event": "mystique-playground",
+      "environments": [ "dev", "preview" ]
     }
   ]
 }
