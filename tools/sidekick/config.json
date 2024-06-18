@@ -26,9 +26,9 @@
       "includePaths": ["**.docx**"]
     },
     {
-      "id": "mystique",
-      "title": "Mystique",
-      "event": "mystique",
+      "id": "mystique-playground",
+      "title": "Mystique Playground",
+      "event": "mystique-playground",
       "environments": [ "dev", "preview" ]
     }
   ]
