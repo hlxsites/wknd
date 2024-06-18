@@ -16,6 +16,14 @@ loadCookieConsent();
 
 // also check consent stored in localstorage used while developing
 const analyticsConsent = localStorage.getItem('consent_status_ANALYTICS');
-if (analyticsConsent) {
+const targetingConsent = localStorage.getItem('consent_status_PERSONALIZATION');
+const marketingConsent = localStorage.getItem('consent_status_MARKETING');
+if (analyticsConsent || targetingConsent) {
   await updateUserConsent(analyticsConsent === 'ALLOW');
+  updateUserConsent({
+    collect: analyticsConsent === 'ALLOW',
+    marketing: marketingConsent === 'ALLOW',
+    personalize: targetingConsent === 'ALLOW',
+    share: marketingConsent === 'ALLOW',
+  });
 }

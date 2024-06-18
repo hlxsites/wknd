@@ -76,7 +76,12 @@ const configureCookieConsent = () => {
 
   function applyConsent() {
     if (window.alloy) {
-      updateUserConsent(!!getConsentForCategory(CC.ANALYTICS));
+      updateUserConsent({
+        collect: !!getConsentForCategory(CC.ANALYTICS),
+        marketing: !!getConsentForCategory(CC.MARKETING),
+        personalize: !!getConsentForCategory(CC.PERSONALIZATION),
+        share: !!getConsentForCategory(CC.MARKETING),
+      });
     }
   }
 

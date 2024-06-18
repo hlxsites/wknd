@@ -60,10 +60,20 @@ const martechLoadedPromise = initMartech({
 });
 
 window.addEventListener('consent', (ev) => {
-  updateUserConsent(ev.detail.categories.includes('CC_TARGETING'));
+  updateUserConsent({
+    collect: ev.detail.categories.includes('CC_ANALYTICS'),
+    marketing: ev.detail.categories.includes('CC_MARKETING'),
+    personalize: ev.detail.categories.includes('CC_PERSONALIZATION'),
+    share: ev.detail.categories.includes('CC_MARKETING'),
+  });
 });
 window.addEventListener('consent-updated', (ev) => {
-  updateUserConsent(ev.detail.categories.includes('CC_TARGETING'));
+  updateUserConsent({
+    collect: ev.detail.categories.includes('CC_ANALYTICS'),
+    marketing: ev.detail.categories.includes('CC_MARKETING'),
+    personalize: ev.detail.categories.includes('CC_PERSONALIZATION'),
+    share: ev.detail.categories.includes('CC_MARKETING'),
+  });
 });
 
 window.hlx.plugins.add('rum-conversion', {
