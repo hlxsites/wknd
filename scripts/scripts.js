@@ -42,7 +42,7 @@ const martechLoadedPromise = initMartech({
     /* add marketing campaign detail to analytics */
     if (options.xdm.eventType === 'web.webpagedetails.pageViews' && options.data?.__adobe?.analytics) {
       const usp = new URLSearchParams(window.Location.search);
-      options.data.__adobe.analytics.campaign = usp.get('utm_campaign') || null;
+      options.data.__adobe.analytics.campaign = usp.get('utm_campaign') || undefined;
     }
 
     /* add experiment details to XDM */
