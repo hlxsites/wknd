@@ -8,13 +8,14 @@ const track = initRumTracking(sampleRUM, { withRumEnhancer: true });
 // The data will be automatically enriched with applied propositions for personalization use cases
 track('lazy', () => {
   const { pathname } = window.location;
+  const canonicalMeta = document.head.querySelector('link[rel="canonical"]');
   pushEventToDataLayer('web.webpagedetails.pageViews', {
     web: {
       webPageDetails: {
         pageViews: {
           value: window.isErrorPage ? 0 : 1,
         },
-        isHomePage: window.location.pathname === '/',
+        isHomePage: pathname === '/',
       },
     },
   }, {
@@ -26,7 +27,7 @@ track('lazy', () => {
         pageType: window.isErrorPage ? 'errorPage' : undefined,
         server: window.location.hostname,
         contextData: {
-          canonical: new URL(document.head.querySelector('link[rel="canonical"]').href).pathname,
+          canonical: canonicalMeta ? new URL(canonicalMeta.href).pathname : undefined,
           language: document.documentElement.getAttribute('lang'),
           template: document.head.querySelector('meta[name="template"]')?.content || 'default',
         },
