@@ -9,6 +9,7 @@ const track = initRumTracking(sampleRUM, { withRumEnhancer: true });
 track('lazy', () => {
   const { pathname } = window.location;
   const canonicalMeta = document.head.querySelector('link[rel="canonical"]');
+  const url = canonicalMeta ? new URL(canonicalMeta.href).pathname : pathname;
   const is404 = window.isErrorPage;
   pushEventToDataLayer('web.webpagedetails.pageViews', {
     web: {
@@ -30,7 +31,7 @@ track('lazy', () => {
         pageType: is404 ? 'errorPage' : undefined,
         server: window.location.hostname,
         contextData: {
-          canonical: canonicalMeta ? new URL(canonicalMeta.href).pathname : undefined,
+          canonical: !is404 ? url : '/404',
           language: document.documentElement.getAttribute('lang'),
           template: document.head.querySelector('meta[name="template"]')?.content || 'default',
         },
