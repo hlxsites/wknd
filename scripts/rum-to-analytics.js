@@ -9,11 +9,12 @@ const track = initRumTracking(sampleRUM, { withRumEnhancer: true });
 track('lazy', () => {
   const { pathname } = window.location;
   const canonicalMeta = document.head.querySelector('link[rel="canonical"]');
+  const is404 = window.isErrorPage;
   pushEventToDataLayer('web.webpagedetails.pageViews', {
     web: {
       webPageDetails: {
         pageViews: {
-          value: window.isErrorPage ? 0 : 1,
+          value: is404 ? 0 : 1,
         },
         isHomePage: pathname === '/',
       },
@@ -21,10 +22,12 @@ track('lazy', () => {
   }, {
     __adobe: {
       analytics: {
-        channel: pathname.split('/')[1] || 'home',
+        channel: !is404 ? pathname.split('/')[1] || 'home' : '404',
         cookiesEnabled: navigator.cookieEnabled ? 'Y' : 'N',
-        pageName: pathname.split('/').slice(1).join(':') + (pathname.endsWith('/') ? 'home' : ''),
-        pageType: window.isErrorPage ? 'errorPage' : undefined,
+        pageName: !is404
+          ? pathname.split('/').slice(1).join(':') + (pathname.endsWith('/') ? 'home' : '')
+          : undefined,
+        pageType: is404 ? 'errorPage' : undefined,
         server: window.location.hostname,
         contextData: {
           canonical: canonicalMeta ? new URL(canonicalMeta.href).pathname : undefined,
