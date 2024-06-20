@@ -7,7 +7,7 @@ const track = initRumTracking(sampleRUM, { withRumEnhancer: true });
 // Track page views when the page is fully rendered
 // The data will be automatically enriched with applied propositions for personalization use cases
 track('lazy', () => {
-  const { pathname } = window.location;
+  const { pathname, hostname } = window.location;
   const canonicalMeta = document.head.querySelector('link[rel="canonical"]');
   const url = canonicalMeta ? new URL(canonicalMeta.href).pathname : pathname;
   const is404 = window.isErrorPage;
@@ -32,7 +32,11 @@ track('lazy', () => {
         server: window.location.hostname,
         contextData: {
           canonical: !is404 ? url : '/404',
-          language: document.documentElement.getAttribute('lang'),
+          environment: (hostname === 'localhost' && 'dev')
+            || (hostname.endsWith('.page') && 'preview')
+            || (hostname.endsWith('.live') && 'live')
+            || 'prod',
+          language: document.documentElement.getAttribute('lang') || 'en',
           template: document.head.querySelector('meta[name="template"]')?.content || 'default',
         },
       },
