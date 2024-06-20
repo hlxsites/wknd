@@ -162,7 +162,7 @@ track('click', (data) => {
 // });
 
 track('convert', (ev) => pushEventToDataLayer('rum:conversion', { element: ev.source, value: ev.target }));
-track('formsubmit', (ev) => pushEventToDataLayer('rum:form-submitted', { element: ev.source, url: ev.target }));
+track('formsubmit', (ev) => pushEventToDataLayer('rum:form-submitted', { form: ev.source, url: ev.target }));
 track('navigate', (ev) => pushEventToDataLayer('rum:internal-navigation', { url: ev.source }));
 track('search', (ev) => pushEventToDataLayer('rum:search', { element: ev.source, query: ev.target }));
 track('nullsearch', (ev) => pushEventToDataLayer('rum:search', { element: ev.source, query: ev.target, hasResults: false }));
