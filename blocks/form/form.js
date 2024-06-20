@@ -1,4 +1,4 @@
-import { readBlockConfig } from '../../scripts/lib-franklin.js';
+import { readBlockConfig, toCamelCase } from '../../scripts/lib-franklin.js';
 
 function generateUnique() {
   return new Date().valueOf() + Math.random();
@@ -418,6 +418,8 @@ export default async function decorate(block) {
     formLink.replaceWith(form);
 
     const config = readBlockConfig(block);
-    Object.entries(config).forEach(([key, value]) => { if (value) form.dataset[key] = value; });
+    Object.entries(config).forEach(([key, value]) => {
+      if (value) form.dataset[toCamelCase(key)] = value;
+    });
   }
 }
