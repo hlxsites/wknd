@@ -500,6 +500,7 @@ async function applyAllModifications(
       }
     }));
 
+    // Fragment-level modifications
   if (pageMetadata.manifest) {
     let entries = await getManifestEntriesForCurrentPage(pageMetadata.manifest);
     if (entries) {

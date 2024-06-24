@@ -42,7 +42,8 @@ window.hlx.plugins.add('rum-conversion', {
 });
 
 window.hlx.plugins.add('experimentation', {
-  condition: () => document.head.querySelector('[name^="experiment"],[property^="campaign:-"],[property^="audience:-"]')
+  condition: () => document.head.querySelector('[name^="experiment"],[name^="campaign-"],[name^="audience-"]')
+    || document.head.querySelector('[property^="campaign:-"],[property^="audience:-"]')
     || document.querySelector('.section[class*="experiment-"],.section[class*="audience-"],.section[class*="campaign-"]')
     || [...document.querySelectorAll('.section-metadata div')].some((d) => d.textContent.match(/Experiment|Campaign|Audience/i))
     ,
@@ -280,7 +281,7 @@ async function loadPage() {
 // Properly decorate fragments that were pulled in
 document.addEventListener('aem:experimentation', (ev) => {
   // Do not redecorate the default content
-  if (ev.detail.variant === 'control') {
+  if (ev.detail.variant === 'control' || ev.detail?.campaign === 'default' || ev.detail?.audience === 'default') {
     return;
   }
   // Rebuild the autoblock as needed
