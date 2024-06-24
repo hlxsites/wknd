@@ -12,69 +12,10 @@ import {
   waitForLCP,
   loadBlocks,
   loadCSS,
-  getMetadata,
 } from './lib-franklin.js';
-import {
-  initMartech,
-  updateUserConsent,
-  martechEager,
-  martechLazy,
-  martechDelayed,
-} from './adobe-martech/index.js';
 
 const LCP_BLOCKS = ['carousel']; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
-
-const martechLoadedPromise = initMartech({
-  datastreamId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
-  orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
-  defaultConsent: 'in', // 'pending',
-  onBeforeEventSend: (options) => {
-    if (options.xdm.eventType === 'decisioning.propositionFetch') {
-      options.data ||= {};
-      options.data.__adobe ||= {};
-      options.data.__adobe.target = {
-        /* add target parameters here.
-           documentation: https://experienceleague.adobe.com/en/docs/platform-learn/migrate-target-to-websdk/send-parameters#parameter-mapping-summary */
-      };
-    }
-
-    /* add marketing campaign detail to analytics */
-    if (options.xdm.eventType === 'web.webpagedetails.pageViews' && options.data?.__adobe?.analytics) {
-      const usp = new URLSearchParams(window.Location.search);
-      options.data.__adobe.analytics.campaign = usp.get('utm_campaign') || undefined;
-    }
-
-    /* add experiment details to XDM */
-    const { experiment } = window.hlx;
-    options.xdm._sitesinternal = {
-      ...options.xdm._sitesinternal,
-      ...(experiment && { experiment }), // add experiment details, if existing, to all events
-    };
-  },
-}, {
-  launchUrls: [
-    'https://assets.adobedtm.com/51b39232f128/2609377b4aba/launch-6c3a8fffe137-development.min.js',
-  ],
-  personalization: getMetadata('target') || new URLSearchParams(window.location.search).has('target'),
-});
-
-window.addEventListener('consent', (ev) => {
-  updateUserConsent({
-    collect: ev.detail.categories.includes('CC_ANALYTICS'),
-    marketing: ev.detail.categories.includes('CC_MARKETING'),
-    personalize: ev.detail.categories.includes('CC_PERSONALIZATION'),
-    share: ev.detail.categories.includes('CC_MARKETING'),
-  });
-});
-window.addEventListener('consent-updated', (ev) => {
-  updateUserConsent({
-    collect: ev.detail.categories.includes('CC_ANALYTICS'),
-    marketing: ev.detail.categories.includes('CC_MARKETING'),
-    personalize: ev.detail.categories.includes('CC_PERSONALIZATION'),
-    share: ev.detail.categories.includes('CC_MARKETING'),
-  });
-});
 
 window.hlx.plugins.add('rum-conversion', {
   url: '/plugins/rum-conversion/src/index.js',
@@ -225,7 +166,6 @@ async function loadEager(doc) {
   if (main) {
     decorateMain(main);
     await Promise.all([
-      martechLoadedPromise.then(martechEager),
       waitForLCP(LCP_BLOCKS),
     ]);
   }
@@ -277,7 +217,6 @@ async function loadLazy(doc) {
   }
   addFavIcon(`${window.wknd.demoConfig.demoBase || window.hlx.codeBasePath}/favicon.png`);
   await import('./rum-to-analytics.js');
-  await martechLazy();
   sampleRUM('lazy');
   sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
   sampleRUM.observe(main.querySelectorAll('picture > img'));
@@ -297,7 +236,6 @@ function loadDelayed() {
   window.setTimeout(() => {
     window.hlx.plugins.load('delayed');
     window.hlx.plugins.run('loadDelayed');
-    martechDelayed();
     return import('./delayed.js');
   }, 3000);
   // load anything that can be postponed to the latest here
