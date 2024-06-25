@@ -23,7 +23,7 @@ function initRumTracking(options = {}) {
 }
 
 // Define RUM tracking function
-const track = initRumTracking(sampleRUM, { withRumEnhancer: true });
+const track = initRumTracking({ withRumEnhancer: true });
 
 // Track page views when the page is fully rendered
 // The data will be automatically enriched with applied propositions for personalization use cases
