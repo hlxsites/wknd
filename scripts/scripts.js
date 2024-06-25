@@ -193,6 +193,7 @@ export function addFavIcon(href) {
  */
 async function loadLazy(doc) {
   const main = doc.querySelector('main');
+  main.classList.add('personalization-container');
   await loadBlocks(main);
 
   const { hash } = window.location;
