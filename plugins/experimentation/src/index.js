@@ -577,6 +577,13 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
 
   const variantNames = [];
   variantNames.push('control');
+  stringToArray(getMetadata("variants-name")).forEach((v) => {
+    if (variantNames.length <= pages.length) {
+      variantNames.push(v);
+    } else{
+      console.log(`Variant name "${v}" is ignored: Number of variants names is more than the number of variants`);
+    }
+  });
 
   const variants = {};
   variants.control = {
@@ -586,8 +593,13 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
   };
 
   pages.forEach((page, i) => {
-    const vname = `challenger-${i + 1}`;
-    variantNames.push(vname);
+    const vname =
+      variantNames.length > i + 1
+        ? variantNames[i + 1]
+        : `challenger-${i + 1}`;
+    if (variantNames.length <= i + 1) {
+      variantNames.push(vname);
+    }
     variants[vname] = {
       percentageSplit: `${splits[i].toFixed(4)}`,
       pages: [page],
