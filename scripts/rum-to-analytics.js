@@ -1,5 +1,26 @@
 import { sampleRUM } from './lib-franklin.js';
-import { initRumTracking } from './adobe-martech/index.js';
+
+function initRumTracking(options = {}) {
+  // Load the RUM enhancer so we can map all RUM events even on non-sampled pages
+  if (options.withRumEnhancer) {
+    const script = document.createElement('script');
+    script.src = new URL('.rum/@adobe/helix-rum-enhancer@^1/src/index.js', sampleRUM.baseURL).href;
+    document.head.appendChild(script);
+  }
+
+  // Define RUM tracking function
+  let track;
+  if (sampleRUM.always) {
+    track = (ev, cb) => sampleRUM.always.on(ev, (data) => {
+      cb(data);
+    });
+  } else {
+    track = (ev, cb) => document.addEventListener('rum', (data) => {
+      cb(data);
+    });
+  }
+  return track;
+}
 
 // Define RUM tracking function
 const track = initRumTracking(sampleRUM, { withRumEnhancer: true });
