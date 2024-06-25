@@ -150,12 +150,55 @@ export function decorateMain(main) {
   decorateBlocks(main);
 }
 
+function triggerPageView() {
+  const { pathname, hostname } = window.location;
+  const canonicalMeta = document.head.querySelector('link[rel="canonical"]');
+  const url = canonicalMeta ? new URL(canonicalMeta.href).pathname : pathname;
+  const is404 = window.isErrorPage;
+  window.adobeDataLayer.push({
+    event: 'web.webpagedetails.pageViews',
+    xdm: {
+      web: {
+        webPageDetails: {
+          pageViews: {
+            value: is404 ? 0 : 1,
+          },
+          isHomePage: pathname === '/',
+        },
+      },
+    },
+    data: {
+      __adobe: {
+        analytics: {
+          channel: !is404 ? pathname.split('/')[1] || 'home' : '404',
+          cookiesEnabled: navigator.cookieEnabled ? 'Y' : 'N',
+          pageName: !is404
+            ? pathname.split('/').slice(1).join(':') + (pathname.endsWith('/') ? 'home' : '')
+            : undefined,
+          pageType: is404 ? 'errorPage' : undefined,
+          server: window.location.hostname,
+          contextData: {
+            canonical: !is404 ? url : '/404',
+            environment: (hostname === 'localhost' && 'dev')
+              || (hostname.endsWith('.page') && 'preview')
+              || (hostname.endsWith('.live') && 'live')
+              || 'prod',
+            language: document.documentElement.getAttribute('lang') || 'en',
+            template: document.head.querySelector('meta[name="template"]')?.content || 'default',
+          },
+        },
+      },
+    },
+  });
+}
+
 /**
  * loads everything needed to get to LCP.
  */
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  triggerPageView();
 
   await window.hlx.plugins.run('loadEager');
 

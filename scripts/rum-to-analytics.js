@@ -27,47 +27,47 @@ const track = initRumTracking({ withRumEnhancer: true });
 
 // Track page views when the page is fully rendered
 // The data will be automatically enriched with applied propositions for personalization use cases
-track('lazy', () => {
-  const { pathname, hostname } = window.location;
-  const canonicalMeta = document.head.querySelector('link[rel="canonical"]');
-  const url = canonicalMeta ? new URL(canonicalMeta.href).pathname : pathname;
-  const is404 = window.isErrorPage;
-  window.adobeDataLayer.push({
-    event: 'web.webpagedetails.pageViews',
-    xdm: {
-      web: {
-        webPageDetails: {
-          pageViews: {
-            value: is404 ? 0 : 1,
-          },
-          isHomePage: pathname === '/',
-        },
-      },
-    },
-    data: {
-      __adobe: {
-        analytics: {
-          channel: !is404 ? pathname.split('/')[1] || 'home' : '404',
-          cookiesEnabled: navigator.cookieEnabled ? 'Y' : 'N',
-          pageName: !is404
-            ? pathname.split('/').slice(1).join(':') + (pathname.endsWith('/') ? 'home' : '')
-            : undefined,
-          pageType: is404 ? 'errorPage' : undefined,
-          server: window.location.hostname,
-          contextData: {
-            canonical: !is404 ? url : '/404',
-            environment: (hostname === 'localhost' && 'dev')
-              || (hostname.endsWith('.page') && 'preview')
-              || (hostname.endsWith('.live') && 'live')
-              || 'prod',
-            language: document.documentElement.getAttribute('lang') || 'en',
-            template: document.head.querySelector('meta[name="template"]')?.content || 'default',
-          },
-        },
-      },
-    },
-  });
-});
+// track('lazy', () => {
+//   const { pathname, hostname } = window.location;
+//   const canonicalMeta = document.head.querySelector('link[rel="canonical"]');
+//   const url = canonicalMeta ? new URL(canonicalMeta.href).pathname : pathname;
+//   const is404 = window.isErrorPage;
+//   window.adobeDataLayer.push({
+//     event: 'web.webpagedetails.pageViews',
+//     xdm: {
+//       web: {
+//         webPageDetails: {
+//           pageViews: {
+//             value: is404 ? 0 : 1,
+//           },
+//           isHomePage: pathname === '/',
+//         },
+//       },
+//     },
+//     data: {
+//       __adobe: {
+//         analytics: {
+//           channel: !is404 ? pathname.split('/')[1] || 'home' : '404',
+//           cookiesEnabled: navigator.cookieEnabled ? 'Y' : 'N',
+//           pageName: !is404
+//             ? pathname.split('/').slice(1).join(':') + (pathname.endsWith('/') ? 'home' : '')
+//             : undefined,
+//           pageType: is404 ? 'errorPage' : undefined,
+//           server: window.location.hostname,
+//           contextData: {
+//             canonical: !is404 ? url : '/404',
+//             environment: (hostname === 'localhost' && 'dev')
+//               || (hostname.endsWith('.page') && 'preview')
+//               || (hostname.endsWith('.live') && 'live')
+//               || 'prod',
+//             language: document.documentElement.getAttribute('lang') || 'en',
+//             template: document.head.querySelector('meta[name="template"]')?.content || 'default',
+//           },
+//         },
+//       },
+//     },
+//   });
+// });
 
 track('click', (data) => {
   const { source, target } = data;
