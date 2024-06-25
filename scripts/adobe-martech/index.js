@@ -337,7 +337,7 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
 
       // Automatically track displayed propositions as part of the pageview event
       if (data.xdm?.eventType === 'web.webpagedetails.pageViews' && config.personalization) {
-        data.xdm.eventType = 'decisioning.propositionDisplay';
+        // data.xdm.eventType = 'decisioning.propositionDisplay';
         data.xdm._experience = {
           decisioning: {
             propositions: response.propositions
