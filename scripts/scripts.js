@@ -198,6 +198,8 @@ function triggerPageView() {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+
+  window.adobeDataLayer = [];
   triggerPageView();
 
   await window.hlx.plugins.run('loadEager');
