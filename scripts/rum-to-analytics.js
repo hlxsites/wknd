@@ -1,5 +1,5 @@
 import { sampleRUM } from './lib-franklin.js';
-import { initRumTracking, pushEventToDataLayer } from './adobe-martech/index.js';
+import { initRumTracking } from './adobe-martech/index.js';
 
 // Define RUM tracking function
 const track = initRumTracking(sampleRUM, { withRumEnhancer: true });
@@ -11,60 +11,73 @@ track('lazy', () => {
   const canonicalMeta = document.head.querySelector('link[rel="canonical"]');
   const url = canonicalMeta ? new URL(canonicalMeta.href).pathname : pathname;
   const is404 = window.isErrorPage;
-  pushEventToDataLayer('web.webpagedetails.pageViews', {
-    web: {
-      webPageDetails: {
-        pageViews: {
-          value: is404 ? 0 : 1,
-        },
-        isHomePage: pathname === '/',
-      },
-    },
-  }, {
-    __adobe: {
-      analytics: {
-        channel: !is404 ? pathname.split('/')[1] || 'home' : '404',
-        cookiesEnabled: navigator.cookieEnabled ? 'Y' : 'N',
-        pageName: !is404
-          ? pathname.split('/').slice(1).join(':') + (pathname.endsWith('/') ? 'home' : '')
-          : undefined,
-        pageType: is404 ? 'errorPage' : undefined,
-        server: window.location.hostname,
-        contextData: {
-          canonical: !is404 ? url : '/404',
-          environment: (hostname === 'localhost' && 'dev')
-            || (hostname.endsWith('.page') && 'preview')
-            || (hostname.endsWith('.live') && 'live')
-            || 'prod',
-          language: document.documentElement.getAttribute('lang') || 'en',
-          template: document.head.querySelector('meta[name="template"]')?.content || 'default',
+  window.adobeDataLayer.push({
+    event: 'web.webpagedetails.pageViews',
+    xdm: {
+      web: {
+        webPageDetails: {
+          pageViews: {
+            value: is404 ? 0 : 1,
+          },
+          isHomePage: pathname === '/',
         },
       },
     },
-  });
-});
-
-track('cwv', (data) => {
-  if (!data.cwv) {
-    return;
-  }
-  pushEventToDataLayer('web.performance.measurements', {
-    _sitesinternal: { cwv: data.cwv },
+    data: {
+      __adobe: {
+        analytics: {
+          channel: !is404 ? pathname.split('/')[1] || 'home' : '404',
+          cookiesEnabled: navigator.cookieEnabled ? 'Y' : 'N',
+          pageName: !is404
+            ? pathname.split('/').slice(1).join(':') + (pathname.endsWith('/') ? 'home' : '')
+            : undefined,
+          pageType: is404 ? 'errorPage' : undefined,
+          server: window.location.hostname,
+          contextData: {
+            canonical: !is404 ? url : '/404',
+            environment: (hostname === 'localhost' && 'dev')
+              || (hostname.endsWith('.page') && 'preview')
+              || (hostname.endsWith('.live') && 'live')
+              || 'prod',
+            language: document.documentElement.getAttribute('lang') || 'en',
+            template: document.head.querySelector('meta[name="template"]')?.content || 'default',
+          },
+        },
+      },
+    },
   });
 });
 
 track('click', (data) => {
   const { source, target } = data;
-  pushEventToDataLayer('web.webinteraction.linkClicks', {
-    web: {
-      webInteraction: {
-        URL: target,
-        // eslint-disable-next-line no-nested-ternary
-        name: source,
-        linkClicks: { value: 1 },
-        type: target && new URL(target).origin !== window.location.origin
-          ? 'exit'
-          : 'other',
+  window.adobeDataLayer.push({
+    event: 'web.webinteraction.linkClicks',
+    xdm: {
+      web: {
+        webInteraction: {
+          URL: target,
+          // eslint-disable-next-line no-nested-ternary
+          name: source,
+          linkClicks: { value: 1 },
+          type: target && new URL(target).origin !== window.location.origin
+            ? 'exit'
+            : 'other',
+        },
+      },
+    },
+    data: {},
+  });
+});
+
+track('formsubmit', (ev) => {
+  window.adobeDataLayer.push({
+    event: 'rum:form-submitted',
+    xdm: {},
+    data: {
+      __adobe: {
+        analytics: {
+          contextData: { form: ev.source },
+        },
       },
     },
   });
@@ -161,12 +174,11 @@ track('click', (data) => {
 //   conversionEvent = undefined;
 // });
 
-track('convert', (ev) => pushEventToDataLayer('rum:conversion', { element: ev.source, value: ev.target }));
-track('formsubmit', (ev) => pushEventToDataLayer('rum:form-submitted', { form: ev.source, url: ev.target }));
-track('navigate', (ev) => pushEventToDataLayer('rum:internal-navigation', { url: ev.source }));
-track('search', (ev) => pushEventToDataLayer('rum:search', { element: ev.source, query: ev.target }));
-track('nullsearch', (ev) => pushEventToDataLayer('rum:search', { element: ev.source, query: ev.target, hasResults: false }));
-track('leave', () => pushEventToDataLayer('rum:page-lost-focus', { duration: performance.now() - performance.timeOrigin }));
+// track('convert', (ev) => pushEventToDataLayer('rum:conversion', { element: ev.source, value: ev.target }));
+// track('navigate', (ev) => pushEventToDataLayer('rum:internal-navigation', { url: ev.source }));
+// track('search', (ev) => pushEventToDataLayer('rum:search', { element: ev.source, query: ev.target }));
+// track('nullsearch', (ev) => pushEventToDataLayer('rum:search', { element: ev.source, query: ev.target, hasResults: false }));
+// track('leave', () => pushEventToDataLayer('rum:page-lost-focus', { duration: performance.now() - performance.timeOrigin }));
 
 // track('viewblock', (ev) => pushEventToDataLayer('rum:block-viewed', { element: ev.source, value: ev.target }));
 // track('viewmedia', (ev) => pushEventToDataLayer('rum:media-viewed', { element: ev.source, value: ev.target }));
