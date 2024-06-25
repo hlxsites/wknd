@@ -149,7 +149,7 @@ export function pushToDataLayer(payload) {
  * @param {Object} xdm the xdm data object to send
  * @param {Object} [data] additional data mapping for the event
  */
-export function pushEventToDataLayer(event, xdm, data) {
+export function pushEventToDataLayer(event, xdm = {}, data = {}) {
   pushToDataLayer({ event, xdm, data });
 }
 
