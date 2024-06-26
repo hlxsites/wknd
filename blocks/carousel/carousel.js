@@ -4,7 +4,7 @@ export default function decorate(block) {
   [...block.children].forEach((row, i) => {
     const classes = ['image', 'text'];
     classes.forEach((e, j) => {
-      row.children[j].classList.add(`carousel-${e}`);
+       row.children[j].classList.add(`carousel-${e}`);
     });
     /* buttons */
     const button = document.createElement('button');

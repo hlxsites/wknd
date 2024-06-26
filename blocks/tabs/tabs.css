@@ -1,30 +1,46 @@
-.tabs ul {
-    display: flex;
-    flex-wrap: wrap;
-    padding-left: 0;
-    list-style: none;
+.tabs .tabs-list {
+  display: flex;
+  gap: 8px;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
-.tabs li {
-    box-sizing: border-box;
-    border-bottom: 1px solid transparent;
-    cursor: pointer;
+.tabs .tabs-list button {
+  flex: 0 0 max-content;
+  margin: 0;
+  border: 1px solid var(--dark-color);
+  border-radius: 0;
+  padding: 8px 16px;
+  background-color: var(--light-color);
+  color: initial;
+  font-size: unset;
+  font-weight: bold;
+  line-height: unset;
+  text-align: initial;
+  text-overflow: unset;
+  overflow: unset;
+  white-space: unset;
+  transition: background-color 0.2s;
 }
 
-.tabs li button {
-    font-size: 14px;
-    font-weight: unset;
-    text-transform: uppercase;
-    padding: 1em 1.5em;
-    max-height: 3pc;
-    min-width: 3pc;
-    border-radius: 0;
-    background: none;
-    color: black;
+.tabs .tabs-list button[aria-selected="true"] {
+  border-bottom: 1px solid var(--background-color);
+  background-color: var(--background-color);
+  cursor: initial;
 }
 
-.tabs li button.active {
-    border: none;
-    background-color: #202020;
-    color: #fff;
+.tabs .tabs-list button[aria-selected="false"]:hover,
+.tabs .tabs-list button[aria-selected="false"]:focus {
+  background-color: var(--dark-color);
+}
+
+.tabs .tabs-panel {
+  margin-top: -1px;
+  padding: 0 16px;
+  border: 1px solid var(--dark-color);
+  overflow: auto;
+}
+
+.tabs .tabs-panel[aria-hidden="true"] {
+  display: none;
 }
