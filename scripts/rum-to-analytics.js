@@ -121,7 +121,9 @@ track('formsubmit', (ev) => pushEventToDataLayer('rum:form-submitted', {}, {
 //         webInteraction: {
 //           URL: element.href,
 //           // eslint-disable-next-line no-nested-ternary
-//           name: element.text ? element.text.trim() : (element.innerHTML ? element.innerHTML.trim() : ''),
+//           name: element.text
+//             ? element.text.trim()
+//             : (element.innerHTML ? element.innerHTML.trim() : ''),
 //           linkClicks: {
 //             // don't count as link click, as this event should be tracked separately,
 //             // track only the details of the link with the conversion
@@ -175,5 +177,9 @@ track('search', (ev) => pushEventToDataLayer('rum:search', { element: ev.source,
 track('nullsearch', (ev) => pushEventToDataLayer('rum:search', { element: ev.source, query: ev.target, hasResults: false }));
 track('leave', () => pushEventToDataLayer('rum:page-lost-focus', { duration: performance.now() - performance.timeOrigin }));
 
-// track('viewblock', (ev) => pushEventToDataLayer('rum:block-viewed', { element: ev.source, value: ev.target }));
-// track('viewmedia', (ev) => pushEventToDataLayer('rum:media-viewed', { element: ev.source, value: ev.target }));
+// track('viewblock', (ev) => pushEventToDataLayer('rum:block-viewed', {
+//   element: ev.source, value: ev.target,
+// }));
+// track('viewmedia', (ev) => pushEventToDataLayer('rum:media-viewed', {
+//   element: ev.source, value: ev.target,
+// }));
