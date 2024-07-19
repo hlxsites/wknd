@@ -13,6 +13,9 @@
  * @property {String[]} launchUrls A list of launch container URLs to load (defults to empty list)
  * @property {Boolean} personalization Indicates whether Adobe Target should be enabled
  *                                     (defaults to true)
+ * @property {Number} personalizationTimeout Indicates the amount of time to wait before bailing
+ *                                           out on the personalization and continue rendering the
+ *                                           page (defaults to 1s)
  */
 export const DEFAULT_CONFIG = {
   analytics: true,
@@ -21,10 +24,27 @@ export const DEFAULT_CONFIG = {
   dataLayerInstanceName: 'adobeDataLayer',
   launchUrls: [],
   personalization: true,
+  personalizationTimeout: 1000,
 };
 
 let config;
 let alloyConfig;
+let isAlloyConfigured = false;
+let pendingAlloyCommands = [];
+
+/**
+ * Runs a promise with a timeout that rejects it if the time has passed.
+ * @param {Promise} promise The base promise to use
+ * @param {Number} [timeout=1000] The timeout to use in ms
+ * @returns the promise result, or a rejected promise if it did not resolve in time
+ */
+function promiseWithTimeout(promise, timeout = 1000) {
+  let timer;
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => { timer = setTimeout(reject, timeout); }),
+  ]).finally(() => clearTimeout(timer));
+}
 
 /**
  * Error handler for rejected promises.
@@ -99,6 +119,8 @@ async function loadAndConfigureAlloy(instanceName, webSDKConfig) {
   await import('./alloy.min.js');
   try {
     await window[instanceName]('configure', webSDKConfig);
+    isAlloyConfigured = true;
+    pendingAlloyCommands.forEach((fn) => fn());
   } catch (err) {
     handleRejectedPromise(new Error(err));
   }
@@ -149,7 +171,7 @@ export function pushToDataLayer(payload) {
  * @param {Object} xdm the xdm data object to send
  * @param {Object} [data] additional data mapping for the event
  */
-export function pushEventToDataLayer(event, xdm = {}, data = {}) {
+export function pushEventToDataLayer(event, xdm, data) {
   pushToDataLayer({ event, xdm, data });
 }
 
@@ -223,7 +245,7 @@ export async function updateUserConsent(consent) {
   // eslint-disable-next-line no-console
   console.assert(config.alloyInstanceName, 'Martech needs to be initialized before the `updateUserConsent` method is called');
 
-  return window[config.alloyInstanceName]('setConsent', {
+  const fn = () => window[config.alloyInstanceName]('setConsent', {
     consent: [{
       standard: 'Adobe',
       version: '2.0',
@@ -240,6 +262,11 @@ export async function updateUserConsent(consent) {
       },
     }],
   });
+  if (isAlloyConfigured) {
+    return fn();
+  }
+  pendingAlloyCommands.push(fn);
+  return Promise.resolve();
 }
 
 /**
@@ -284,7 +311,10 @@ async function applyPropositions(instanceName) {
     },
   });
   response = renderDecisionResponse;
-  const propositions = window.structuredClone(renderDecisionResponse.propositions || []);
+  if (!renderDecisionResponse?.propositions) {
+    return [];
+  }
+  const propositions = window.structuredClone(renderDecisionResponse.propositions);
   onDecoratedElement(async () => {
     if (!propositions.length) {
       return;
@@ -331,14 +361,19 @@ export async function initMartech(webSDKConfig, martechConfig = {}) {
   alloyConfig = {
     ...getDefaultAlloyConfiguration(),
     ...webSDKConfig,
-    onBeforeEventSend: (data) => {
+    onBeforeEventSend: (payload) => {
+      payload.data ||= {};
+      payload.data.__adobe ||= {};
+
       // Let project override the data if needed
-      webSDKConfig?.onBeforeEventSend(data);
+      if (webSDKConfig?.onBeforeEventSend) {
+        webSDKConfig?.onBeforeEventSend(payload);
+      }
 
       // Automatically track displayed propositions as part of the pageview event
-      if (data.xdm?.eventType === 'web.webpagedetails.pageViews' && config.personalization) {
-        data.xdm.eventType = 'decisioning.propositionDisplay';
-        data.xdm._experience = {
+      if (payload.xdm?.eventType === 'web.webpagedetails.pageViews' && config.personalization) {
+        payload.xdm.eventType = 'decisioning.propositionDisplay';
+        payload.xdm._experience = {
           decisioning: {
             propositions: response.propositions
               .map((p) => ({ id: p.id, scope: p.scope, scopeDetails: p.scopeDetails })),
@@ -393,7 +428,15 @@ export async function martechEager() {
   if (config.personalization) {
     // eslint-disable-next-line no-console
     console.assert(window.alloy, 'Martech needs to be initialized before the `martechEager` method is called');
-    return applyPropositions(config.alloyInstanceName);
+    return promiseWithTimeout(
+      applyPropositions(config.alloyInstanceName),
+      config.personalizationTimeout,
+    ).catch(() => {
+      if (alloyConfig.debugEnabled) {
+        // eslint-disable-next-line no-console
+        console.warn('Could not apply personalization in time. Either backend is taking too long, or user did not give consent in time.');
+      }
+    });
   }
   return Promise.resolve();
 }
