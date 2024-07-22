@@ -584,15 +584,20 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
     pages: [window.location.pathname],
     label: 'Control',
   };
+  // get the custom labels for the variants names
 
+  const labelNames = stringToArray(metadata.variant ?? metadata.names);
   pages.forEach((page, i) => {
     const vname = `challenger-${i + 1}`;
+    //  label with custom name or default
+    const customLabel = labelNames.length > i ? labelNames[i] : `Challenger ${i + 1}`;
+
     variantNames.push(vname);
     variants[vname] = {
       percentageSplit: `${splits[i].toFixed(4)}`,
       pages: [page],
       blocks: [],
-      label: `Challenger ${i + 1}`,
+      label: customLabel,
     };
   });
   inferEmptyPercentageSplits(Object.values(variants));
