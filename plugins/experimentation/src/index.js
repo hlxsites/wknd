@@ -78,6 +78,16 @@ export function toCamelCase(name) {
 }
 
 /**
+ * Removes all leading hyphens from a string.
+ * @param {String} after the string to remove the leading hyphens from, usually is colon
+ * @returns {String} The string without leading hyphens
+ */
+export function removeLeadingHyphens(inputString) {
+  // Remove all leading hyphens which are converted from the space in metadata
+  return inputString.replace(/^(-+)/, '');
+}
+
+/**
  * Retrieves the content of metadata tags.
  * @param {String} name The metadata name (or property)
  * @returns {String} The metadata value(s)
@@ -94,12 +104,13 @@ export function getMetadata(name) {
  */
 export function getAllMetadata(scope) {
   const value = getMetadata(scope);
-  const metaTags = document.head.querySelectorAll(`meta[name^="${scope}-"], meta[property^="${scope}:-"]`);
-
+  const metaTags = document.head.querySelectorAll(`meta[name^="${scope}"], meta[property^="${scope}:"]`);
   return [...metaTags].reduce((res, meta) => {
-    const key = meta.getAttribute('name')
-      ? meta.getAttribute('name').substring(scope.length + 1)
-      : meta.getAttribute('property').substring(scope.length + 2);
+    const key = removeLeadingHyphens(
+      meta.getAttribute('name')
+        ? meta.getAttribute('name').substring(scope.length)
+        : meta.getAttribute('property').substring(scope.length + 1),
+    );
 
     const camelCaseKey = toCamelCase(key);
     res[camelCaseKey] = meta.getAttribute('content');
@@ -586,7 +597,7 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
   };
   // get the custom labels for the variants names
 
-  const labelNames = stringToArray(metadata.variant ?? metadata.names);
+  const labelNames = stringToArray(metadata.name);
   pages.forEach((page, i) => {
     const vname = `challenger-${i + 1}`;
     //  label with custom name or default
@@ -660,9 +671,9 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
  */
 function parseExperimentManifest(entries) {
   return Object.values(Object.groupBy(
-    entries.map((e) => depluralizeProps(e, ['experiment', 'variant', 'split'])),
+    entries.map((e) => depluralizeProps(e, ['experiment', 'name', 'split'])),
     ({ experiment }) => experiment,
-  )).map(aggregateEntries('experiment', ['split', 'url', 'variant']));
+  )).map(aggregateEntries('experiment', ['split', 'url', 'name']));
 }
 
 function getUrlFromExperimentConfig(config) {
