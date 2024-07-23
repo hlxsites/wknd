@@ -304,6 +304,19 @@ function toDecisionPolicy(config) {
   return decisionPolicy;
 }
 
+function replaceUrlStringWithCurrentHost(urlString) {
+  const url = new URL(urlString, window.location.origin);
+  url.protocol = window.location.protocol;
+  url.host = window.location.host;
+  return url.toString();
+}
+
+function replaceUrlWithCurrentHost(url) {
+  url.protocol = window.location.protocol;
+  url.host = window.location.host;
+  return url;
+}
+
 /**
  * Creates an instance of a modification handler that will be responsible for applying the desired
  * personalized experience.
@@ -328,7 +341,7 @@ function createModificationsHandler(
       return null;
     }
     const ns = { config, el };
-    const url = await getExperienceUrl(ns.config);
+    const url = replaceUrlStringWithCurrentHost(await getExperienceUrl(ns.config));
     let res;
     if (url && new URL(url, window.location.origin).pathname !== window.location.pathname) {
       res = await replaceInner(url, el);
@@ -367,6 +380,7 @@ function depluralizeProps(obj, props = []) {
 async function getManifestEntriesForCurrentPage(urlString) {
   try {
     const url = new URL(urlString, window.location.origin);
+    replaceUrlWithCurrentHost(url);
     const response = await fetch(url);
     const json = await response.json();
     return json.data
