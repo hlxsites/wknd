@@ -276,25 +276,18 @@ async function loadPage() {
 }
 
 // Properly decorate fragments that were pulled in
-document.addEventListener('aem:experimentation', (ev) => {
+document.addEventListener("aem:experimentation", (ev) => {
   // Do not redecorate the default content
-  if (ev.detail.variant === 'control' || ev.detail?.campaign === 'default' || ev.detail?.audience === 'default') {
+  if (
+    ev.detail.variant === "control" ||
+    ev.detail?.campaign === "default" ||
+    ev.detail?.audience === "default" ||
+    !ev.detail.element.classList.contains("block")
+  ) {
     return;
   }
-  // Rebuild the autoblock as needed
-  if (ev.detail.element.classList.contains('hero')) {
-    const parent = ev.detail.element.parentElement.parentElement;
-    [...ev.detail.element.children].reverse().forEach((el) => parent.prepend(el));
-    ev.detail.element.remove();
-    // Rebuild and redecorate the hero block
-    buildHeroBlock(parent);
-    decorateBlocks(parent);
-    loadBlocks(parent);
-  } else if (ev.detail.element.classList.contains('block')) {
-    // Otherwise, just reset the replaced blocks and redecorate them
-    decorateBlock(ev.detail.element);
-    loadBlock(ev.detail.element);
-  }
+  decorateBlock(ev.detail.element);
+  loadBlock(ev.detail.element);
 });
 
 const cwv = {};
