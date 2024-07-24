@@ -314,19 +314,6 @@ function toDecisionPolicy(config) {
   return decisionPolicy;
 }
 
-function replaceUrlStringWithCurrentHost(urlString) {
-  const url = new URL(urlString, window.location.origin);
-  url.protocol = window.location.protocol;
-  url.host = window.location.host;
-  return url.toString();
-}
-
-function replaceUrlWithCurrentHost(url) {
-  url.protocol = window.location.protocol;
-  url.host = window.location.host;
-  return url;
-}
-
 /**
  * Creates an instance of a modification handler that will be responsible for applying the desired
  * personalized experience.
@@ -351,13 +338,14 @@ function createModificationsHandler(
       return null;
     }
     const ns = { config, el };
-    const url = replaceUrlStringWithCurrentHost(await getExperienceUrl(ns.config));
+    const url = await getExperienceUrl(ns.config);
     let res;
     if (url && new URL(url, window.location.origin).pathname !== window.location.pathname) {
-      res = await replaceInner(url, el);
+      // eslint-disable-next-line no-await-in-loop
+      res = await replaceInner(new URL(url, window.location.origin).pathname, el);
     } else {
       res = url;
-    }
+    }   
     cb(el.tagName === 'MAIN' ? document.body : ns.el, ns.config, res ? url : null);
     if (res) {
       ns.servedExperience = url;
@@ -390,8 +378,7 @@ function depluralizeProps(obj, props = []) {
 async function getManifestEntriesForCurrentPage(urlString) {
   try {
     const url = new URL(urlString, window.location.origin);
-    replaceUrlWithCurrentHost(url);
-    const response = await fetch(url);
+    const response = await fetch(url.pathname);
     const json = await response.json();
     return json.data
       .map((entry) => Object.keys(entry).reduce((res, k) => {
@@ -448,7 +435,7 @@ function watchMutationsAndApplyFragments(
       let res;
       if (url && new URL(url, window.location.origin).pathname !== window.location.pathname) {
         // eslint-disable-next-line no-await-in-loop
-        res = await replaceInner(url, el, entry.selector);
+        res = await replaceInner(new URL(url, window.location.origin).pathname, el, entry.selector);
       } else {
         res = url;
       }
