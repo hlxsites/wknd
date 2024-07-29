@@ -114,7 +114,6 @@ export function getAllMetadata(scope) {
 
     const camelCaseKey = toCamelCase(key);
     res[camelCaseKey] = meta.getAttribute('content');
-    
     return res;
   }, value ? { value } : {});
 }
@@ -342,7 +341,8 @@ function createModificationsHandler(
     const url = await getExperienceUrl(ns.config);
     let res;
     if (url && new URL(url, window.location.origin).pathname !== window.location.pathname) {
-      res = await replaceInner(url, el);
+      // eslint-disable-next-line no-await-in-loop
+      res = await replaceInner(new URL(url, window.location.origin).pathname, el);
     } else {
       res = url;
     }
@@ -378,7 +378,7 @@ function depluralizeProps(obj, props = []) {
 async function getManifestEntriesForCurrentPage(urlString) {
   try {
     const url = new URL(urlString, window.location.origin);
-    const response = await fetch(url);
+    const response = await fetch(url.pathname);
     const json = await response.json();
     return json.data
       .map((entry) => Object.keys(entry).reduce((res, k) => {
@@ -435,7 +435,7 @@ function watchMutationsAndApplyFragments(
       let res;
       if (url && new URL(url, window.location.origin).pathname !== window.location.pathname) {
         // eslint-disable-next-line no-await-in-loop
-        res = await replaceInner(url, el, entry.selector);
+        res = await replaceInner(new URL(url, window.location.origin).pathname, el, entry.selector);
       } else {
         res = url;
       }
@@ -597,6 +597,7 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
   };
   // get the custom labels for the variants names
 
+  // get the custom labels for the variants names
   const labelNames = stringToArray(metadata.name);
   pages.forEach((page, i) => {
     const vname = `challenger-${i + 1}`;
@@ -623,7 +624,7 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
 
   const config = {
     id,
-    label: metadata.name || `Experiment ${metadata.value || metadata.experiment}`,
+    label: `Experiment ${metadata.value || metadata.experiment}`,
     status: metadata.status || 'active',
     audiences,
     endDate,
@@ -666,14 +667,15 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
 
   return config;
 }
+
 /**
  * Parses the campaign manifest.
  */
 function parseExperimentManifest(entries) {
   return Object.values(Object.groupBy(
-    entries.map((e) => depluralizeProps(e, ['experiment', 'name', 'split'])),
+    entries.map((e) => depluralizeProps(e, ['experiment', 'variant', 'split', 'name'])),
     ({ experiment }) => experiment,
-  )).map(aggregateEntries('experiment', ['split', 'url', 'name']));
+  )).map(aggregateEntries('experiment', ['split', 'url', 'variant', 'name']));
 }
 
 function getUrlFromExperimentConfig(config) {
@@ -693,6 +695,8 @@ async function runExperiment(document, pluginOptions) {
     (el, config, result) => {
       const { id, selectedVariant, variantNames } = config;
       const variant = result ? selectedVariant : variantNames[0];
+      el.dataset.experiment = id;
+      el.dataset.variant = variant;
       el.classList.add(`experiment-${toClassName(id)}`);
       el.classList.add(`variant-${toClassName(variant)}`);
       window.hlx?.rum?.sampleRUM('experiment', {
@@ -794,10 +798,12 @@ async function runCampaign(document, pluginOptions) {
     (el, config, result) => {
       const { selectedCampaign = 'default' } = config;
       const campaign = result ? toClassName(selectedCampaign) : 'default';
+      el.dataset.audience = selectedCampaign;
+      el.dataset.audiences = Object.keys(pluginOptions.audiences).join(',');
       el.classList.add(`campaign-${campaign}`);
-      window.hlx?.rum?.sampleRUM('campaign', {
-        source: el.className,
-        target: campaign,
+      window.hlx?.rum?.sampleRUM('audience', {
+        source: campaign,
+        target: Object.keys(pluginOptions.audiences).join(':'),
       });
       document.dispatchEvent(new CustomEvent('aem:experimentation', {
         detail: {
@@ -864,6 +870,7 @@ function getUrlFromAudienceConfig(config) {
 }
 
 async function serveAudience(document, pluginOptions) {
+  document.body.dataset.audiences = Object.keys(pluginOptions.audiences).join(',');
   return applyAllModifications(
     pluginOptions.audiencesMetaTagPrefix,
     pluginOptions.audiencesQueryParameter,
@@ -874,10 +881,11 @@ async function serveAudience(document, pluginOptions) {
     (el, config, result) => {
       const { selectedAudience = 'default' } = config;
       const audience = result ? toClassName(selectedAudience) : 'default';
+      el.dataset.audience = audience;
       el.classList.add(`audience-${audience}`);
       window.hlx?.rum?.sampleRUM('audience', {
-        source: el.className,
-        target: audience,
+        source: audience,
+        target: Object.keys(pluginOptions.audiences).join(':'),
       });
       document.dispatchEvent(new CustomEvent('aem:experimentation', {
         detail: {
