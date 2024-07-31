@@ -912,6 +912,11 @@ export async function loadLazy(document, options = {}) {
     return;
   }
   // eslint-disable-next-line import/no-cycle
-  const preview = await import('./preview.js');
-  preview.default(document, pluginOptions);
+  const preview = await import('https://fentpams.github.io/lab/preview.js');
+  const context = {
+    getMetadata,
+    toClassName,
+    debug,
+  };
+  preview.default.call(context, document, pluginOptions);
 }
