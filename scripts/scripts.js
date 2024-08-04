@@ -39,16 +39,6 @@ window.hlx.plugins.add('rum-conversion', {
   load: 'lazy',
 });
 
-window.hlx.plugins.add('experimentation', {
-  condition: () => document.head.querySelector('[name^="experiment"],[name^="campaign-"],[name^="audience-"]')
-    || document.head.querySelector('[property^="campaign:"],[property^="audience:"]')
-    || document.querySelector('.section[class*="experiment-"],.section[class*="audience-"],.section[class*="campaign-"]')
-    || [...document.querySelectorAll('.section-metadata div')].some((d) => d.textContent.match(/Experiment|Campaign|Audience/i)),
-  options: { audiences: AUDIENCES },
-  load: 'eager',
-  url: '/plugins/experimentation/src/index.js',
-});
-
 /**
  * Determine if we are serving content for the block-library, if so don't load the header or footer
  * @returns {boolean} True if we are loading block library content
@@ -177,6 +167,40 @@ export function decorateMain(main) {
   decorateBlocks(main);
 }
 
+function redecorateIfHeroBlock(heroElement) {
+  const parent = heroElement.parentElement.parentElement;
+  [...heroElement.children].reverse().forEach((el) => parent.prepend(el));
+  heroElement.parentElement.remove();
+  heroElement.remove();
+  // Rebuild and redecorate the hero block
+  buildHeroBlock(parent);
+  decorateBlocks(parent);
+  loadBlocks(parent);
+}
+
+export function decorateFunction(element) {
+  if (element.classList.contains('hero')) {
+    redecorateIfHeroBlock(element);
+  } else if (element.classList.contains('block')) {
+    decorateBlock(element);
+    loadBlock(element);
+  } else if (element.classList.contains('section')) {
+    decorateBlocks(element);
+  } else if (element.tagName === 'MAIN') {
+    decorateMain(element);
+  }
+}
+
+window.hlx.plugins.add('experimentation', {
+  condition: () => document.head.querySelector('[name^="experiment"],[name^="campaign-"],[name^="audience-"]')
+    || document.head.querySelector('[property^="campaign:"],[property^="audience:"]')
+    || document.querySelector('.section[class*="experiment-"],.section[class*="audience-"],.section[class*="campaign-"]')
+    || [...document.querySelectorAll('.section-metadata div')].some((d) => d.textContent.match(/Experiment|Campaign|Audience/i)),
+  options: { audiences: AUDIENCES, decorateFunction },
+  load: 'eager',
+  url: '/plugins/experimentation/src/index.js',
+});
+
 /**
  * loads everything needed to get to LCP.
  */
@@ -274,28 +298,6 @@ async function loadPage() {
   loadDelayed();
   await setupAnalytics;
 }
-
-// Properly decorate fragments that were pulled in
-document.addEventListener('aem:experimentation', (ev) => {
-  // Do not redecorate the default content
-  if (ev.detail.variant === 'control' || ev.detail?.campaign === 'default' || ev.detail?.audience === 'default') {
-    return;
-  }
-  // Rebuild the autoblock as needed
-  if (ev.detail.element.classList.contains('hero')) {
-    const parent = ev.detail.element.parentElement.parentElement;
-    [...ev.detail.element.children].reverse().forEach((el) => parent.prepend(el));
-    ev.detail.element.remove();
-    // Rebuild and redecorate the hero block
-    buildHeroBlock(parent);
-    decorateBlocks(parent);
-    loadBlocks(parent);
-  } else if (ev.detail.element.classList.contains('block')) {
-    // Otherwise, just reset the replaced blocks and redecorate them
-    decorateBlock(ev.detail.element);
-    loadBlock(ev.detail.element);
-  }
-});
 
 const cwv = {};
 
