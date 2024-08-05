@@ -28,7 +28,7 @@
     {
       "id": "generate-variations-v2",
       "titleI18n": {
-        "en": "Generate Variations V2"
+        "en": "Generate Variations V2 Alpha"
       },
       "environments": [
         "preview"
