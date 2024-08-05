@@ -24,6 +24,19 @@
       "passConfig": true,
       "environments": [ "preview", "live", "edit" ],
       "includePaths": ["**.docx**"]
+    },
+    {
+      "id": "generate-variations-v2",
+      "titleI18n": {
+        "en": "Generate Variations V2"
+      },
+      "environments": [
+        "preview"
+      ],
+      "includePaths": [
+        "**.docx**"
+      ],
+      "event": "aem-genai-variations-sidekick"
     }
   ]
 }

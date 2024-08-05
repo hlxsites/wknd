@@ -248,6 +248,9 @@ async function loadLazy(doc) {
   // Mark customer as having viewed the page once
   localStorage.setItem('franklin-visitor-returning', true);
 
+  // Add aem-genai-variations script as part of the lazy loading process
+  import('../tools/sidekick/aem-genai-variations.js');
+
   window.hlx.plugins.run('loadLazy');
 }
 
