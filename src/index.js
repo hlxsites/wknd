@@ -43,6 +43,9 @@ export const DEFAULT_OPTIONS = {
   // Experimentation related properties
   experimentsMetaTagPrefix: 'experiment',
   experimentsQueryParameter: 'experiment',
+
+  // Redecoration function for fragments
+  decorateFunction: () => {},
 };
 
 /**
@@ -436,6 +439,8 @@ function watchMutationsAndApplyFragments(
       if (url && new URL(url, window.location.origin).pathname !== window.location.pathname) {
         // eslint-disable-next-line no-await-in-loop
         res = await replaceInner(new URL(url, window.location.origin).pathname, el, entry.selector);
+        // eslint-disable-next-line no-await-in-loop
+        await pluginOptions.decorateFunction(el);
       } else {
         res = url;
       }
@@ -595,8 +600,11 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
     label: 'Control',
   };
 
-  // get the custom labels for the variants names
-  const labelNames = stringToArray(metadata.name);
+  // get the customized name for the variant in page metadata and manifest
+  const labelNames = stringToArray(metadata.name)?.length
+    ? stringToArray(metadata.name)
+    : stringToArray(depluralizeProps(metadata, ['variantName']).variantName);
+
   pages.forEach((page, i) => {
     const vname = `challenger-${i + 1}`;
     //  label with custom name or default
@@ -917,7 +925,12 @@ export async function loadLazy(document, options = {}) {
   if (!isDebugEnabled) {
     return;
   }
-  // eslint-disable-next-line import/no-cycle
-  const preview = await import('./preview.js');
-  preview.default(document, pluginOptions);
+  // eslint-disable-next-line import/no-unresolved
+  const preview = await import('https://opensource.adobe.com/aem-experimentation/preview.js');
+  const context = {
+    getMetadata,
+    toClassName,
+    debug,
+  };
+  preview.default.call(context, document, pluginOptions);
 }
