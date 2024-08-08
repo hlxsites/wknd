@@ -38,10 +38,12 @@ Before you begin, ensure you have the [AEM Sidekick Chrome extension](https://ch
 
 - To see how this experiment is configured, right-click on the AEM Sidekick extension and select "View document source"
 - Scroll down to the Metadata block at the bottom of the document
-- Note the Experiment, and Instant Experiment properties
-- The Instant Experiment property defines the pages used for the "challenger" variants in the Experimentation UI
+- Note the Experiment, and Experiment Vairants properties
+- The Experiment Vairants property defines the pages used for the "challenger" variants in the Experimentation UI
 
 <img src="/docs/images/experiment-metadata.png" width="500" alt="The document source which configures the experiments">
+
+For more details about Experimentation, please check out this repo : [aem-experimentation](https://github.com/adobe/aem-experimentation/)
 
 ### Conversion Tracking
 [RUM docs](https://www.hlx.live/developer/rum)
