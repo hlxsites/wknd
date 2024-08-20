@@ -79,25 +79,6 @@ export function toClassName(name) {
  * @param {string} result - the URL of the served experience.
  */
 function fireRUM(type, config, pluginOptions, result) {
-<<<<<<< HEAD
-  const sampleData = {
-    experiment: {
-      source: config.id,
-      target: result ? config.selectedVariant : config.variantNames[0],
-    },
-    campaign: {
-      source: result ? toClassName(config.selectedCampaign) : 'default',
-      target: Object.keys(pluginOptions.audiences).join(":"),
-    },
-    audience: {
-      source: result ? toClassName(config.selectedAudience) : 'default',
-      target: Object.keys(pluginOptions.audiences).join(":"),
-    },
-  };
-
-  const rumType = type === "experiment" ? "experiment" : "audience";
-  window.hlx?.rum?.sampleRUM(rumType, sampleData[type]);
-=======
   const { selectedCampaign = 'default', selectedAudience = 'default' } = config;
 
   const typeHandlers = {
@@ -118,7 +99,6 @@ function fireRUM(type, config, pluginOptions, result) {
   const { source, target } = typeHandlers[type]();
   const rumType = type === 'experiment' ? 'experiment' : 'audience';
   window.hlx?.rum?.sampleRUM(rumType, { source, target });
->>>>>>> 97e67b7207ab00e95c47651061c2cceac4d007d9
 }
 
 /**
@@ -400,12 +380,8 @@ function createModificationsHandler(
         // Firing RUM event early since redirection will stop the rest of the JS execution
         fireRUM(type, config, pluginOptions, url);
         window.location.replace(url);
-<<<<<<< HEAD
-        return null;
-=======
         // eslint-disable-next-line consistent-return
         return;
->>>>>>> 97e67b7207ab00e95c47651061c2cceac4d007d9
       }
       // eslint-disable-next-line no-await-in-loop
       res = await replaceInner(new URL(url, window.location.origin).pathname, el);
