@@ -79,6 +79,7 @@ export function toClassName(name) {
  * @param {string} result - the URL of the served experience.
  */
 function fireRUM(type, config, pluginOptions, result) {
+<<<<<<< HEAD
   const sampleData = {
     experiment: {
       source: config.id,
@@ -96,6 +97,28 @@ function fireRUM(type, config, pluginOptions, result) {
 
   const rumType = type === "experiment" ? "experiment" : "audience";
   window.hlx?.rum?.sampleRUM(rumType, sampleData[type]);
+=======
+  const { selectedCampaign = 'default', selectedAudience = 'default' } = config;
+
+  const typeHandlers = {
+    experiment: () => ({
+      source: config.id,
+      target: result ? config.selectedVariant : config.variantNames[0],
+    }),
+    campaign: () => ({
+      source: result ? toClassName(selectedCampaign) : 'default',
+      target: Object.keys(pluginOptions.audiences).join(':'),
+    }),
+    audience: () => ({
+      source: result ? toClassName(selectedAudience) : 'default',
+      target: Object.keys(pluginOptions.audiences).join(':'),
+    }),
+  };
+
+  const { source, target } = typeHandlers[type]();
+  const rumType = type === 'experiment' ? 'experiment' : 'audience';
+  window.hlx?.rum?.sampleRUM(rumType, { source, target });
+>>>>>>> 97e67b7207ab00e95c47651061c2cceac4d007d9
 }
 
 /**
@@ -348,6 +371,7 @@ function toDecisionPolicy(config) {
  * Creates an instance of a modification handler that will be responsible for applying the desired
  * personalized experience.
  *
+ * @param {String} type The type of modifications to apply
  * @param {Object} overrides The config overrides
  * @param {Function} metadataToConfig a function that will handle the parsing of the metadata
  * @param {Function} getExperienceUrl a function that returns the URL to the experience
@@ -376,7 +400,12 @@ function createModificationsHandler(
         // Firing RUM event early since redirection will stop the rest of the JS execution
         fireRUM(type, config, pluginOptions, url);
         window.location.replace(url);
+<<<<<<< HEAD
         return null;
+=======
+        // eslint-disable-next-line consistent-return
+        return;
+>>>>>>> 97e67b7207ab00e95c47651061c2cceac4d007d9
       }
       // eslint-disable-next-line no-await-in-loop
       res = await replaceInner(new URL(url, window.location.origin).pathname, el);
