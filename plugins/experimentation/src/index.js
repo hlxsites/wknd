@@ -211,7 +211,7 @@ function inferEmptyPercentageSplits(variants) {
   if (variantsWithoutPercentage.length) {
     const missingPercentage = remainingPercentage / variantsWithoutPercentage.length;
     variantsWithoutPercentage.forEach((v) => {
-      v.percentageSplit = missingPercentage.toFixed(2);
+      v.percentageSplit = missingPercentage.toFixed(4);
     });
   }
 }
@@ -249,7 +249,7 @@ function getConfigForInstantExperiment(
   const splitString = context.getMetadata(`${pluginOptions.experimentsMetaTag}-split`);
   const splits = splitString
     // custom split
-    ? splitString.split(',').map((i) => parseInt(i, 10) / 100)
+    ? splitString.split(',').map((i) => parseFloat(i) / 100)
     // even split fallback
     : [...new Array(pages.length)].map(() => 1 / (pages.length + 1));
 
@@ -265,7 +265,7 @@ function getConfigForInstantExperiment(
     const vname = `challenger-${i + 1}`;
     config.variantNames.push(vname);
     config.variants[vname] = {
-      percentageSplit: `${splits[i].toFixed(2)}`,
+      percentageSplit: `${splits[i].toFixed(4)}`,
       pages: [page],
       blocks: [],
       label: `Challenger ${i + 1}`,
@@ -679,10 +679,25 @@ function adjustedRumSamplingRate(checkpoint, options, context) {
   };
 }
 
+function adjustRumSampligRate(document, options, context) {
+  const checkpoints = ['audiences', 'campaign', 'experiment'];
+  if (context.sampleRUM.always) { // RUM v1.x
+    checkpoints.forEach((ck) => {
+      context.sampleRUM.always.on(ck, adjustedRumSamplingRate(ck, options, context));
+    });
+  } else { // RUM 2.x
+    document.addEventListener('rum', (event) => {
+      if (event.detail
+        && event.detail.checkpoint
+        && checkpoints.includes(event.detail.checkpoint)) {
+        adjustedRumSamplingRate(event.detail.checkpoint, options, context);
+      }
+    });
+  }
+}
+
 export async function loadEager(document, options, context) {
-  context.sampleRUM.always.on('audiences', adjustedRumSamplingRate('audiences', options, context));
-  context.sampleRUM.always.on('campaign', adjustedRumSamplingRate('campaign', options, context));
-  context.sampleRUM.always.on('experiment', adjustedRumSamplingRate('experiment', options, context));
+  adjustRumSampligRate(document, options, context);
   let res = await runCampaign(document, options, context);
   if (!res) {
     res = await runExperiment(document, options, context);
@@ -701,9 +716,9 @@ export async function loadLazy(document, options, context) {
   if (window.location.hostname.endsWith('.live')
     || (typeof options.isProd === 'function' && options.isProd())
     || (options.prodHost
-        && (options.prodHost === window.location.host
-          || options.prodHost === window.location.hostname
-          || options.prodHost === window.location.origin))) {
+      && (options.prodHost === window.location.host
+        || options.prodHost === window.location.hostname
+        || options.prodHost === window.location.origin))) {
     return;
   }
   // eslint-disable-next-line import/no-cycle

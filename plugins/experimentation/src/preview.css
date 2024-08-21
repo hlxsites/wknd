@@ -24,7 +24,7 @@
 }
 
 .hlx-preview-overlay {
-  z-index: 99;
+  z-index: 99999;
   position: fixed;
   color: #eee;
   font-size: 1rem;
@@ -104,9 +104,14 @@
 
 .hlx-popup {
   position: absolute;
+  display: grid;
+  grid-template:
+    "header" min-content
+    "content" 1fr;
   bottom: 6.5em;
   left: 50%;
   transform: translateX(-50%);
+  max-height: calc(100vh - 100px - var(--nav-height, 100px));
   max-width: calc(100vw - 2em);
   min-width: calc(300px - 2em);
   background-color: #444;
@@ -128,6 +133,7 @@
 
 .hlx-popup-header {
   display: grid;
+  grid-area: header;
   grid-template:
     "label actions" 
     "description actions"
@@ -135,6 +141,13 @@
   background-color: #222;
   border-radius: 16px 16px 0 0;
   padding: 24px 16px;
+}
+
+.hlx-popup-items {
+  overflow-y: auto;
+  grid-area: content;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
 }
 
 .hlx-popup-header-label {
@@ -174,7 +187,7 @@
   height: 0;
   position: absolute;
   border-left: 15px solid transparent;
-  border-right: 15px solid transparent;    
+  border-right: 15px solid transparent;
   border-top: 15px solid #444;
   bottom: -15px;
   right: 50%;
@@ -198,13 +211,13 @@
 .hlx-popup-item {
   display: grid;
   grid-template:
-    "label actions" 
+    "label actions"
     "description actions"
     / 1fr min-content;
   margin: 1em;
   padding: 1em;
   border-radius: 1em;
-  gap: 1em;
+  gap: .5em 1em;
 }
 
 .hlx-popup-item-label {
