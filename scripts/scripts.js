@@ -1,8 +1,7 @@
+/* eslint-disable no-underscore-dangle */
 import {
   sampleRUM,
   buildBlock,
-  getAllMetadata,
-  getMetadata,
   loadHeader,
   loadFooter,
   decorateButtons,
@@ -13,39 +12,73 @@ import {
   waitForLCP,
   loadBlocks,
   loadCSS,
+  getMetadata,
 } from './lib-franklin.js';
 import {
-  analyticsTrack404,
-  analyticsTrackConversion,
-  analyticsTrackCWV,
-  analyticsTrackError,
-  initAnalyticsTrackingQueue,
-  setupAnalyticsTrackingWithAlloy,
-} from './analytics/lib-analytics.js';
+  initMartech,
+  updateUserConsent,
+  martechEager,
+  martechLazy,
+  martechDelayed,
+} from './adobe-martech/index.js';
 
-const LCP_BLOCKS = []; // add your LCP blocks to the list
+const LCP_BLOCKS = ['carousel']; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
-// Define the custom audiences mapping for experience decisioning
-const AUDIENCES = {
-  mobile: () => window.innerWidth < 600,
-  desktop: () => window.innerWidth >= 600,
-  'new-visitor': () => !localStorage.getItem('franklin-visitor-returning'),
-  'returning-visitor': () => !!localStorage.getItem('franklin-visitor-returning'),
-};
+const martechLoadedPromise = initMartech({
+  datastreamId: 'cc68fdd3-4db1-432c-adce-288917ddf108',
+  orgId: '908936ED5D35CC220A495CD4@AdobeOrg',
+  defaultConsent: 'in', // 'pending',
+  onBeforeEventSend: (options) => {
+    if (options.xdm.eventType === 'decisioning.propositionFetch') {
+      options.data ||= {};
+      options.data.__adobe ||= {};
+      options.data.__adobe.target = {
+        /* add target parameters here.
+           documentation: https://experienceleague.adobe.com/en/docs/platform-learn/migrate-target-to-websdk/send-parameters#parameter-mapping-summary */
+      };
+    }
+
+    /* add marketing campaign detail to analytics */
+    if (options.xdm.eventType === 'web.webpagedetails.pageViews' && options.data?.__adobe?.analytics) {
+      const usp = new URLSearchParams(window.Location.search);
+      options.data.__adobe.analytics.campaign = usp.get('utm_campaign') || undefined;
+    }
+
+    /* add experiment details to XDM */
+    const { experiment } = window.hlx;
+    options.xdm._sitesinternal = {
+      ...options.xdm._sitesinternal,
+      ...(experiment && { experiment }), // add experiment details, if existing, to all events
+    };
+  },
+}, {
+  launchUrls: [
+    'https://assets.adobedtm.com/51b39232f128/2609377b4aba/launch-6c3a8fffe137-development.min.js',
+  ],
+  personalization: getMetadata('target') || new URLSearchParams(window.location.search).has('target'),
+});
+
+window.addEventListener('consent', (ev) => {
+  updateUserConsent({
+    collect: ev.detail.categories.includes('CC_ANALYTICS'),
+    marketing: ev.detail.categories.includes('CC_MARKETING'),
+    personalize: ev.detail.categories.includes('CC_PERSONALIZATION'),
+    share: ev.detail.categories.includes('CC_MARKETING'),
+  });
+});
+window.addEventListener('consent-updated', (ev) => {
+  updateUserConsent({
+    collect: ev.detail.categories.includes('CC_ANALYTICS'),
+    marketing: ev.detail.categories.includes('CC_MARKETING'),
+    personalize: ev.detail.categories.includes('CC_PERSONALIZATION'),
+    share: ev.detail.categories.includes('CC_MARKETING'),
+  });
+});
 
 window.hlx.plugins.add('rum-conversion', {
   url: '/plugins/rum-conversion/src/index.js',
   load: 'lazy',
-});
-
-window.hlx.plugins.add('experimentation', {
-  condition: () => getMetadata('experiment')
-    || Object.keys(getAllMetadata('campaign')).length
-    || Object.keys(getAllMetadata('audience')).length,
-  options: { audiences: AUDIENCES },
-  load: 'eager',
-  url: '/plugins/experimentation/src/index.js',
 });
 
 /**
@@ -190,9 +223,11 @@ async function loadEager(doc) {
 
   const main = doc.querySelector('main');
   if (main) {
-    await initAnalyticsTrackingQueue();
     decorateMain(main);
-    await waitForLCP(LCP_BLOCKS);
+    await Promise.all([
+      martechLoadedPromise.then(martechEager),
+      waitForLCP(LCP_BLOCKS),
+    ]);
   }
 }
 
@@ -241,6 +276,8 @@ async function loadLazy(doc) {
     loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   }
   addFavIcon(`${window.wknd.demoConfig.demoBase || window.hlx.codeBasePath}/favicon.png`);
+  await import('./rum-to-analytics.js');
+  await martechLazy();
   sampleRUM('lazy');
   sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
   sampleRUM.observe(main.querySelectorAll('picture > img'));
@@ -260,6 +297,7 @@ function loadDelayed() {
   window.setTimeout(() => {
     window.hlx.plugins.load('delayed');
     window.hlx.plugins.run('loadDelayed');
+    martechDelayed();
     return import('./delayed.js');
   }, 3000);
   // load anything that can be postponed to the latest here
@@ -270,75 +308,9 @@ async function loadPage() {
   await loadEager(document);
   await window.hlx.plugins.load('lazy');
   await loadLazy(document);
-  const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
+  // const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
   loadDelayed();
-  await setupAnalytics;
+  // await setupAnalytics;
 }
-
-const cwv = {};
-
-// Forward the RUM CWV cached measurements to edge using WebSDK before the page unloads
-window.addEventListener('beforeunload', () => {
-  if (!Object.keys(cwv).length) return;
-  analyticsTrackCWV(cwv);
-});
-
-// Callback to RUM CWV checkpoint in order to cache the measurements
-sampleRUM.always.on('cwv', async (data) => {
-  if (!data.cwv) return;
-  Object.assign(cwv, data.cwv);
-});
-
-sampleRUM.always.on('404', analyticsTrack404);
-sampleRUM.always.on('error', analyticsTrackError);
-
-// Declare conversionEvent, bufferTimeoutId and tempConversionEvent,
-// outside the convert function to persist them for buffering between
-// subsequent convert calls
-const CONVERSION_EVENT_TIMEOUT_MS = 100;
-let bufferTimeoutId;
-let conversionEvent;
-let tempConversionEvent;
-sampleRUM.always.on('convert', (data) => {
-  const { element } = data;
-  // eslint-disable-next-line no-undef
-  if (!element || !alloy) {
-    return;
-  }
-
-  if (element.tagName === 'FORM') {
-    conversionEvent = {
-      ...data,
-      event: 'Form Complete',
-    };
-
-    if (conversionEvent.event === 'Form Complete'
-      // Check for undefined, since target can contain value 0 as well, which is falsy
-      && (data.target === undefined || data.source === undefined)
-    ) {
-      // If a buffer has already been set and tempConversionEvent exists,
-      // merge the two conversionEvent objects to send to alloy
-      if (bufferTimeoutId && tempConversionEvent) {
-        conversionEvent = { ...tempConversionEvent, ...conversionEvent };
-      } else {
-        // Temporarily hold the conversionEvent object until the timeout is complete
-        tempConversionEvent = { ...conversionEvent };
-
-        // If there is partial form conversion data,
-        // set the timeout buffer to wait for additional data
-        bufferTimeoutId = setTimeout(async () => {
-          analyticsTrackConversion({ ...conversionEvent });
-          tempConversionEvent = undefined;
-          conversionEvent = undefined;
-        }, CONVERSION_EVENT_TIMEOUT_MS);
-      }
-    }
-    return;
-  }
-
-  analyticsTrackConversion({ ...data });
-  tempConversionEvent = undefined;
-  conversionEvent = undefined;
-});
 
 loadPage();

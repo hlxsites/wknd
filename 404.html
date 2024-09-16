@@ -9,7 +9,8 @@
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta property="og:title" content="Page not found">
-  <script src="/scripts/scripts.js" type="module" crossorigin="use-credentials"></script>
+  <script type="module" src="/scripts/lib-franklin.js"></script>
+  <script type="module" src="/scripts/scripts.js"></script>
   <script type="module">
     import { sampleRUM } from '/scripts/lib-franklin.js';
 
@@ -46,6 +47,9 @@
     }
   </style>
   <link rel="stylesheet" href="/styles/lazy-styles.css">
+  <link rel="preload" as="script" crossorigin="anonymous" href="/scripts/adobe-martech/index.js"></script>
+  <link rel="preload" as="script" crossorigin="anonymous" href="/scripts/adobe-martech/alloy.min.js"></script>
+  <link rel="preconnect" crossorigin="with-crdentials" href="https://edge.adobedc.net"></script>
 </head>
 
 <body>
