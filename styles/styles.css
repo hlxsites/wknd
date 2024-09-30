@@ -339,3 +339,13 @@ main .section[data-section-status='initialized'] {
 .cc-btn.cc-save {
   padding: 13px 29px;
 }
+
+/* Accor Demo Styles */
+
+main .audience-fr .carousel-text {
+  background: lightblue;
+}
+
+main .audience-fr .carousel-text .button {
+  background: red;
+}
