@@ -32,6 +32,8 @@ const AUDIENCES = {
   desktop: () => window.innerWidth >= 600,
   'new-visitor': () => !localStorage.getItem('franklin-visitor-returning'),
   'returning-visitor': () => !!localStorage.getItem('franklin-visitor-returning'),
+  fr: async () => new URLSearchParams(window.location.search).get('lang') === 'fr'
+    || (await window.cookieStore.get('lang')) === 'fr',
 };
 
 window.hlx.plugins.add('rum-conversion', {
