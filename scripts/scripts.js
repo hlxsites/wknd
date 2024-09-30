@@ -39,10 +39,10 @@ window.hlx.plugins.add('rum-conversion', {
   load: 'lazy',
 });
 
+const isExperimentationEnabled = document.head.querySelector('[name^="experiment"],[name^="campaign-"],[name^="audience-"]')
+    || [...document.querySelectorAll('.section-metadata div')].some((d) => d.textContent.match(/Experiment|Campaign|Audience/i));
 window.hlx.plugins.add('experimentation', {
-  condition: () => getMetadata('experiment')
-    || Object.keys(getAllMetadata('campaign')).length
-    || Object.keys(getAllMetadata('audience')).length,
+  condition: () => isExperimentationEnabled,
   options: { audiences: AUDIENCES },
   load: 'eager',
   url: '/plugins/experimentation/src/index.js',
