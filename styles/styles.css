@@ -342,10 +342,10 @@ main .section[data-section-status='initialized'] {
 
 /* Accor Demo Styles */
 
-main .audience-fr div.carousel-text {
+main .audience-fr .carousel div.carousel-text {
   background: lightblue;
 }
 
-main .audience-fr div.carousel-text .button {
+main .audience-fr .carousel div.carousel-text .button {
   background: red;
 }
