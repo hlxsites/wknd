@@ -21,9 +21,18 @@ import {
   analyticsTrackError,
   initAnalyticsTrackingQueue,
   setupAnalyticsTrackingWithAlloy,
+  getSegmentsFromAlloy,
+  analyticsCustomData,
 } from './analytics/lib-analytics.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
+/**
+ * Add your segment name id mappings path here. Configure Segment sync
+ * from https://github.com/adobe-rnd/aem-experimentation-gh-actions/tree/main/segments-sync
+ * to generate the segment-mappings automatically from your AEP segments.
+ */
+const SEGMENTNAME_ID_MAPPINGS = '/data/segment-mappings.json';
+const RTCDP_AUDIENCE_PREFIX = 'rtcdp';
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
 // Define the custom audiences mapping for experience decisioning
@@ -32,6 +41,23 @@ const AUDIENCES = {
   desktop: () => window.innerWidth >= 600,
   'new-visitor': () => !localStorage.getItem('franklin-visitor-returning'),
   'returning-visitor': () => !!localStorage.getItem('franklin-visitor-returning'),
+  default: async (audience) => {
+    // check if the audience is rtcdp audience
+    if (audience.indexOf(RTCDP_AUDIENCE_PREFIX) !== -1) {
+      const rtcdpAudience = audience.replace(`${RTCDP_AUDIENCE_PREFIX}-`, '');
+      const segmentMappingsResponse = await fetch(SEGMENTNAME_ID_MAPPINGS);
+      const segmentMappingsJson = await segmentMappingsResponse.json();
+      const segmentMappings = [];
+      segmentMappingsJson.forEach((mapping) => {
+        const name = mapping.name.replace(/\s+/g, '-').toLowerCase();
+        segmentMappings[name] = mapping.id;
+      });
+      const rtcdpAudienceId = segmentMappings[rtcdpAudience];
+      const segments = await getSegmentsFromAlloy();
+      return segments.includes(rtcdpAudienceId);
+    }
+    return false;
+  },
 };
 
 window.hlx.plugins.add('rum-conversion', {
@@ -182,6 +208,7 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  await initAnalyticsTrackingQueue();
 
   await window.hlx.plugins.run('loadEager');
 
@@ -190,7 +217,6 @@ async function loadEager(doc) {
 
   const main = doc.querySelector('main');
   if (main) {
-    await initAnalyticsTrackingQueue();
     decorateMain(main);
     await waitForLCP(LCP_BLOCKS);
   }
@@ -271,6 +297,16 @@ async function loadPage() {
   await window.hlx.plugins.load('lazy');
   await loadLazy(document);
   const setupAnalytics = setupAnalyticsTrackingWithAlloy(document);
+
+  // example of sending custom data to AEP through Alloy
+  // TODO: comment this after testing
+  if (document.location.href.includes('products')) {
+    analyticsCustomData({
+      Interests: 'sports',
+      Entitlements: 'photoshop',
+    });
+  }
+
   loadDelayed();
   await setupAnalytics;
 }
