@@ -61,22 +61,8 @@
           const decodedParam = decodeURIComponent(experimentParam);
 
           const [experimentId, variantId] = decodedParam.split('/');
-          if (experimentId) {
+          if (experimentId && variantId) {
               isHandlingSimulation = true;
-              // Set simulation state
-              const simulationState = {
-                  isSimulation: true,
-                  source: 'plugin',
-                  experimentId: experimentId,
-                  variantId: variantId || 'control',
-              };
-              console.log('[AEM Exp] Setting simulation state:', simulationState);
-
-              sessionStorage.setItem('simulationState', JSON.stringify(simulationState));
-              sessionStorage.setItem('aemExperimentation_autoOpen', 'true');
-              sessionStorage.setItem('aemExperimentation_experimentId', experimentId);
-              sessionStorage.setItem('aemExperimentation_variantId', variantId || 'control');
-
               // Load app and force show
               loadAEMExperimentationApp()
                   .then(() => {
