@@ -26,11 +26,10 @@
           }
 
           const script = document.createElement('script');
-          script.src = 'https://experience-qa.adobe.com/solutions/ExpSuccess-aem-experimentation-mfe/static-assets/resources/sidekick/client.js?source=sidekick';
+          script.src = 'https://experience.adobe.com/solutions/ExpSuccess-aem-experimentation-mfe/static-assets/resources/sidekick/client.js?source=plugin';
 
           script.onload = function () {
               isAEMExperimentationAppLoaded = true;
-              // Wait for container to be created
               const waitForContainer = (retries = 0, maxRetries = 20) => {
                   const container = document.getElementById('aemExperimentation');
                   if (container) {
@@ -61,29 +60,12 @@
           const decodedParam = decodeURIComponent(experimentParam);
 
           const [experimentId, variantId] = decodedParam.split('/');
-          if (experimentId) {
+          if (experimentId && variantId) {
               isHandlingSimulation = true;
-              // Set simulation state
-              const simulationState = {
-                  isSimulation: true,
-                  source: 'plugin',
-                  experimentId: experimentId,
-                  variantId: variantId || 'control',
-              };
-              console.log('[AEM Exp] Setting simulation state:', simulationState);
-
-              sessionStorage.setItem('simulationState', JSON.stringify(simulationState));
-              sessionStorage.setItem('aemExperimentation_autoOpen', 'true');
-              sessionStorage.setItem('aemExperimentation_experimentId', experimentId);
-              sessionStorage.setItem('aemExperimentation_variantId', variantId || 'control');
-
               // Load app and force show
               loadAEMExperimentationApp()
                   .then(() => {
-                      const panel = document.getElementById('aemExperimentation');
-                      if (panel) {
-                          panel.classList.remove('aemExperimentationHidden');
-                      }
+                    toggleExperimentPanel(true); 
                   })
                   .catch((error) => {
                       console.error('[AEM Exp] Error loading app:', error);
