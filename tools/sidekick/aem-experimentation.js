@@ -30,7 +30,6 @@
 
           script.onload = function () {
               isAEMExperimentationAppLoaded = true;
-              // Wait for container to be created
               const waitForContainer = (retries = 0, maxRetries = 20) => {
                   const container = document.getElementById('aemExperimentation');
                   if (container) {
@@ -66,10 +65,7 @@
               // Load app and force show
               loadAEMExperimentationApp()
                   .then(() => {
-                      const panel = document.getElementById('aemExperimentation');
-                      if (panel) {
-                          panel.classList.remove('aemExperimentationHidden');
-                      }
+                    toggleExperimentPanel(true); 
                   })
                   .catch((error) => {
                       console.error('[AEM Exp] Error loading app:', error);
