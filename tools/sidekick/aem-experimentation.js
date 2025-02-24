@@ -62,7 +62,6 @@
           const [experimentId, variantId] = decodedParam.split('/');
           if (experimentId && variantId) {
               isHandlingSimulation = true;
-              // Load app and force show
               loadAEMExperimentationApp()
                   .then(() => {
                     toggleExperimentPanel(true); 
@@ -75,15 +74,11 @@
   }
 
   function handleSidekickPluginButtonClick() {
-    const panel = document.getElementById('aemExperimentation');
-
     if (!isAEMExperimentationAppLoaded) {
         loadAEMExperimentationApp()
             .then(() => {
-                if (panel) {
-                    console.log('[AEM Exp] First load - showing panel');
-                    toggleExperimentPanel(true); 
-                }
+                console.log('[AEM Exp] First load - showing panel');
+                toggleExperimentPanel(true); 
             })
             .catch(error => {
                 console.error('[AEM Exp] Failed to load:', error);
