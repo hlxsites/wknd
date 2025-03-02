@@ -31,7 +31,8 @@ const AUDIENCES = {
   mobile: () => window.innerWidth < 600,
   desktop: () => window.innerWidth >= 600,
   'new-visitor': () => !localStorage.getItem('franklin-visitor-returning'),
-  'returning-visitor': () => !!localStorage.getItem('franklin-visitor-returning'),
+  'returning-visitor': () =>
+    !!localStorage.getItem('franklin-visitor-returning'),
 };
 
 window.hlx.plugins.add('rum-conversion', {
@@ -57,9 +58,11 @@ export function isBlockLibrary() {
 export function createTag(tag, attributes, children) {
   const element = document.createElement(tag);
   if (children) {
-    if (children instanceof HTMLElement
-      || children instanceof SVGElement
-      || children instanceof DocumentFragment) {
+    if (
+      children instanceof HTMLElement ||
+      children instanceof SVGElement ||
+      children instanceof DocumentFragment
+    ) {
       element.append(children);
     } else if (Array.isArray(children)) {
       element.append(...children);
@@ -79,7 +82,11 @@ function buildHeroBlock(main) {
   const h1 = main.querySelector('main > div > h1');
   const picture = main.querySelector('main > div > p > picture');
   // eslint-disable-next-line no-bitwise
-  if (h1 && picture && (h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING)) {
+  if (
+    h1 &&
+    picture &&
+    h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING
+  ) {
     const section = document.createElement('div');
     section.append(buildBlock('hero', { elems: [picture, h1] }));
     main.prepend(section);
@@ -100,7 +107,10 @@ function buildAutoBlocks(main) {
 }
 
 function patchDemoBlocks(config) {
-  if (window.wknd.demoConfig.blocks && window.wknd.demoConfig.blocks[config.blockName]) {
+  if (
+    window.wknd.demoConfig.blocks &&
+    window.wknd.demoConfig.blocks[config.blockName]
+  ) {
     const url = window.wknd.demoConfig.blocks[config.blockName];
     const splits = new URL(url).pathname.split('/');
     const [, owner, repo, , branch] = splits;
@@ -113,15 +123,20 @@ function patchDemoBlocks(config) {
       cssPath: `${franklinPath}/${config.blockName}.css`,
     };
   }
-  return (config);
+  return config;
 }
 
 async function loadDemoConfig() {
   const demoConfig = {};
   const pathSegments = window.location.pathname.split('/');
-  if (window.location.pathname.startsWith('/drafts/') && pathSegments.length > 4) {
+  if (
+    window.location.pathname.startsWith('/drafts/') &&
+    pathSegments.length > 4
+  ) {
     const demoBase = pathSegments.slice(0, 4).join('/');
-    const resp = await fetch(`${demoBase}/theme.json?sheet=default&sheet=blocks&`);
+    const resp = await fetch(
+      `${demoBase}/theme.json?sheet=default&sheet=blocks&`
+    );
     if (resp.status === 200) {
       const json = await resp.json();
       const tokens = json.data || json.default.data;
@@ -192,10 +207,19 @@ export function decorateFunction(element) {
 }
 
 window.hlx.plugins.add('experimentation', {
-  condition: () => document.head.querySelector('[name^="experiment"],[name^="campaign-"],[name^="audience-"]')
-    || document.head.querySelector('[property^="campaign:"],[property^="audience:"]')
-    || document.querySelector('.section[class*="experiment-"],.section[class*="audience-"],.section[class*="campaign-"]')
-    || [...document.querySelectorAll('.section-metadata div')].some((d) => d.textContent.match(/Experiment|Campaign|Audience/i)),
+  condition: () =>
+    document.head.querySelector(
+      '[name^="experiment"],[name^="campaign-"],[name^="audience-"]'
+    ) ||
+    document.head.querySelector(
+      '[property^="campaign:"],[property^="audience:"]'
+    ) ||
+    document.querySelector(
+      '.section[class*="experiment-"],.section[class*="audience-"],.section[class*="campaign-"]'
+    ) ||
+    [...document.querySelectorAll('.section-metadata div')].some((d) =>
+      d.textContent.match(/Experiment|Campaign|Audience/i)
+    ),
   options: { audiences: AUDIENCES, decorateFunction },
   load: 'eager',
   url: '/plugins/experimentation/src/index.js',
@@ -264,16 +288,16 @@ async function loadLazy(doc) {
   } else {
     loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   }
-  addFavIcon(`${window.wknd.demoConfig.demoBase || window.hlx.codeBasePath}/favicon.png`);
+  addFavIcon(
+    `${window.wknd.demoConfig.demoBase || window.hlx.codeBasePath}/favicon.png`
+  );
   sampleRUM('lazy');
   sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
   sampleRUM.observe(main.querySelectorAll('picture > img'));
-
-  // Mark customer as having viewed the page once
   localStorage.setItem('franklin-visitor-returning', true);
- 
+
   window.hlx.plugins.run('loadLazy');
-  import('../tools/sidekick/aem-experimentation.js');
+  import('../tools/sidekick/aem-experimentation.js'); // add this
 }
 
 /**
@@ -337,9 +361,10 @@ sampleRUM.always.on('convert', (data) => {
       event: 'Form Complete',
     };
 
-    if (conversionEvent.event === 'Form Complete'
+    if (
+      conversionEvent.event === 'Form Complete' &&
       // Check for undefined, since target can contain value 0 as well, which is falsy
-      && (data.target === undefined || data.source === undefined)
+      (data.target === undefined || data.source === undefined)
     ) {
       // If a buffer has already been set and tempConversionEvent exists,
       // merge the two conversionEvent objects to send to alloy
