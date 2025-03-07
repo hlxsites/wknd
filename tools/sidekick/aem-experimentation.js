@@ -26,8 +26,7 @@
           }
 
           const script = document.createElement('script');
-          script.src = 'https://experience-qa.adobe.com/solutions/ExpSuccess-aem-experimentation-mfe/static-assets/resources/sidekick/client.js?source=bookmarklet&ExpSuccess-aem-experimentation-mfe_version=PR-130-7c2de753d2abf020af275e52681defbdd8c4adbe';
-
+          script.src = 'https://experience-qa.adobe.com/solutions/ExpSuccess-aem-experimentation-mfe/static-assets/resources/sidekick/client.js?source=plugin'
           script.onload = function () {
               isAEMExperimentationAppLoaded = true;
               const waitForContainer = (retries = 0, maxRetries = 20) => {
