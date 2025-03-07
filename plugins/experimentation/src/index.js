@@ -712,7 +712,6 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
     percentageSplit: '',
     pages: [window.location.pathname],
     label: 'Control',
-    thumbnail: thumbnail,
   };
 
   // get the customized name for the variant in page metadata and manifest
@@ -754,6 +753,7 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
     startDate,
     variants,
     variantNames,
+    thumbnail,
   };
 
   config.run =
