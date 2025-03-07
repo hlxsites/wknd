@@ -692,6 +692,10 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
     return null;
   }
 
+  const thumbnailMeta = document.querySelector('meta[property="og:image:secure_url"]') || 
+                        document.querySelector('meta[property="og:image"]');
+  const thumbnail = thumbnailMeta ? thumbnailMeta.getAttribute('content') : '';
+
   const audiences = stringToArray(metadata.audiences).map(toClassName);
 
   const splits = metadata.split
@@ -749,6 +753,7 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
     startDate,
     variants,
     variantNames,
+    thumbnail,
   };
 
   config.run =
