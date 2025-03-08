@@ -692,6 +692,10 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
     return null;
   }
 
+  const thumbnailMeta = document.querySelector('meta[property="og:image:secure_url"]') || 
+                        document.querySelector('meta[property="og:image"]');
+  const thumbnail = thumbnailMeta ? thumbnailMeta.getAttribute('content') : '';
+
   const audiences = stringToArray(metadata.audiences).map(toClassName);
 
   const splits = metadata.split
@@ -749,6 +753,7 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
     startDate,
     variants,
     variantNames,
+    thumbnail,
   };
 
   config.run =
@@ -1051,6 +1056,8 @@ export async function loadEager(document, options = {}) {
   ns.audiences = await serveAudience(document, pluginOptions);
   ns.experiments = await runExperiment(document, pluginOptions);
   ns.campaigns = await runCampaign(document, pluginOptions);
+  ns.audienceLibary = options.audiences
+
 
   // Backward compatibility
   ns.experiment = ns.experiments.find((e) => e.type === 'page');
