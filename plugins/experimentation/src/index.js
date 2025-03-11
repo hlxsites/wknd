@@ -1088,13 +1088,13 @@ export async function loadLazy(document, options = {}) {
     }
   });
 
-  window.addEventListener('message', function(event) {
-    console.log('Message received from iframe:', event.data);
-    if (event.data && event.data.type === 'EXPERIMENT_UPDATED' && event.data.action === 'RELOAD_PAGE') {
-        console.log('Reloading page due to experiment update');
-        window.location.reload();
-    }
-  });
+  // window.addEventListener('message', function(event) {
+  //   console.log('Message received from iframe:', event.data);
+  //   if (event.data && event.data.type === 'EXPERIMENT_UPDATED' && event.data.action === 'RELOAD_PAGE') {
+  //       console.log('Reloading page due to experiment update');
+  //       window.location.reload();
+  //   }
+  // });
 
   const preview = await import(
     'https://opensource.adobe.com/aem-experimentation/preview.js'
