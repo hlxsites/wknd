@@ -31,11 +31,10 @@
 
       script.onload = function () {
         isAEMExperimentationAppLoaded = true;
-        // Wait for container to be created
         const waitForContainer = (retries = 0, maxRetries = 20) => {
           const container = document.getElementById('aemExperimentation');
           if (container) {
-            toggleExperimentPanel(true); // Force show on initial load
+            toggleExperimentPanel(true);
             resolve();
           } else if (retries < maxRetries) {
             setTimeout(() => waitForContainer(retries + 1, maxRetries), 200);
@@ -56,34 +55,18 @@
 
   // Listen for experiment update messages
   window.addEventListener('message', function (event) {
-    console.log('[AEM Exp] Message received:', event.data);
     if (event.data && event.data.type === 'EXPERIMENT_UPDATED') {
       if (event.data.action === 'RELOAD_PAGE') {
-        console.log('[AEM Exp] Reloading page due to experiment update');
 
-        // Store a flag in sessionStorage to indicate we should open the panel after reload
         sessionStorage.setItem('aem_experimentation_open_panel', 'true');
-
         window.location.reload();
-      } else if (event.data.action === 'OPEN_PANEL') {
-        console.log('[AEM Exp] Opening experimentation panel');
-        loadAEMExperimentationApp()
-          .then(() => {
-            toggleExperimentPanel(true);
-          })
-          .catch((error) => {
-            console.error('[AEM Exp] Failed to load:', error);
-          });
       }
     }
   });
 
-  // Check if we need to open the panel after a reload
   if (sessionStorage.getItem('aem_experimentation_open_panel') === 'true') {
-    console.log('[AEM Exp] Auto-opening experimentation panel after reload');
     sessionStorage.removeItem('aem_experimentation_open_panel');
 
-    // Wait a bit to ensure everything is loaded
     setTimeout(() => {
       loadAEMExperimentationApp()
         .then(() => {
