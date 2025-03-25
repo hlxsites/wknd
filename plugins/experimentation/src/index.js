@@ -1087,6 +1087,12 @@ export async function loadLazy(document, options = {}) {
       }
     }
   });
+  
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'hlx:experimentation-window-reload' && event.data.action === 'reload') {
+        window.location.reload();
+    }
+  });
 
   // const preview = await import(
   //   'https://opensource.adobe.com/aem-experimentation/preview.js'
