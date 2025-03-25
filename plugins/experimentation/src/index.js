@@ -692,15 +692,35 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
     return null;
   }
 
-  const thumbnailMeta = document.querySelector('meta[property="og:image:secure_url"]') || 
-                        document.querySelector('meta[property="og:image"]');
+  const thumbnailMeta =
+    document.querySelector('meta[property="og:image:secure_url"]') ||
+    document.querySelector('meta[property="og:image"]');
   const thumbnail = thumbnailMeta ? thumbnailMeta.getAttribute('content') : '';
 
   const audiences = stringToArray(metadata.audiences).map(toClassName);
 
   const splits = metadata.split
     ? // custom split
-      stringToArray(metadata.split).map((i) => parseFloat(i) / 100)
+      (() => {
+        const splitValues = stringToArray(metadata.split).map(
+          (i) => parseFloat(i) / 100
+        );
+
+        // If we have fewer splits than pages, pad with zeros
+        if (splitValues.length < pages.length) {
+          return [
+            ...splitValues,
+            ...Array(pages.length - splitValues.length).fill(0),
+          ];
+        }
+
+        // If we have more splits than needed, truncate
+        if (splitValues.length > pages.length) {
+          return splitValues.slice(0, pages.length);
+        }
+
+        return splitValues;
+      })()
     : // even split
       [...new Array(pages.length)].map(() => 1 / (pages.length + 1));
 
@@ -832,7 +852,7 @@ async function runExperiment(document, pluginOptions) {
         experiment: id,
         variant: variant,
         config: config,
-        element: el
+        element: el,
       });
       document.dispatchEvent(
         new CustomEvent('aem:experimentation', {
@@ -1076,12 +1096,15 @@ export async function loadLazy(document, options = {}) {
     if (event.data?.type === 'hlx:experimentation-get-config') {
       try {
         const safeClone = JSON.parse(JSON.stringify(window.hlx));
-        
-        event.source.postMessage({
-          type: 'hlx:experimentation-config',
-          config: safeClone,
-          source: 'index-js'
-        }, '*');
+
+        event.source.postMessage(
+          {
+            type: 'hlx:experimentation-config',
+            config: safeClone,
+            source: 'index-js',
+          },
+          '*'
+        );
       } catch (e) {
         console.error('Error sending hlx config:', e);
       }
@@ -1089,10 +1112,14 @@ export async function loadLazy(document, options = {}) {
   });
 
   // event listener for rail iframe to reload the page
-  window.addEventListener('message', function(event) {
+  window.addEventListener('message', function (event) {
     console.log('Message received from iframe:', event.data);
-    if (event.data && event.data.type === 'hlx:experimentation-window-reload' && event.data.action === 'reload') {
-        window.location.reload();
+    if (
+      event.data &&
+      event.data.type === 'hlx:experimentation-window-reload' &&
+      event.data.action === 'reload'
+    ) {
+      window.location.reload();
     }
   });
 
