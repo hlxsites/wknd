@@ -173,7 +173,6 @@ export function getAllMetadata(scope) {
 
       const camelCaseKey = toCamelCase(key);
       res[camelCaseKey] = meta.getAttribute('content');
-      console.log('xxxxxxxxxxxxres', res);
       return res;
     },
     value ? { value } : {}
@@ -1097,28 +1096,16 @@ export async function loadLazy(document, options = {}) {
     if (event.data?.type === 'hlx:experimentation-get-config') {
       try {
         const safeClone = JSON.parse(JSON.stringify(window.hlx));
-
-        event.source.postMessage(
-          {
-            type: 'hlx:experimentation-config',
-            config: safeClone,
-            source: 'index-js',
-          },
-          '*'
-        );
+        
+        event.source.postMessage({
+          type: 'hlx:experimentation-config',
+          config: safeClone,
+          source: 'index-js'
+        }, '*');
       } catch (e) {
         console.error('Error sending hlx config:', e);
       }
-    }
-  });
-
-  // event listener for rail iframe to reload the page
-  window.addEventListener('message', function (event) {
-    if (
-      event.data &&
-      event.data.type === 'hlx:experimentation-window-reload' &&
-      event.data.action === 'reload'
-    ) {
+    } else if (event.data?.type === 'hlx:experimentation-window-reload' && event.data?.action === 'reload') {
       window.location.reload();
     }
   });
