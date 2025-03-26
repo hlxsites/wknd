@@ -173,6 +173,7 @@ export function getAllMetadata(scope) {
 
       const camelCaseKey = toCamelCase(key);
       res[camelCaseKey] = meta.getAttribute('content');
+      console.log('xxxxxxxxxxxxres', res);
       return res;
     },
     value ? { value } : {}
@@ -1113,7 +1114,6 @@ export async function loadLazy(document, options = {}) {
 
   // event listener for rail iframe to reload the page
   window.addEventListener('message', function (event) {
-    console.log('Message received from iframe:', event.data);
     if (
       event.data &&
       event.data.type === 'hlx:experimentation-window-reload' &&
