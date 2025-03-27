@@ -11,21 +11,26 @@
  */
 window.addEventListener('message', (event) => {
   if (event.data?.type === 'hlx:experimentation-get-config') {
-      try {
-          const safeClone = JSON.parse(JSON.stringify(window.hlx));
-          
-          event.source.postMessage({
-              type: 'hlx:experimentation-config',
-              config: safeClone,
-              source: 'preview-js'
-          }, '*');
+    try {
+      const safeClone = JSON.parse(JSON.stringify(window.hlx));
 
-          window.dispatchEvent(new CustomEvent('hlx:experiment-update', {
-              detail: window.hlx?.experiment
-          }));
-      } catch (e) {
-          console.error('Error sending hlx config:', e);
-      }
+      event.source.postMessage(
+        {
+          type: 'hlx:experimentation-config',
+          config: safeClone,
+          source: 'preview-js',
+        },
+        '*'
+      );
+
+      window.dispatchEvent(
+        new CustomEvent('hlx:experiment-update', {
+          detail: window.hlx?.experiment,
+        })
+      );
+    } catch (e) {
+      console.error('Error sending hlx config:', e);
+    }
   }
 });
 
@@ -36,7 +41,9 @@ class AemExperimentationBar extends HTMLElement {
     // Create a shadow root
     const shadow = this.attachShadow({ mode: 'open' });
 
-    const cssPath = new URL(new Error().stack.split('\n')[2].match(/[a-z]+:[^:]+/)[0]).pathname.replace('preview.js', 'preview.css');
+    const cssPath = new URL(
+      new Error().stack.split('\n')[2].match(/[a-z]+:[^:]+/)[0]
+    ).pathname.replace('preview.js', 'preview.css');
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = cssPath;
@@ -59,7 +66,8 @@ function createPreviewOverlay() {
 }
 
 function getOverlay() {
-  let overlay = document.querySelector('aem-experimentation-bar')?.shadowRoot.children[1];
+  let overlay = document.querySelector('aem-experimentation-bar')?.shadowRoot
+    .children[1];
   if (!overlay) {
     const el = createPreviewOverlay();
     document.body.append(el);
@@ -78,17 +86,30 @@ function createButton(label) {
 }
 
 function createPopupItem(item) {
-  const actions = typeof item === 'object'
-    ? item.actions.map((action) => (action.href
-      ? `<div class="hlx-button"><a href="${action.href}">${action.label}</a></div>`
-      : `<div class="hlx-button"><a href="#">${action.label}</a></div>`))
-    : [];
+  const actions =
+    typeof item === 'object'
+      ? item.actions.map((action) =>
+          action.href
+            ? `<div class="hlx-button"><a href="${action.href}">${action.label}</a></div>`
+            : `<div class="hlx-button"><a href="#">${action.label}</a></div>`
+        )
+      : [];
   const div = document.createElement('div');
   div.className = `hlx-popup-item${item.isSelected ? ' is-selected' : ''}`;
   div.innerHTML = `
-    <h5 class="hlx-popup-item-label">${typeof item === 'object' ? item.label : item}</h5>
-    ${item.description ? `<div class="hlx-popup-item-description">${item.description}</div>` : ''}
-    ${actions.length ? `<div class="hlx-popup-item-actions">${actions}</div>` : ''}`;
+    <h5 class="hlx-popup-item-label">${
+      typeof item === 'object' ? item.label : item
+    }</h5>
+    ${
+      item.description
+        ? `<div class="hlx-popup-item-description">${item.description}</div>`
+        : ''
+    }
+    ${
+      actions.length
+        ? `<div class="hlx-popup-item-actions">${actions}</div>`
+        : ''
+    }`;
   const buttons = [...div.querySelectorAll('.hlx-button a')];
   item.actions?.forEach((action, index) => {
     if (action.onclick) {
@@ -99,25 +120,40 @@ function createPopupItem(item) {
 }
 
 function createPopupDialog(header, items = []) {
-  const actions = typeof header === 'object'
-    ? (header.actions || []).map((action) => (action.href
-      ? `<div class="hlx-button"><a href="${action.href}">${action.label}</a></div>`
-      : `<div class="hlx-button"><a href="#">${action.label}</a></div>`))
-    : [];
+  const actions =
+    typeof header === 'object'
+      ? (header.actions || []).map((action) =>
+          action.href
+            ? `<div class="hlx-button"><a href="${action.href}">${action.label}</a></div>`
+            : `<div class="hlx-button"><a href="#">${action.label}</a></div>`
+        )
+      : [];
   const popup = document.createElement('div');
   popup.className = 'hlx-popup hlx-hidden';
   popup.innerHTML = `
     <div class="hlx-popup-header">
-      <h5 class="hlx-popup-header-label">${typeof header === 'object' ? header.label : header}</h5>
-      ${header.description ? `<div class="hlx-popup-header-description">${header.description}</div>` : ''}
-      ${actions.length ? `<div class="hlx-popup-header-actions">${actions}</div>` : ''}
+      <h5 class="hlx-popup-header-label">${
+        typeof header === 'object' ? header.label : header
+      }</h5>
+      ${
+        header.description
+          ? `<div class="hlx-popup-header-description">${header.description}</div>`
+          : ''
+      }
+      ${
+        actions.length
+          ? `<div class="hlx-popup-header-actions">${actions}</div>`
+          : ''
+      }
     </div>
     <div class="hlx-popup-items"></div>`;
   const list = popup.querySelector('.hlx-popup-items');
   items.forEach((item) => {
     list.append(createPopupItem(item));
   });
-  const buttons = [...popup.querySelectorAll('.hlx-popup-header-actions .hlx-button a')];
+  const buttons = [
+    ...popup.querySelectorAll('.hlx-popup-header-actions .hlx-button a'),
+  ];
   header.actions?.forEach((action, index) => {
     if (action.onclick) {
       buttons[index].addEventListener('click', action.onclick);
@@ -148,13 +184,21 @@ function createToggleButton(label) {
   text.innerHTML = label;
   button.append(text);
   button.addEventListener('click', () => {
-    button.setAttribute('aria-pressed', button.getAttribute('aria-pressed') === 'false');
+    button.setAttribute(
+      'aria-pressed',
+      button.getAttribute('aria-pressed') === 'false'
+    );
   });
   return button;
 }
 
-const percentformat = new Intl.NumberFormat('en-US', { style: 'percent', maximumSignificantDigits: 2 });
-const countformat = new Intl.NumberFormat('en-US', { maximumSignificantDigits: 2 });
+const percentformat = new Intl.NumberFormat('en-US', {
+  style: 'percent',
+  maximumSignificantDigits: 2,
+});
+const countformat = new Intl.NumberFormat('en-US', {
+  maximumSignificantDigits: 2,
+});
 const significanceformat = {
   format: (value) => {
     if (value < 0.005) {
@@ -189,7 +233,10 @@ function createVariant(experiment, variantName, config, options) {
 
   const experimentURL = new URL(window.location.href);
   // this will retain other query params such as ?rum=on
-  experimentURL.searchParams.set(options.experimentsQueryParameter, `${experiment}/${variantName}`);
+  experimentURL.searchParams.set(
+    options.experimentsQueryParameter,
+    `${experiment}/${variantName}`
+  );
 
   return {
     label: `<code>${variantName}</code>`,
@@ -208,14 +255,21 @@ async function fetchRumData(experiment, options) {
     console.warn('Cannot show RUM data. No `domainKey` configured.');
     return null;
   }
-  if (!options.prodHost && (typeof options.isProd !== 'function' || !options.isProd())) {
+  if (
+    !options.prodHost &&
+    (typeof options.isProd !== 'function' || !options.isProd())
+  ) {
     // eslint-disable-next-line no-console
-    console.warn('Cannot show RUM data. No `prodHost` configured or custom `isProd` method provided.');
+    console.warn(
+      'Cannot show RUM data. No `prodHost` configured or custom `isProd` method provided.'
+    );
     return null;
   }
 
   // the query is a bit slow, so I'm only fetching the results when the popup is opened
-  const resultsURL = new URL('https://helix-pages.anywhere.run/helix-services/run-query@v3/rum-experiments');
+  const resultsURL = new URL(
+    'https://helix-pages.anywhere.run/helix-services/run-query@v3/rum-experiments'
+  );
   // restrict results to the production host, this also reduces query cost
   if (typeof options.isProd === 'function' && options.isProd()) {
     resultsURL.searchParams.set('url', window.location.host);
@@ -236,24 +290,33 @@ async function fetchRumData(experiment, options) {
     return null;
   }
 
-  const numberify = (obj) => Object.entries(obj).reduce((o, [k, v]) => {
-    o[k] = Number.parseFloat(v);
-    o[k] = Number.isNaN(o[k]) ? v : o[k];
-    return o;
-  }, {});
+  const numberify = (obj) =>
+    Object.entries(obj).reduce((o, [k, v]) => {
+      o[k] = Number.parseFloat(v);
+      o[k] = Number.isNaN(o[k]) ? v : o[k];
+      return o;
+    }, {});
 
   const variantsAsNums = data.map(numberify);
   const totals = Object.entries(
     variantsAsNums.reduce((o, v) => {
       Object.entries(v).forEach(([k, val]) => {
-        if (typeof val === 'number' && Number.isInteger(val) && k.startsWith('variant_')) {
+        if (
+          typeof val === 'number' &&
+          Number.isInteger(val) &&
+          k.startsWith('variant_')
+        ) {
           o[k] = (o[k] || 0) + val;
-        } else if (typeof val === 'number' && Number.isInteger(val) && k.startsWith('control_')) {
+        } else if (
+          typeof val === 'number' &&
+          Number.isInteger(val) &&
+          k.startsWith('control_')
+        ) {
           o[k] = val;
         }
       });
       return o;
-    }, {}),
+    }, {})
   ).reduce((o, [k, v]) => {
     o[k] = v;
     const vkey = k.replace(/^(variant|control)_/, 'variant_');
@@ -267,32 +330,39 @@ async function fetchRumData(experiment, options) {
   const richVariants = variantsAsNums
     .map((v) => ({
       ...v,
-      allocation_rate: v.variant_experimentations / totals.total_experimentations,
+      allocation_rate:
+        v.variant_experimentations / totals.total_experimentations,
     }))
-    .reduce((o, v) => {
-      const variantName = v.variant;
-      o[variantName] = v;
-      return o;
-    }, {
-      control: {
-        variant: 'control',
-        ...Object.entries(variantsAsNums[0]).reduce((k, v) => {
-          const [key, val] = v;
-          if (key.startsWith('control_')) {
-            k[key.replace(/^control_/, 'variant_')] = val;
-          }
-          return k;
-        }, {}),
+    .reduce(
+      (o, v) => {
+        const variantName = v.variant;
+        o[variantName] = v;
+        return o;
       },
-    });
-  const winner = variantsAsNums.reduce((w, v) => {
-    if (v.variant_conversion_rate > w.conversion_rate && v.p_value < 0.05) {
-      w.conversion_rate = v.variant_conversion_rate;
-      w.p_value = v.p_value;
-      w.variant = v.variant;
-    }
-    return w;
-  }, { variant: 'control', p_value: 1, conversion_rate: 0 });
+      {
+        control: {
+          variant: 'control',
+          ...Object.entries(variantsAsNums[0]).reduce((k, v) => {
+            const [key, val] = v;
+            if (key.startsWith('control_')) {
+              k[key.replace(/^control_/, 'variant_')] = val;
+            }
+            return k;
+          }, {}),
+        },
+      }
+    );
+  const winner = variantsAsNums.reduce(
+    (w, v) => {
+      if (v.variant_conversion_rate > w.conversion_rate && v.p_value < 0.05) {
+        w.conversion_rate = v.variant_conversion_rate;
+        w.p_value = v.p_value;
+        w.variant = v.variant;
+      }
+      return w;
+    },
+    { variant: 'control', p_value: 1, conversion_rate: 0 }
+  );
 
   return {
     richVariants,
@@ -302,18 +372,28 @@ async function fetchRumData(experiment, options) {
   };
 }
 
-function populatePerformanceMetrics(div, config, {
-  richVariants, totals, variantsAsNums, winner,
-}) {
+function populatePerformanceMetrics(
+  div,
+  config,
+  { richVariants, totals, variantsAsNums, winner }
+) {
   // add summary
   const summary = div.querySelector('.hlx-info');
-  summary.innerHTML = `Showing results for ${bigcountformat.format(totals.total_experimentations)} visits and ${bigcountformat.format(totals.total_conversions)} conversions: `;
+  summary.innerHTML = `Showing results for ${bigcountformat.format(
+    totals.total_experimentations
+  )} visits and ${bigcountformat.format(
+    totals.total_conversions
+  )} conversions: `;
   if (totals.total_conversion_events < 500 && winner.p_value > 0.05) {
-    summary.innerHTML += ` not yet enough data to determine a winner. Keep going until you get ${bigcountformat.format((500 * totals.total_experimentations) / totals.total_conversion_events)} visits.`;
+    summary.innerHTML += ` not yet enough data to determine a winner. Keep going until you get ${bigcountformat.format(
+      (500 * totals.total_experimentations) / totals.total_conversion_events
+    )} visits.`;
   } else if (winner.p_value > 0.05) {
-    summary.innerHTML += ' no significant difference between variants. In doubt, stick with <code>control</code>.';
+    summary.innerHTML +=
+      ' no significant difference between variants. In doubt, stick with <code>control</code>.';
   } else if (winner.variant === 'control') {
-    summary.innerHTML += ' Stick with <code>control</code>. No variant is better than the control.';
+    summary.innerHTML +=
+      ' Stick with <code>control</code>. No variant is better than the control.';
   } else {
     summary.innerHTML += ` <code>${winner.variant}</code> is the winner.`;
   }
@@ -323,21 +403,41 @@ function populatePerformanceMetrics(div, config, {
     const variantDiv = document.querySelectorAll('.hlx-popup-item')[index];
     const percentage = variantDiv.querySelector('.percentage');
     percentage.innerHTML = `
-      <span title="${countformat.format(richVariants[variantName].variant_conversion_events)} real events">${bigcountformat.format(richVariants[variantName].variant_conversions)} clicks</span> /
-      <span title="${countformat.format(richVariants[variantName].variant_experimentation_events)} real events">${bigcountformat.format(richVariants[variantName].variant_experimentations)} visits</span>
-      <span>(${percentformat.format(richVariants[variantName].variant_experimentations / totals.total_experimentations)} split)</span>
+      <span title="${countformat.format(
+        richVariants[variantName].variant_conversion_events
+      )} real events">${bigcountformat.format(
+      richVariants[variantName].variant_conversions
+    )} clicks</span> /
+      <span title="${countformat.format(
+        richVariants[variantName].variant_experimentation_events
+      )} real events">${bigcountformat.format(
+      richVariants[variantName].variant_experimentations
+    )} visits</span>
+      <span>(${percentformat.format(
+        richVariants[variantName].variant_experimentations /
+          totals.total_experimentations
+      )} split)</span>
     `;
   });
 
   // add click rate and significance to each variant
   variantsAsNums.forEach((result) => {
-    const variant = document.querySelectorAll('.hlx-popup-item')[config.variantNames.indexOf(result.variant)];
+    const variant =
+      document.querySelectorAll('.hlx-popup-item')[
+        config.variantNames.indexOf(result.variant)
+      ];
     if (variant) {
       const performance = variant.querySelector('.performance');
       performance.innerHTML = `
-        <span>click rate: ${percentformat.format(result.variant_conversion_rate)}</span>
+        <span>click rate: ${percentformat.format(
+          result.variant_conversion_rate
+        )}</span>
         <span>vs. ${percentformat.format(result.control_conversion_rate)}</span>
-        <span title="p value: ${result.p_value}" class="significance ${significanceformat.format(result.p_value).replace(/ /, '-')}">${significanceformat.format(result.p_value)}</span>
+        <span title="p value: ${
+          result.p_value
+        }" class="significance ${significanceformat
+        .format(result.p_value)
+        .replace(/ /, '-')}">${significanceformat.format(result.p_value)}</span>
       `;
     }
   });
@@ -349,7 +449,9 @@ function populatePerformanceMetrics(div, config, {
  */
 async function decorateExperimentPill(overlay, options, context) {
   const config = window?.hlx?.experiment;
-  const experiment = context.toClassName(context.getMetadata(options.experimentsMetaTag));
+  const experiment = context.toClassName(
+    context.getMetadata(options.experimentsMetaTag)
+  );
   if (!experiment || !config) {
     return;
   }
@@ -365,21 +467,35 @@ async function decorateExperimentPill(overlay, options, context) {
         <div class="hlx-details">
           ${config.status}
           ${config.resolvedAudiences ? ', ' : ''}
-          ${config.resolvedAudiences && config.resolvedAudiences.length ? config.resolvedAudiences[0] : ''}
-          ${config.resolvedAudiences && !config.resolvedAudiences.length ? 'No audience resolved' : ''}
-          ${config.variants[config.variantNames[0]].blocks.length ? ', Blocks: ' : ''}
+          ${
+            config.resolvedAudiences && config.resolvedAudiences.length
+              ? config.resolvedAudiences[0]
+              : ''
+          }
+          ${
+            config.resolvedAudiences && !config.resolvedAudiences.length
+              ? 'No audience resolved'
+              : ''
+          }
+          ${
+            config.variants[config.variantNames[0]].blocks.length
+              ? ', Blocks: '
+              : ''
+          }
           ${config.variants[config.variantNames[0]].blocks.join(',')}
         </div>
         <div class="hlx-info">How is it going?</div>`,
       actions: [
-        ...config.manifest ? [{ label: 'Manifest', href: config.manifest }] : [],
+        ...(config.manifest
+          ? [{ label: 'Manifest', href: config.manifest }]
+          : []),
         {
           label: '<span style="font-size:2em;line-height:1em">⚙</span>',
           onclick: async () => {
             // eslint-disable-next-line no-alert
             const key = window.prompt(
               'Please enter your domain key:',
-              window.localStorage.getItem(DOMAIN_KEY_NAME) || '',
+              window.localStorage.getItem(DOMAIN_KEY_NAME) || ''
             );
             if (key && key.match(/[a-f0-9-]+/)) {
               window.localStorage.setItem(DOMAIN_KEY_NAME, key);
@@ -398,14 +514,19 @@ async function decorateExperimentPill(overlay, options, context) {
         },
       ],
     },
-    config.variantNames.map((vname) => createVariant(experiment, vname, config, options)),
+    config.variantNames.map((vname) =>
+      createVariant(experiment, vname, config, options)
+    )
   );
   if (config.run) {
     pill.classList.add(`is-${context.toClassName(config.status)}`);
   }
   overlay.append(pill);
 
-  const performanceMetrics = await fetchRumData(experiment, { ...options, domainKey });
+  const performanceMetrics = await fetchRumData(experiment, {
+    ...options,
+    domainKey,
+  });
   if (performanceMetrics === null) {
     return;
   }
@@ -441,32 +562,57 @@ async function decorateCampaignPill(overlay, options, context) {
   const forcedAudience = usp.has(options.audiencesQueryParameter)
     ? context.toClassName(usp.get(options.audiencesQueryParameter))
     : null;
-  const audiences = campaigns.audience?.split(',').map(context.toClassName) || [];
-  const resolvedAudiences = await context.getResolvedAudiences(audiences, options);
+  const audiences =
+    campaigns.audience?.split(',').map(context.toClassName) || [];
+  const resolvedAudiences = await context.getResolvedAudiences(
+    audiences,
+    options
+  );
   const isActive = forcedAudience
     ? audiences.includes(forcedAudience)
-    : (!resolvedAudiences || !!resolvedAudiences.length);
-  const campaign = (usp.has(options.campaignsQueryParameter)
-    ? context.toClassName(usp.get(options.campaignsQueryParameter))
-    : null)
-    || (usp.has('utm_campaign') ? context.toClassName(usp.get('utm_campaign')) : null);
+    : !resolvedAudiences || !!resolvedAudiences.length;
+  const campaign =
+    (usp.has(options.campaignsQueryParameter)
+      ? context.toClassName(usp.get(options.campaignsQueryParameter))
+      : null) ||
+    (usp.has('utm_campaign')
+      ? context.toClassName(usp.get('utm_campaign'))
+      : null);
   const pill = createPopupButton(
     `Campaign: ${campaign || 'default'}`,
     {
       label: 'Campaigns on this page:',
       description: `
         <div class="hlx-details">
-          ${audiences.length && resolvedAudiences?.length ? `Audience: ${resolvedAudiences[0]}` : ''}
-          ${audiences.length && !resolvedAudiences?.length ? 'No audience resolved' : ''}
-          ${!audiences.length || !resolvedAudiences ? 'No audience configured' : ''}
+          ${
+            audiences.length && resolvedAudiences?.length
+              ? `Audience: ${resolvedAudiences[0]}`
+              : ''
+          }
+          ${
+            audiences.length && !resolvedAudiences?.length
+              ? 'No audience resolved'
+              : ''
+          }
+          ${
+            !audiences.length || !resolvedAudiences
+              ? 'No audience configured'
+              : ''
+          }
         </div>`,
     },
     [
       createCampaign('default', !campaign || !isActive, options),
       ...Object.keys(campaigns)
         .filter((c) => c !== 'audience')
-        .map((c) => createCampaign(c, isActive && context.toClassName(campaign) === c, options)),
-    ],
+        .map((c) =>
+          createCampaign(
+            c,
+            isActive && context.toClassName(campaign) === c,
+            options
+          )
+        ),
+    ]
   );
 
   if (campaign && isActive) {
@@ -492,14 +638,17 @@ function createAudience(audience, isSelected, options) {
  */
 async function decorateAudiencesPill(overlay, options, context) {
   const audiences = context.getAllMetadata(options.audiencesMetaTagPrefix);
-  if (!Object.keys(audiences).length || !Object.keys(options.audiences).length) {
+  if (
+    !Object.keys(audiences).length ||
+    !Object.keys(options.audiences).length
+  ) {
     return;
   }
 
   const resolvedAudiences = await context.getResolvedAudiences(
     Object.keys(audiences),
     options,
-    context,
+    context
   );
   const pill = createPopupButton(
     'Audiences',
@@ -507,11 +656,21 @@ async function decorateAudiencesPill(overlay, options, context) {
       label: 'Audiences for this page:',
     },
     [
-      createAudience('default', !resolvedAudiences.length || resolvedAudiences[0] === 'default', options),
+      createAudience(
+        'default',
+        !resolvedAudiences.length || resolvedAudiences[0] === 'default',
+        options
+      ),
       ...Object.keys(audiences)
         .filter((a) => a !== 'audience')
-        .map((a) => createAudience(a, resolvedAudiences && resolvedAudiences[0] === a, options)),
-    ],
+        .map((a) =>
+          createAudience(
+            a,
+            resolvedAudiences && resolvedAudiences[0] === a,
+            options
+          )
+        ),
+    ]
   );
 
   if (resolvedAudiences.length) {

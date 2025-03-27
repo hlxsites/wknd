@@ -14,7 +14,7 @@
 }
 
 .hlx-highlight {
-  --highlight-size: .5rem;
+  --highlight-size: 0.5rem;
 
   outline-color: #888;
   outline-offset: calc(-1 * var(--highlight-size));
@@ -31,7 +31,7 @@
   font-weight: 600;
   display: flex;
   flex-direction: column;
-  gap: .5rem;
+  gap: 0.5rem;
   inset: auto auto 1em;
   align-items: center;
   justify-content: flex-end;
@@ -65,7 +65,7 @@
 
 .hlx-badge:focus-visible {
   outline-style: solid;
-  outline-width: .25em;
+  outline-width: 0.25em;
 }
 
 .hlx-badge > span {
@@ -84,7 +84,7 @@
 }
 
 .hlx-badge .hlx-open::after {
-  content: "";
+  content: '';
   display: block;
   box-sizing: border-box;
   position: absolute;
@@ -129,8 +129,8 @@
 .hlx-popup-header {
   display: grid;
   grid-template:
-    "label actions" 
-    "description actions"
+    'label actions'
+    'description actions'
     / 1fr min-content;
   background-color: #222;
   border-radius: 16px 16px 0 0;
@@ -151,7 +151,8 @@
   flex-direction: column;
 }
 
-.hlx-popup h4, .hlx-popup h5 {
+.hlx-popup h4,
+.hlx-popup h5 {
   margin: 0;
 }
 
@@ -163,7 +164,6 @@
   font-size: 14px;
 }
 
-
 .hlx-popup p {
   margin: 0;
 }
@@ -174,7 +174,7 @@
   height: 0;
   position: absolute;
   border-left: 15px solid transparent;
-  border-right: 15px solid transparent;    
+  border-right: 15px solid transparent;
   border-top: 15px solid #444;
   bottom: -15px;
   right: 50%;
@@ -186,20 +186,20 @@
 }
 
 .hlx-badge.is-active,
-.hlx-badge[aria-pressed="true"] {
+.hlx-badge[aria-pressed='true'] {
   --color: #280;
 }
 
 .hlx-badge.is-inactive,
-.hlx-badge[aria-pressed="false"] {
+.hlx-badge[aria-pressed='false'] {
   --color: #fa0f00;
 }
 
 .hlx-popup-item {
   display: grid;
   grid-template:
-    "label actions" 
-    "description actions"
+    'label actions'
+    'description actions'
     / 1fr min-content;
   margin: 1em;
   padding: 1em;
@@ -232,7 +232,7 @@
 
 @media (width >= 600px) {
   .hlx-highlight {
-    --highlight-size: .75rem;
+    --highlight-size: 0.75rem;
   }
 
   .hlx-preview-overlay {
@@ -259,7 +259,7 @@
   .hlx-highlight {
     --highlight-size: 1rem;
   }
-  
+
   .hlx-preview-overlay {
     flex-flow: row wrap-reverse;
     justify-content: flex-end;

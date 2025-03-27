@@ -14,12 +14,11 @@ let isDebugEnabled;
 export function setDebugMode(url, pluginOptions) {
   const { host, hostname, origin } = url;
   const { isProd, prodHost } = pluginOptions;
-  isDebugEnabled =
-    url.hostname === 'localhost' ||
-    url.hostname.endsWith('.page') ||
-    (typeof isProd === 'function' && !isProd()) ||
-    (prodHost && ![host, hostname, origin].includes(prodHost)) ||
-    false;
+  isDebugEnabled = (url.hostname === 'localhost'
+    || url.hostname.endsWith('.page')
+    || (typeof isProd === 'function' && !isProd())
+    || (prodHost && ![host, hostname, origin].includes(prodHost))
+    || false);
   return isDebugEnabled;
 }
 
@@ -31,6 +30,7 @@ export function debug(...args) {
 }
 
 export const DEFAULT_OPTIONS = {
+
   // Audiences related properties
   audiences: {},
   audiencesMetaTagPrefix: 'audience',
@@ -67,11 +67,7 @@ export function stringToArray(str) {
  */
 export function toClassName(name) {
   return typeof name === 'string'
-    ? name
-        .toLowerCase()
-        .replace(/[^0-9a-z]/gi, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '')
+    ? name.toLowerCase().replace(/[^0-9a-z]/gi, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
     : '';
 }
 
@@ -147,9 +143,7 @@ export function removeLeadingHyphens(inputString) {
  * @returns {String} The metadata value(s)
  */
 export function getMetadata(name) {
-  const meta = [...document.head.querySelectorAll(`meta[name="${name}"]`)]
-    .map((m) => m.content)
-    .join(', ');
+  const meta = [...document.head.querySelectorAll(`meta[name="${name}"]`)].map((m) => m.content).join(', ');
   return meta || '';
 }
 
@@ -160,23 +154,18 @@ export function getMetadata(name) {
  */
 export function getAllMetadata(scope) {
   const value = getMetadata(scope);
-  const metaTags = document.head.querySelectorAll(
-    `meta[name^="${scope}"], meta[property^="${scope}:"]`
-  );
-  return [...metaTags].reduce(
-    (res, meta) => {
-      const key = removeLeadingHyphens(
-        meta.getAttribute('name')
-          ? meta.getAttribute('name').substring(scope.length)
-          : meta.getAttribute('property').substring(scope.length + 1)
-      );
+  const metaTags = document.head.querySelectorAll(`meta[name^="${scope}"], meta[property^="${scope}:"]`);
+  return [...metaTags].reduce((res, meta) => {
+    const key = removeLeadingHyphens(
+      meta.getAttribute('name')
+        ? meta.getAttribute('name').substring(scope.length)
+        : meta.getAttribute('property').substring(scope.length + 1),
+    );
 
-      const camelCaseKey = toCamelCase(key);
-      res[camelCaseKey] = meta.getAttribute('content');
-      return res;
-    },
-    value ? { value } : {}
-  );
+    const camelCaseKey = toCamelCase(key);
+    res[camelCaseKey] = meta.getAttribute('content');
+    return res;
+  }, value ? { value } : {});
 }
 
 /**
@@ -186,14 +175,10 @@ export function getAllMetadata(scope) {
  */
 // eslint-disable-next-line no-unused-vars
 function getAllDataAttributes(el, scope) {
-  return el
-    .getAttributeNames()
-    .filter(
-      (attr) => attr === `data-${scope}` || attr.startsWith(`data-${scope}-`)
-    )
+  return el.getAttributeNames()
+    .filter((attr) => attr === `data-${scope}` || attr.startsWith(`data-${scope}-`))
     .reduce((res, attr) => {
-      const key =
-        attr === `data-${scope}` ? 'value' : attr.replace(`data-${scope}-`, '');
+      const key = attr === `data-${scope}` ? 'value' : attr.replace(`data-${scope}-`, '');
       res[key] = el.getAttribute(attr);
       return res;
     }, {});
@@ -316,15 +301,13 @@ export async function getResolvedAudiences(pageAudiences, options) {
 
   // Otherwise, return the list of audiences that are resolved on the page
   const results = await Promise.all(
-    pageAudiences.map((key) => {
-      if (
-        options.audiences[key] &&
-        typeof options.audiences[key] === 'function'
-      ) {
-        return options.audiences[key]();
-      }
-      return false;
-    })
+    pageAudiences
+      .map((key) => {
+        if (options.audiences[key] && typeof options.audiences[key] === 'function') {
+          return options.audiences[key]();
+        }
+        return false;
+      }),
   );
   return pageAudiences.filter((_, i) => results[i]);
 }
@@ -348,8 +331,7 @@ function inferEmptyPercentageSplits(variants) {
     return newResult;
   }, 1);
   if (variantsWithoutPercentage.length) {
-    const missingPercentage =
-      remainingPercentage / variantsWithoutPercentage.length;
+    const missingPercentage = remainingPercentage / variantsWithoutPercentage.length;
     variantsWithoutPercentage.forEach((v) => {
       v.percentageSplit = missingPercentage.toFixed(4);
     });
@@ -365,21 +347,19 @@ function toDecisionPolicy(config) {
   const decisionPolicy = {
     id: 'content-experimentation-policy',
     rootDecisionNodeId: 'n1',
-    decisionNodes: [
-      {
-        id: 'n1',
-        type: 'EXPERIMENTATION',
-        experiment: {
-          id: config.id,
-          identityNamespace: 'ECID',
-          randomizationUnit: 'DEVICE',
-          treatments: Object.entries(config.variants).map(([key, props]) => ({
-            id: key,
-            allocationPercentage: Number(props.percentageSplit) * 100,
-          })),
-        },
+    decisionNodes: [{
+      id: 'n1',
+      type: 'EXPERIMENTATION',
+      experiment: {
+        id: config.id,
+        identityNamespace: 'ECID',
+        randomizationUnit: 'DEVICE',
+        treatments: Object.entries(config.variants).map(([key, props]) => ({
+          id: key,
+          allocationPercentage: Number(props.percentageSplit) * 100,
+        })),
       },
-    ],
+    }],
   };
   return decisionPolicy;
 }
@@ -402,7 +382,7 @@ function createModificationsHandler(
   metadataToConfig,
   getExperienceUrl,
   pluginOptions,
-  cb
+  cb,
 ) {
   return async (el, metadata) => {
     const config = await metadataToConfig(pluginOptions, metadata, overrides);
@@ -412,10 +392,7 @@ function createModificationsHandler(
     const ns = { config, el };
     const url = await getExperienceUrl(ns.config);
     let res;
-    if (
-      url &&
-      new URL(url, window.location.origin).pathname !== window.location.pathname
-    ) {
+    if (url && new URL(url, window.location.origin).pathname !== window.location.pathname) {
       if (toClassName(metadata?.resolution) === 'redirect') {
         // Firing RUM event early since redirection will stop the rest of the JS execution
         fireRUM(type, config, pluginOptions, url);
@@ -424,18 +401,11 @@ function createModificationsHandler(
         return;
       }
       // eslint-disable-next-line no-await-in-loop
-      res = await replaceInner(
-        new URL(url, window.location.origin).pathname,
-        el
-      );
+      res = await replaceInner(new URL(url, window.location.origin).pathname, el);
     } else {
       res = url;
     }
-    cb(
-      el.tagName === 'MAIN' ? document.body : ns.el,
-      ns.config,
-      res ? url : null
-    );
+    cb(el.tagName === 'MAIN' ? document.body : ns.el, ns.config, res ? url : null);
     if (res) {
       ns.servedExperience = url;
     }
@@ -470,18 +440,13 @@ async function getManifestEntriesForCurrentPage(urlString) {
     const response = await fetch(url.pathname);
     const json = await response.json();
     return json.data
-      .map((entry) =>
-        Object.keys(entry).reduce((res, k) => {
-          res[k.toLowerCase()] = entry[k];
-          return res;
-        }, {})
-      )
-      .filter(
-        (entry) =>
-          (!entry.page && !entry.pages) ||
-          entry.page === window.location.pathname ||
-          entry.pages === window.location.pathname
-      )
+      .map((entry) => Object.keys(entry).reduce((res, k) => {
+        res[k.toLowerCase()] = entry[k];
+        return res;
+      }, {}))
+      .filter((entry) => (!entry.page && !entry.pages)
+        || entry.page === window.location.pathname
+        || entry.pages === window.location.pathname)
       .filter((entry) => entry.selector || entry.selectors)
       .filter((entry) => entry.url || entry.urls)
       .map((entry) => depluralizeProps(entry, ['page', 'selector', 'url']));
@@ -504,7 +469,7 @@ function watchMutationsAndApplyFragments(
   pluginOptions,
   metadataToConfig,
   overrides,
-  cb
+  cb,
 ) {
   if (!entries.length) {
     return;
@@ -527,27 +492,15 @@ function watchMutationsAndApplyFragments(
       // eslint-disable-next-line no-await-in-loop
       const url = await getExperienceUrl(fragmentNS.config);
       let res;
-      if (
-        url &&
-        new URL(url, window.location.origin).pathname !==
-          window.location.pathname
-      ) {
+      if (url && new URL(url, window.location.origin).pathname !== window.location.pathname) {
         // eslint-disable-next-line no-await-in-loop
-        res = await replaceInner(
-          new URL(url, window.location.origin).pathname,
-          el,
-          entry.selector
-        );
+        res = await replaceInner(new URL(url, window.location.origin).pathname, el, entry.selector);
         // eslint-disable-next-line no-await-in-loop
         await pluginOptions.decorateFunction(el);
       } else {
         res = url;
       }
-      cb(
-        el.tagName === 'MAIN' ? document.body : fragmentNS.el,
-        fragmentNS.config,
-        res ? url : null
-      );
+      cb(el.tagName === 'MAIN' ? document.body : fragmentNS.el, fragmentNS.config, res ? url : null);
       if (res) {
         fragmentNS.servedExperience = url;
       }
@@ -579,7 +532,7 @@ async function applyAllModifications(
   metadataToConfig,
   manifestToConfig,
   getExperienceUrl,
-  cb
+  cb,
 ) {
   const modificationsHandler = createModificationsHandler(
     type,
@@ -587,7 +540,7 @@ async function applyAllModifications(
     metadataToConfig,
     getExperienceUrl,
     pluginOptions,
-    cb
+    cb,
   );
 
   const configs = [];
@@ -596,7 +549,7 @@ async function applyAllModifications(
   const pageMetadata = getAllMetadata(type);
   const pageNS = await modificationsHandler(
     document.querySelector('main'),
-    pageMetadata
+    pageMetadata,
   );
   if (pageNS) {
     pageNS.type = 'page';
@@ -606,20 +559,19 @@ async function applyAllModifications(
 
   // Section-level modifications
   let sectionMetadata;
-  await Promise.all(
-    [...document.querySelectorAll('.section-metadata')].map(async (sm) => {
+  await Promise.all([...document.querySelectorAll('.section-metadata')]
+    .map(async (sm) => {
       sectionMetadata = getAllSectionMeta(sm, type);
       const sectionNS = await modificationsHandler(
         sm.parentElement,
-        sectionMetadata
+        sectionMetadata,
       );
       if (sectionNS) {
         sectionNS.type = 'section';
         debug('section', type, sectionNS);
         configs.push(sectionNS);
       }
-    })
-  );
+    }));
 
   if (pageMetadata.manifest) {
     let entries = await getManifestEntriesForCurrentPage(pageMetadata.manifest);
@@ -634,7 +586,7 @@ async function applyAllModifications(
         pluginOptions,
         metadataToConfig,
         getAllQueryParameters(paramNS),
-        cb
+        cb,
       );
     }
   }
@@ -643,24 +595,21 @@ async function applyAllModifications(
 }
 
 function aggregateEntries(type, allowedMultiValuesProperties) {
-  return (entries) =>
-    entries.reduce((aggregator, entry) => {
-      Object.entries(entry).forEach(([key, value]) => {
-        if (!aggregator[key]) {
-          aggregator[key] = value;
-        } else if (aggregator[key] !== value) {
-          if (allowedMultiValuesProperties.includes(key)) {
-            aggregator[key] = [].concat(aggregator[key], value);
-          } else {
-            // eslint-disable-next-line no-console
-            console.warn(
-              `Key "${key}" in the ${type} manifest must be the same for every variant on the page.`
-            );
-          }
+  return (entries) => entries.reduce((aggregator, entry) => {
+    Object.entries(entry).forEach(([key, value]) => {
+      if (!aggregator[key]) {
+        aggregator[key] = value;
+      } else if (aggregator[key] !== value) {
+        if (allowedMultiValuesProperties.includes(key)) {
+          aggregator[key] = [].concat(aggregator[key], value);
+        } else {
+          // eslint-disable-next-line no-console
+          console.warn(`Key "${key}" in the ${type} manifest must be the same for every variant on the page.`);
         }
-      });
-      return aggregator;
-    }, {});
+      }
+    });
+    return aggregator;
+  }, {});
 }
 
 /**
@@ -684,21 +633,43 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
 
   const nbOfVariants = Number(pages);
   pages = Number.isNaN(nbOfVariants)
-    ? stringToArray(pages).map(
-        (p) => new URL(p.trim(), window.location).pathname
-      )
+    ? stringToArray(pages).map((p) => new URL(p.trim(), window.location).pathname)
     : new Array(nbOfVariants).fill(window.location.pathname);
   if (!pages.length) {
     return null;
   }
 
+  const thumbnailMeta =
+    document.querySelector('meta[property="og:image:secure_url"]') ||
+    document.querySelector('meta[property="og:image"]');
+  const thumbnail = thumbnailMeta ? thumbnailMeta.getAttribute('content') : '';
+
   const audiences = stringToArray(metadata.audiences).map(toClassName);
 
   const splits = metadata.split
-    ? // custom split
-      stringToArray(metadata.split).map((i) => parseFloat(i) / 100)
-    : // even split
-      [...new Array(pages.length)].map(() => 1 / (pages.length + 1));
+  ? // custom split
+  (() => {
+    const splitValues = stringToArray(metadata.split).map(
+      (i) => parseFloat(i) / 100
+    );
+
+    // If fewer splits than pages, pad with zeros
+    if (splitValues.length < pages.length) {
+      return [
+        ...splitValues,
+        ...Array(pages.length - splitValues.length).fill(0),
+      ];
+    }
+
+    // If more splits than needed, truncate
+    if (splitValues.length > pages.length) {
+      return splitValues.slice(0, pages.length);
+    }
+
+    return splitValues;
+  })()
+: // even split
+  [...new Array(pages.length)].map(() => 1 / (pages.length + 1));
 
   const variantNames = [];
   variantNames.push('control');
@@ -718,8 +689,7 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
   pages.forEach((page, i) => {
     const vname = `challenger-${i + 1}`;
     //  label with custom name or default
-    const customLabel =
-      labelNames.length > i ? labelNames[i] : `Challenger ${i + 1}`;
+    const customLabel = labelNames.length > i ? labelNames[i] : `Challenger ${i + 1}`;
 
     variantNames.push(vname);
     variants[vname] = {
@@ -733,7 +703,7 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
 
   const resolvedAudiences = await getResolvedAudiences(
     audiences,
-    pluginOptions
+    pluginOptions,
   );
 
   const startDate = metadata.startDate ? new Date(metadata.startDate) : null;
@@ -749,30 +719,29 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
     startDate,
     variants,
     variantNames,
+    thumbnail,
   };
 
-  config.run =
+  config.run = (
     // experiment is active or forced
-    (['active', 'on', 'true'].includes(toClassName(config.status)) ||
-      overrides.value) &&
+    (['active', 'on', 'true'].includes(toClassName(config.status)) || overrides.value)
     // experiment has resolved audiences if configured
-    (!resolvedAudiences || resolvedAudiences.length) &&
+    && (!resolvedAudiences || resolvedAudiences.length)
     // forced audience resolves if defined
-    (!overrides.audience || audiences.includes(overrides.audience)) &&
-    (!startDate || startDate <= Date.now()) &&
-    (!endDate || endDate > Date.now());
+    && (!overrides.audience || audiences.includes(overrides.audience))
+    && (!startDate || startDate <= Date.now())
+    && (!endDate || endDate > Date.now())
+  );
 
   if (!config.run) {
     return config;
   }
 
-  const [, forcedVariant] =
-    (Array.isArray(overrides.value)
-      ? overrides.value
-      : stringToArray(overrides.value)
-    )
-      .map((value) => value?.split('/'))
-      .find(([experiment]) => toClassName(experiment) === config.id) || [];
+  const [, forcedVariant] = (Array.isArray(overrides.value)
+    ? overrides.value
+    : stringToArray(overrides.value))
+    .map((value) => value?.split('/'))
+    .find(([experiment]) => toClassName(experiment) === config.id) || [];
   if (variantNames.includes(toClassName(forcedVariant))) {
     config.selectedVariant = toClassName(forcedVariant);
   } else if (overrides.variant && variantNames.includes(overrides.variant)) {
@@ -791,18 +760,16 @@ async function getExperimentConfig(pluginOptions, metadata, overrides) {
  * Parses the campaign manifest.
  */
 function parseExperimentManifest(entries) {
-  return Object.values(
-    Object.groupBy(
-      entries.map((e) =>
-        depluralizeProps(e, ['experiment', 'variant', 'split', 'name'])
-      ),
-      ({ experiment }) => experiment
-    )
-  ).map(aggregateEntries('experiment', ['split', 'url', 'variant', 'name']));
+  return Object.values(Object.groupBy(
+    entries.map((e) => depluralizeProps(e, ['experiment', 'variant', 'split', 'name'])),
+    ({ experiment }) => experiment,
+  )).map(aggregateEntries('experiment', ['split', 'url', 'variant', 'name']));
 }
 
 function getUrlFromExperimentConfig(config) {
-  return config.run ? config.variants[config.selectedVariant].pages[0] : null;
+  return config.run
+    ? config.variants[config.selectedVariant].pages[0]
+    : null;
 }
 
 async function runExperiment(document, pluginOptions) {
@@ -822,25 +789,15 @@ async function runExperiment(document, pluginOptions) {
       el.dataset.variant = variant;
       el.classList.add(`experiment-${toClassName(id)}`);
       el.classList.add(`variant-${toClassName(variant)}`);
-      console.log('Dispatching experimentation event:', {
-        type: 'experiment',
-        experiment: id,
-        variant: variant,
-        config: config,
-        element: el
-      });
-      document.dispatchEvent(
-        new CustomEvent('aem:experimentation', {
-          detail: {
-            element: el,
-            config: config,
-            type: 'experiment',
-            experiment: id,
-            variant,
-          },
-        })
-      );
-    }
+      document.dispatchEvent(new CustomEvent('aem:experimentation', {
+        detail: {
+          element: el,
+          type: 'experiment',
+          experiment: id,
+          variant,
+        },
+      }));
+    },
   );
 }
 
@@ -848,10 +805,7 @@ async function runExperiment(document, pluginOptions) {
  * Parses the campaign configuration from the metadata
  */
 async function getCampaignConfig(pluginOptions, metadata, overrides) {
-  if (
-    !Object.keys(metadata).length ||
-    (Object.keys(metadata).length === 1 && metadata.manifest)
-  ) {
+  if (!Object.keys(metadata).length || (Object.keys(metadata).length === 1 && metadata.manifest)) {
     return null;
   }
 
@@ -873,24 +827,22 @@ async function getCampaignConfig(pluginOptions, metadata, overrides) {
   const audiences = stringToArray(metadata.audiences).map(toClassName);
   const resolvedAudiences = await getResolvedAudiences(
     audiences,
-    pluginOptions
+    pluginOptions,
   );
   if (resolvedAudiences && !resolvedAudiences.length) {
     return null;
   }
 
-  const configuredCampaigns = Object.fromEntries(
-    Object.entries(metadata.campaigns || metadata).filter(
-      ([key]) => !['audience', 'audiences'].includes(key)
-    )
-  );
+  const configuredCampaigns = Object.fromEntries(Object.entries(metadata.campaigns || metadata)
+    .filter(([key]) => !['audience', 'audiences'].includes(key)));
 
   return {
     audiences,
     configuredCampaigns,
     resolvedAudiences,
-    selectedCampaign:
-      campaign && (metadata.campaigns || metadata)[campaign] ? campaign : null,
+    selectedCampaign: campaign && (metadata.campaigns || metadata)[campaign]
+      ? campaign
+      : null,
   };
 }
 
@@ -898,12 +850,10 @@ async function getCampaignConfig(pluginOptions, metadata, overrides) {
  * Parses the campaign manifest.
  */
 function parseCampaignManifest(entries) {
-  return Object.values(
-    Object.groupBy(
-      entries.map((e) => depluralizeProps(e, ['campaign'])),
-      ({ selector }) => selector
-    )
-  )
+  return Object.values(Object.groupBy(
+    entries.map((e) => depluralizeProps(e, ['campaign'])),
+    ({ selector }) => selector,
+  ))
     .map(aggregateEntries('campaign', ['campaign', 'url']))
     .map((e) => {
       const campaigns = e.campaign;
@@ -939,16 +889,14 @@ async function runCampaign(document, pluginOptions) {
       el.dataset.audience = selectedCampaign;
       el.dataset.audiences = Object.keys(pluginOptions.audiences).join(',');
       el.classList.add(`campaign-${campaign}`);
-      document.dispatchEvent(
-        new CustomEvent('aem:experimentation', {
-          detail: {
-            element: el,
-            type: 'campaign',
-            campaign,
-          },
-        })
-      );
-    }
+      document.dispatchEvent(new CustomEvent('aem:experimentation', {
+        detail: {
+          element: el,
+          type: 'campaign',
+          campaign,
+        },
+      }));
+    },
   );
 }
 
@@ -956,19 +904,14 @@ async function runCampaign(document, pluginOptions) {
  * Parses the audience configuration from the metadata
  */
 async function getAudienceConfig(pluginOptions, metadata, overrides) {
-  if (
-    !Object.keys(metadata).length ||
-    (Object.keys(metadata).length === 1 && metadata.manifest)
-  ) {
+  if (!Object.keys(metadata).length || (Object.keys(metadata).length === 1 && metadata.manifest)) {
     return null;
   }
 
-  const configuredAudiencesName = Object.keys(
-    metadata.audiences || metadata
-  ).map(toClassName);
+  const configuredAudiencesName = Object.keys(metadata.audiences || metadata).map(toClassName);
   const resolvedAudiences = await getResolvedAudiences(
     configuredAudiencesName,
-    pluginOptions
+    pluginOptions,
   );
   if (resolvedAudiences && !resolvedAudiences.length) {
     return false;
@@ -987,12 +930,10 @@ async function getAudienceConfig(pluginOptions, metadata, overrides) {
  * Parses the audience manifest.
  */
 function parseAudienceManifest(entries) {
-  return Object.values(
-    Object.groupBy(
-      entries.map((e) => depluralizeProps(e, ['audience'])),
-      ({ selector }) => selector
-    )
-  )
+  return Object.values(Object.groupBy(
+    entries.map((e) => depluralizeProps(e, ['audience'])),
+    ({ selector }) => selector,
+  ))
     .map(aggregateEntries('audience', ['audience', 'url']))
     .map((e) => {
       const audiences = e.audience;
@@ -1013,9 +954,7 @@ function getUrlFromAudienceConfig(config) {
 }
 
 async function serveAudience(document, pluginOptions) {
-  document.body.dataset.audiences = Object.keys(pluginOptions.audiences).join(
-    ','
-  );
+  document.body.dataset.audiences = Object.keys(pluginOptions.audiences).join(',');
   return applyAllModifications(
     pluginOptions.audiencesMetaTagPrefix,
     pluginOptions.audiencesQueryParameter,
@@ -1030,16 +969,14 @@ async function serveAudience(document, pluginOptions) {
       const audience = result ? toClassName(selectedAudience) : 'default';
       el.dataset.audience = audience;
       el.classList.add(`audience-${audience}`);
-      document.dispatchEvent(
-        new CustomEvent('aem:experimentation', {
-          detail: {
-            element: el,
-            type: 'audience',
-            audience,
-          },
-        })
-      );
-    }
+      document.dispatchEvent(new CustomEvent('aem:experimentation', {
+        detail: {
+          element: el,
+          type: 'audience',
+          audience,
+        },
+      }));
+    },
   );
 }
 
@@ -1056,38 +993,36 @@ export async function loadEager(document, options = {}) {
   ns.experiment = ns.experiments.find((e) => e.type === 'page');
   ns.audience = ns.audiences.find((e) => e.type === 'page');
   ns.campaign = ns.campaigns.find((e) => e.type === 'page');
-
-  console.log('[AEM Exp Debug] experiment plugin: Loaded eager finished');
 }
 
-export async function loadLazy(document, options = {}) {
-  const pluginOptions = { ...DEFAULT_OPTIONS, ...options };
+export async function loadLazy() {
+  // const pluginOptions = { ...DEFAULT_OPTIONS, ...options };
   // do not show the experimentation pill on prod domains
   if (!isDebugEnabled) {
     return;
   }
-
-  console.log('[AEM Exp Debug] experiment plugin: Loading lazy');
   // Add event listener for experimentation config requests
   window.addEventListener('message', (event) => {
     if (event.data?.type === 'hlx:experimentation-get-config') {
       try {
         const safeClone = JSON.parse(JSON.stringify(window.hlx));
-        
-        event.source.postMessage({
-          type: 'hlx:experimentation-config',
-          config: safeClone,
-          source: 'index-js'
-        }, '*');
+
+        event.source.postMessage(
+          {
+            type: 'hlx:experimentation-config',
+            config: safeClone,
+            source: 'index-js',
+          },
+          '*'
+        );
       } catch (e) {
         console.error('Error sending hlx config:', e);
       }
     }
   });
-
-  // const preview = await import(
-  //   'https://opensource.adobe.com/aem-experimentation/preview.js'
-  // );
+  
+  // // eslint-disable-next-line import/no-unresolved
+  // const preview = await import('https://opensource.adobe.com/aem-experimentation/preview.js');
   // const context = {
   //   getMetadata,
   //   toClassName,
