@@ -1091,67 +1091,72 @@ export async function loadLazy(document, options = {}) {
     return;
   }
 
-      // In the parent window (sidekick)
-window.addEventListener('message', async (event) => {
-  // Check if this is a Last-Modified request
-  if (event.data && event.data.type === 'hlx:last-modified-request') {
+  // Combined event listener for all message types
+  window.addEventListener('message', async (event) => {
+    // Handle Last-Modified request
+    if (event.data && event.data.type === 'hlx:last-modified-request') {
       const url = event.data.url;
       console.log('Received request to check Last-Modified for:', url);
-      
-      try {
-          // Fetch the Last-Modified header
-          const response = await fetch(url, { 
-              method: 'HEAD',
-              cache: 'no-store',
-              headers: {
-                  'Cache-Control': 'no-cache'
-              }
-          });
-          
-          const lastModified = response.headers.get('Last-Modified');
-          console.log('Last-Modified header for', url, ':', lastModified);
-          
-          // Send the response back to the iframe
-          event.source.postMessage(
-              {
-                  type: 'hlx:last-modified-response',
-                  url: url,
-                  lastModified: lastModified,
-                  status: response.status
-              },
-              event.origin
-          );
-      } catch (error) {
-          console.error('Error fetching Last-Modified header:', error);
-          
-          // Send error response
-          event.source.postMessage(
-              {
-                  type: 'hlx:last-modified-response',
-                  url: url,
-                  error: error.message
-              },
-              event.origin
-          );
-      }
-  }
-});
 
-  // Add event listener for experimentation config requests
-  window.addEventListener('message', (event) => {
-    if (event.data?.type === 'hlx:experimentation-get-config') {
+      try {
+        // Fetch the Last-Modified header
+        const response = await fetch(url, {
+          method: 'HEAD',
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+          },
+        });
+
+        const lastModified = response.headers.get('Last-Modified');
+        console.log('Last-Modified header for', url, ':', lastModified);
+
+        // Send the response back to the iframe
+        event.source.postMessage(
+          {
+            type: 'hlx:last-modified-response',
+            url: url,
+            lastModified: lastModified,
+            status: response.status,
+          },
+          event.origin
+        );
+      } catch (error) {
+        console.error('Error fetching Last-Modified header:', error);
+
+        // Send error response
+        event.source.postMessage(
+          {
+            type: 'hlx:last-modified-response',
+            url: url,
+            error: error.message,
+          },
+          event.origin
+        );
+      }
+    }
+    // Handle experimentation config request
+    else if (event.data?.type === 'hlx:experimentation-get-config') {
       try {
         const safeClone = JSON.parse(JSON.stringify(window.hlx));
-        
-        event.source.postMessage({
-          type: 'hlx:experimentation-config',
-          config: safeClone,
-          source: 'index-js'
-        }, '*');
+
+        event.source.postMessage(
+          {
+            type: 'hlx:experimentation-config',
+            config: safeClone,
+            source: 'index-js',
+          },
+          '*'
+        );
       } catch (e) {
         console.error('Error sending hlx config:', e);
       }
-    } else if (event.data?.type === 'hlx:experimentation-window-reload' && event.data?.action === 'reload') {
+    }
+    // Handle window reload request
+    else if (
+      event.data?.type === 'hlx:experimentation-window-reload' &&
+      event.data?.action === 'reload'
+    ) {
       window.location.reload();
     }
   });
