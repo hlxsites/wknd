@@ -1078,7 +1078,20 @@ export async function loadEager(document, options = {}) {
   ns.campaigns = await runCampaign(document, pluginOptions);
   ns.audienceLibrary = Object.keys(options.audiences);
 
-    // In the parent window (sidekick)
+  // Backward compatibility
+  ns.experiment = ns.experiments.find((e) => e.type === 'page');
+  ns.audience = ns.audiences.find((e) => e.type === 'page');
+  ns.campaign = ns.campaigns.find((e) => e.type === 'page');
+}
+
+export async function loadLazy(document, options = {}) {
+  const pluginOptions = { ...DEFAULT_OPTIONS, ...options };
+  // do not show the experimentation pill on prod domains
+  if (!isDebugEnabled) {
+    return;
+  }
+
+      // In the parent window (sidekick)
 window.addEventListener('message', async (event) => {
   // Check if this is a Last-Modified request
   if (event.data && event.data.type === 'hlx:last-modified-request') {
@@ -1123,19 +1136,6 @@ window.addEventListener('message', async (event) => {
       }
   }
 });
-
-  // Backward compatibility
-  ns.experiment = ns.experiments.find((e) => e.type === 'page');
-  ns.audience = ns.audiences.find((e) => e.type === 'page');
-  ns.campaign = ns.campaigns.find((e) => e.type === 'page');
-}
-
-export async function loadLazy(document, options = {}) {
-  const pluginOptions = { ...DEFAULT_OPTIONS, ...options };
-  // do not show the experimentation pill on prod domains
-  if (!isDebugEnabled) {
-    return;
-  }
 
   // Add event listener for experimentation config requests
   window.addEventListener('message', (event) => {
