@@ -1119,13 +1119,6 @@ export async function loadLazy(document, options = {}) {
         console.error('Error sending hlx config:', e);
       }
     }
-    // Handle window reload request
-    else if (
-      event.data?.type === 'hlx:experimentation-window-reload' &&
-      event.data?.action === 'reload'
-    ) {
-      window.location.reload();
-    }
   });
 
   // const preview = await import(

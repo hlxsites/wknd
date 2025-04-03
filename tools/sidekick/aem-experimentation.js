@@ -110,4 +110,22 @@
   } else {
       checkExperimentParams();
   }
+
+  window.addEventListener('message', function (event) {
+    if (!event.data) return;
+
+    const shouldReload =
+      event.data.type === 'hlx:experimentation-window-reload' &&
+      event.data.action === 'reload';
+
+    if (shouldReload) {
+      sessionStorage.setItem('aem_experimentation_open_panel', 'true');
+      window.location.reload();
+    }
+  });
+
+  if (sessionStorage.getItem('aem_experimentation_open_panel') === 'true') {
+    sessionStorage.removeItem('aem_experimentation_open_panel');
+    handleSidekickPluginButtonClick();
+  }
 })();
