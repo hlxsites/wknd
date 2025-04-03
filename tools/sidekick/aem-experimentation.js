@@ -53,40 +53,6 @@
     return scriptLoadPromise;
   }
 
-  // Listen for experiment update messages
-  window.addEventListener('message', function (event) {
-    if (event.data && event.data.type === 'EXPERIMENT_UPDATED') {
-      if (event.data.action === 'RELOAD_PAGE') {
-        sessionStorage.setItem('aem_experimentation_open_panel', 'true');
-        window.location.reload();
-      }
-    }
-
-    // Add this new condition to handle the experimentation window reload message
-    if (
-      event.data &&
-      event.data.type === 'hlx:experimentation-window-reload' &&
-      event.data.action === 'reload'
-    ) {
-      sessionStorage.setItem('aem_experimentation_open_panel', 'true');
-      window.location.reload();
-    }
-  });
-
-  if (sessionStorage.getItem('aem_experimentation_open_panel') === 'true') {
-    sessionStorage.removeItem('aem_experimentation_open_panel');
-
-    setTimeout(() => {
-      loadAEMExperimentationApp()
-        .then(() => {
-          toggleExperimentPanel(true);
-        })
-        .catch((error) => {
-          console.error('[AEM Exp] Failed to load after reload:', error);
-        });
-    }, 1000);
-  }
-
   function checkExperimentParams() {
     const urlParams = new URLSearchParams(window.location.search);
     const experimentParam = urlParams.get('experiment');
@@ -161,5 +127,23 @@
     document.addEventListener('DOMContentLoaded', checkExperimentParams);
   } else {
     checkExperimentParams();
+  }
+
+  window.addEventListener('message', function (event) {
+    if (!event.data) return;
+
+    const shouldReload =
+      event.data.type === 'hlx:experimentation-window-reload' &&
+      event.data.action === 'reload';
+
+    if (shouldReload) {
+      sessionStorage.setItem('aem_experimentation_open_panel', 'true');
+      window.location.reload();
+    }
+  });
+
+  if (sessionStorage.getItem('aem_experimentation_open_panel') === 'true') {
+    sessionStorage.removeItem('aem_experimentation_open_panel');
+    handleSidekickPluginButtonClick();
   }
 })();
