@@ -1137,12 +1137,6 @@ export async function loadLazy(document, options = {}) {
         // eslint-disable-next-line no-console
         console.error('Error sending hlx config:', e);
       }
-    } else if (
-      event.data?.type === 'hlx:experimentation-window-reload' &&
-      event.data?.action === 'reload'
-    ) {
-      sessionStorage.setItem('aem_experimentation_open_panel', 'true');
-      window.location.reload();
     }
   });
 

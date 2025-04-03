@@ -57,10 +57,19 @@
   window.addEventListener('message', function (event) {
     if (event.data && event.data.type === 'EXPERIMENT_UPDATED') {
       if (event.data.action === 'RELOAD_PAGE') {
-
         sessionStorage.setItem('aem_experimentation_open_panel', 'true');
         window.location.reload();
       }
+    }
+
+    // Add this new condition to handle the experimentation window reload message
+    if (
+      event.data &&
+      event.data.type === 'hlx:experimentation-window-reload' &&
+      event.data.action === 'reload'
+    ) {
+      sessionStorage.setItem('aem_experimentation_open_panel', 'true');
+      window.location.reload();
     }
   });
 
