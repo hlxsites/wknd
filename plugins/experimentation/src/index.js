@@ -1115,7 +1115,7 @@ export async function loadLazy(document, options = {}) {
             lastModified,
             status: response.status,
           },
-          event.origin,
+          event.origin
         );
       } catch (error) {
         // eslint-disable-next-line no-console
@@ -1131,16 +1131,17 @@ export async function loadLazy(document, options = {}) {
             config: safeClone,
             source: 'index-js',
           },
-          '*',
+          '*'
         );
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error('Error sending hlx config:', e);
       }
     } else if (
-      event.data?.type === 'hlx:experimentation-window-reload'
-      && event.data?.action === 'reload'
+      event.data?.type === 'hlx:experimentation-window-reload' &&
+      event.data?.action === 'reload'
     ) {
+      sessionStorage.setItem('aem_experimentation_open_panel', 'true');
       window.location.reload();
     }
   });
