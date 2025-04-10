@@ -1093,6 +1093,7 @@ export async function loadLazy(document, options = {}) {
 
   window.addEventListener('message', async (event) => {
     if (event.data && event.data.type === 'hlx:last-modified-request') {
+      console.log('Last-Modified request received');
       const { url } = event.data;
 
       try {
