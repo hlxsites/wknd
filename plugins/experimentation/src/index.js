@@ -280,6 +280,7 @@ async function replaceInner(path, el, selector) {
     // eslint-disable-next-line no-param-reassign
     let newEl;
     if (selector) {
+      console.log("xinyi selector", selector)
       newEl = dom.querySelector(selector);
       console.log("xinyi newEl", newEl)
     }
