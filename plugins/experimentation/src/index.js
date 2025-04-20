@@ -275,6 +275,7 @@ async function replaceInner(path, el, selector) {
       return null;
     }
     const html = await resp.text();
+    console.log("xinyi html", html)
     // parse with DOMParser to guarantee valid HTML, and no script execution(s)
     const dom = new DOMParser().parseFromString(html, 'text/html');
     // eslint-disable-next-line no-param-reassign
