@@ -281,9 +281,11 @@ async function replaceInner(path, el, selector) {
     let newEl;
     if (selector) {
       newEl = dom.querySelector(selector);
+      console.log("xinyi newEl", newEl)
     }
     if (!newEl) {
       newEl = dom.querySelector(el.tagName === 'MAIN' ? 'main' : 'main > div');
+      console.log("xinyi not found newEl", newEl)
     }
     el.innerHTML = newEl.innerHTML;
     return path;
