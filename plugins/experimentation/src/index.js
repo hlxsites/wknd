@@ -269,6 +269,7 @@ function getAllSectionMeta(block, scope) {
 async function replaceInner(path, el, selector) {
   try {
     const resp = await fetch(path);
+    console.log("xinyi resp", resp)
     if (!resp.ok) {
       // eslint-disable-next-line no-console
       console.log('error loading content:', resp);
