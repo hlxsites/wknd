@@ -281,6 +281,7 @@ async function replaceInner(path, el, selector) {
     let newEl;
     if (selector) {
       console.log("xinyi selector", selector)
+      console.log("xinyi dom", dom)
       newEl = dom.querySelector(selector);
       console.log("xinyi newEl", newEl)
     }
