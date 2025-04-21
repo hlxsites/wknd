@@ -1132,7 +1132,28 @@ export async function loadLazy(document, options = {}) {
     } else if (event.data?.type === 'hlx:experimentation-get-config') {
       try {
         const safeClone = JSON.parse(JSON.stringify(window.hlx));
-
+        // Add element information for experiments
+      if (safeClone.experiments) {
+        safeClone.experiments = safeClone.experiments.map(exp => {
+          if (exp.el && exp.el instanceof Element) {
+            // For section experiments, add section index
+            if (exp.type === 'section') {
+              const allSections = Array.from(
+                document.querySelectorAll('.section, section, [data-section-status]')
+              );
+              const sectionIndex = allSections.indexOf(exp.el);
+              
+              // Replace the empty el object with useful information
+              exp.el = {
+                sectionIndex: sectionIndex,
+                tagName: exp.el.tagName,
+                className: exp.el.className,
+              };
+            }
+          }
+          return exp;
+        });
+      }
         event.source.postMessage(
           {
             type: 'hlx:experimentation-config',
