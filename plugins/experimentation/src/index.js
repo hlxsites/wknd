@@ -1131,38 +1131,26 @@ export async function loadLazy(document, options = {}) {
       }
     } else if (event.data?.type === 'hlx:experimentation-get-config') {
       try {
-        const safeClone = JSON.parse(JSON.stringify(window.hlx));
-        // Add element information for experiments
-        if (safeClone.experiments && window.hlx.experiments) {
-          console.log("xinyi entering safeClone", safeClone.experiments.el)
-          safeClone.experiments = safeClone.experiments.map((exp, index) => {
-            // Access the original element from window.hlx.experiments
-            const originalExp = window.hlx.experiments[index];
-            const originalEl = originalExp?.el;
-            
-            // If this experiment has an element reference in the original data
-            if (originalEl && originalEl instanceof Element) {
-              // For section experiments, add section index
-              if (exp.type === 'section') {
-                const allSections = Array.from(
-                  document.querySelectorAll('.section, section, [data-section-status]')
-                );
-                const sectionIndex = allSections.indexOf(originalEl);
-                
-                // Replace the empty el object with useful information
-                exp.el = {
-                  sectionIndex: sectionIndex,
-                  tagName: originalEl.tagName,
-                  className: originalEl.className,
-                  id: originalEl.id || ''
-                };
-              }
+        // First, enhance the original window.hlx with section indices
+        if (window.hlx && window.hlx.experiments) {
+          // Add section indices to the original experiments
+          window.hlx.experiments.forEach(exp => {
+            if (exp.type === 'section' && exp.el instanceof Element) {
+              const allSections = Array.from(
+                document.querySelectorAll('.section, section, [data-section-status]')
+              );
+              const sectionIndex = allSections.indexOf(exp.el);
+              
+              // Add sectionIndex directly to the experiment object
+              exp.sectionIndex = sectionIndex;
             }
-            return exp;
           });
         }
-
-      console.log("xinyi safeClone", safeClone)
+        
+        // Now create the serializable clone
+        const safeClone = JSON.parse(JSON.stringify(window.hlx));
+        
+        console.log("xinyi safeClone", safeClone);
         event.source.postMessage(
           {
             type: 'hlx:experimentation-config',
@@ -1172,7 +1160,6 @@ export async function loadLazy(document, options = {}) {
           '*'
         );
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.error('Error sending hlx config:', e);
       }
     }
