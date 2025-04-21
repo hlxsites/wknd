@@ -1134,6 +1134,7 @@ export async function loadLazy(document, options = {}) {
         const safeClone = JSON.parse(JSON.stringify(window.hlx));
         // Add element information for experiments
         if (safeClone.experiments && window.hlx.experiments) {
+          console.log("xinyi entering safeClone", safeClone.experiments.el)
           safeClone.experiments = safeClone.experiments.map((exp, index) => {
             // Access the original element from window.hlx.experiments
             const originalExp = window.hlx.experiments[index];
