@@ -1133,27 +1133,33 @@ export async function loadLazy(document, options = {}) {
       try {
         const safeClone = JSON.parse(JSON.stringify(window.hlx));
         // Add element information for experiments
-      if (safeClone.experiments) {
-        safeClone.experiments = safeClone.experiments.map(exp => {
-          if (exp.el && exp.el instanceof Element) {
-            // For section experiments, add section index
-            if (exp.type === 'section') {
-              const allSections = Array.from(
-                document.querySelectorAll('.section, section, [data-section-status]')
-              );
-              const sectionIndex = allSections.indexOf(exp.el);
-              
-              // Replace the empty el object with useful information
-              exp.el = {
-                sectionIndex: sectionIndex,
-                tagName: exp.el.tagName,
-                className: exp.el.className,
-              };
+        if (safeClone.experiments && window.hlx.experiments) {
+          safeClone.experiments = safeClone.experiments.map((exp, index) => {
+            // Access the original element from window.hlx.experiments
+            const originalExp = window.hlx.experiments[index];
+            const originalEl = originalExp?.el;
+            
+            // If this experiment has an element reference in the original data
+            if (originalEl && originalEl instanceof Element) {
+              // For section experiments, add section index
+              if (exp.type === 'section') {
+                const allSections = Array.from(
+                  document.querySelectorAll('.section, section, [data-section-status]')
+                );
+                const sectionIndex = allSections.indexOf(originalEl);
+                
+                // Replace the empty el object with useful information
+                exp.el = {
+                  sectionIndex: sectionIndex,
+                  tagName: originalEl.tagName,
+                  className: originalEl.className,
+                  id: originalEl.id || ''
+                };
+              }
             }
-          }
-          return exp;
-        });
-      }
+            return exp;
+          });
+        }
 
       console.log("xinyi safeClone", safeClone)
         event.source.postMessage(
