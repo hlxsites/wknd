@@ -1154,6 +1154,8 @@ export async function loadLazy(document, options = {}) {
           return exp;
         });
       }
+
+      console.log("xinyi safeClone", safeClone)
         event.source.postMessage(
           {
             type: 'hlx:experimentation-config',
