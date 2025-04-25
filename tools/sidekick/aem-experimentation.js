@@ -27,7 +27,7 @@
 
       const script = document.createElement('script');
       script.src =
-        'https://experience-qa.adobe.com/solutions/ExpSuccess-aem-experimentation-mfe/static-assets/resources/sidekick/client.js?source=bookmarklet&ExpSuccess-aem-experimentation-mfe_version=PR-164-fa690f92501d8a72e41d8f83d2aed097e35b710e';
+        'https://experience-qa.adobe.com/solutions/ExpSuccess-aem-experimentation-mfe/static-assets/resources/sidekick/client.js?source=bookmarklet&ExpSuccess-aem-experimentation-mfe_version=PR-164-db2a09b0e3bc4028a941e64e6bd422a49be504db';
 
       script.onload = function () {
         isAEMExperimentationAppLoaded = true;
