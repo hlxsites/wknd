@@ -25,42 +25,60 @@
 
   /**
    * Get all active experiment IDs from the page
-   * This now returns an array of all active experiments
+   * Prioritizes window.hlx.experiments over DOM elements and localStorage
    */
   function getActiveExperiments() {
     const experiments = [];
 
-    // Check body classes (page-level experiments)
-    document.body.classList.forEach((cls) => {
-      if (cls.startsWith('experiment-')) {
-        experiments.push(cls.replace('experiment-', ''));
-      }
-    });
-
-    // Check for any element with data-experiment attribute
-    document.querySelectorAll('[data-experiment]').forEach((el) => {
-      experiments.push(el.dataset.experiment);
-    });
-
-    // Check for section-level experiments
-    document.querySelectorAll('.section').forEach((section) => {
-      section.classList.forEach((cls) => {
-        if (cls.startsWith('experiment-')) {
-          experiments.push(cls.replace('experiment-', ''));
+    // 1. First check window.hlx.experiments (most reliable source)
+    if (
+      window.hlx &&
+      window.hlx.experiments &&
+      Array.isArray(window.hlx.experiments)
+    ) {
+      log(
+        'Found window.hlx.experiments with',
+        window.hlx.experiments.length,
+        'experiments'
+      );
+      window.hlx.experiments.forEach((exp) => {
+        if (exp.config && exp.config.id) {
+          experiments.push(exp.config.id);
+          log(
+            'Added experiment from window.hlx.experiments:',
+            exp.config.id,
+            'type:',
+            exp.type,
+            'variant:',
+            exp.config.selectedVariant
+          );
         }
       });
-    });
-
-    // Add special case for section-exp
-    if (
-      document.querySelector('.section-exp') ||
-      document.querySelector('[data-section-exp]') ||
-      document.querySelector('[data-section-experiment]')
+    }
+    // 2. Also check the legacy window.hlx.experiment (single experiment)
+    else if (
+      window.hlx &&
+      window.hlx.experiment &&
+      window.hlx.experiment.config
     ) {
-      experiments.push('section-exp');
+      const expId = window.hlx.experiment.config.id;
+      if (expId && !experiments.includes(expId)) {
+        experiments.push(expId);
+        log(
+          'Added experiment from window.hlx.experiment:',
+          expId,
+          'variant:',
+          window.hlx.experiment.config.selectedVariant
+        );
+      }
     }
 
-    // Check localStorage as fallback
+    // If we found experiments from window.hlx, return them
+    if (experiments.length > 0) {
+      return experiments;
+    }
+
+    // 7. Check localStorage as fallback
     try {
       const experimentsData = localStorage.getItem(
         'unified-decisioning-experiments'
@@ -70,29 +88,63 @@
         Object.keys(storedExperiments).forEach((id) => {
           if (!experiments.includes(id)) {
             experiments.push(id);
+            log('Added experiment from unified-decisioning-experiments:', id);
           }
         });
       }
     } catch (e) {
       log('Error reading experiments data:', e);
     }
+    
+    return experiments;
+  }
 
-    // Add any experiments from the tracking storage itself
-    try {
-      const trackingData = localStorage.getItem(STORAGE_KEY);
-      if (trackingData) {
-        const parsed = JSON.parse(trackingData);
-        Object.keys(parsed).forEach((id) => {
-          if (!experiments.includes(id)) {
-            experiments.push(id);
-          }
-        });
+  /**
+   * Get experiment details for a specific experiment ID
+   */
+  function getExperimentDetails(experimentId) {
+    if (!experimentId) return null;
+
+    // 1. Check window.hlx.experiments array
+    if (
+      window.hlx &&
+      window.hlx.experiments &&
+      Array.isArray(window.hlx.experiments)
+    ) {
+      const experiment = window.hlx.experiments.find(
+        (exp) => exp.config && exp.config.id === experimentId
+      );
+      if (experiment) {
+        return {
+          id: experimentId,
+          type: experiment.type,
+          selectedVariant: experiment.config.selectedVariant,
+          variantNames: experiment.config.variantNames,
+          sectionIndex: experiment.sectionIndex,
+        };
       }
-    } catch (e) {
-      log('Error reading tracking data:', e);
     }
 
-    return experiments;
+    // 2. Check window.hlx.experiment (legacy)
+    if (
+      window.hlx &&
+      window.hlx.experiment &&
+      window.hlx.experiment.config &&
+      window.hlx.experiment.config.id === experimentId
+    ) {
+      return {
+        id: experimentId,
+        type: window.hlx.experiment.type || 'page',
+        selectedVariant: window.hlx.experiment.config.selectedVariant,
+        variantNames: window.hlx.experiment.config.variantNames,
+      };
+    }
+
+    // 3. Return basic info if not found in hlx
+    return {
+      id: experimentId,
+      type: experimentId === 'section-exp' ? 'section' : 'unknown',
+    };
   }
 
   /**
@@ -116,10 +168,15 @@
         log('Error parsing stored tracking data:', e);
       }
 
+      // Get experiment details if available
+      const expDetails = getExperimentDetails(experimentId);
+
       // Add or update tracking for this experiment
       trackingData[experimentId] = {
         selector,
         timestamp: new Date().toISOString(),
+        type: expDetails?.type || 'unknown',
+        variant: expDetails?.selectedVariant || 'unknown',
       };
 
       // Save to localStorage
@@ -129,7 +186,9 @@
         '✅ Stored tracking data for experiment:',
         experimentId,
         'selector:',
-        selector
+        selector,
+        'type:',
+        expDetails?.type || 'unknown'
       );
       return true;
     } catch (e) {
@@ -139,61 +198,111 @@
   }
 
   /**
+   * Find a suitable element for a section experiment
+   */
+  function findSectionElement(experimentId, sectionIndex) {
+    log(
+      'Looking for section element for experiment:',
+      experimentId,
+      'sectionIndex:',
+      sectionIndex
+    );
+
+    // If we have a section index, try to find the corresponding section
+    if (typeof sectionIndex === 'number') {
+      const sections = document.querySelectorAll(
+        '.section, section, [data-section-status]'
+      );
+      if (sections.length > sectionIndex) {
+        const section = sections[sectionIndex];
+        log('Found section element using sectionIndex:', sectionIndex);
+
+        // Try to find interactive elements in the section
+        const interactiveElements = section.querySelectorAll(
+          'button, a[href], input[type="submit"]'
+        );
+        if (interactiveElements.length > 0) {
+          // Prefer the last button as it's often a submit/CTA
+          log(
+            'Found interactive element in section:',
+            interactiveElements[interactiveElements.length - 1]
+          );
+          return interactiveElements[interactiveElements.length - 1];
+        }
+
+        // If no interactive elements, return the section itself
+        return section;
+      }
+    }
+
+    // Try to find form buttons as a fallback
+    const sectionForms = document.querySelectorAll('.section form');
+    if (sectionForms.length > 0) {
+      // Try to find buttons in the last form
+      const buttons =
+        sectionForms[sectionForms.length - 1].querySelectorAll('button');
+      if (buttons.length > 0) {
+        // Take the last button which is likely the submit button
+        log(
+          'Found button for section using form fallback:',
+          buttons[buttons.length - 1]
+        );
+        return buttons[buttons.length - 1];
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Apply the data-rum-source attribute to an element
-   * Improved with better fallback strategies
+   * Improved with better fallback strategies and section handling
    */
   function applyRumAttribute(selector, experimentId) {
-    if (!selector || !experimentId) {
-      log(
-        'Invalid data for attribute application - missing selector or experimentId'
-      );
+    if (!experimentId) {
+      log('Invalid experiment ID for attribute application');
       return false;
     }
 
     try {
-      log('Looking for element with selector:', selector);
-      let element = document.querySelector(selector);
+      // Get experiment details
+      const expDetails = getExperimentDetails(experimentId);
+      log('Experiment details for', experimentId, ':', expDetails);
 
-      // Special handling for section-exp
-      if (!element && experimentId === 'section-exp') {
-        log('Using special handling for section-exp');
+      let element = null;
 
-        // Try to find the button in a form inside a section
-        const sectionForms = document.querySelectorAll('.section form');
-        if (sectionForms.length > 0) {
-          // Try to find buttons in the last form
-          const buttons =
-            sectionForms[sectionForms.length - 1].querySelectorAll('button');
-          if (buttons.length > 0) {
-            // Take the last button which is likely the submit button
-            element = buttons[buttons.length - 1];
-            log(
-              'Found button for section-exp using special handling:',
-              element
-            );
-          }
-        }
+      // For section experiments, try finding the section first
+      if (expDetails.type === 'section') {
+        element = findSectionElement(experimentId, expDetails.sectionIndex);
+      }
+
+      // If we still don't have an element, try the selector
+      if (!element && selector) {
+        log('Looking for element with selector:', selector);
+        element = document.querySelector(selector);
       }
 
       // If that fails, try alternate selector strategies
       if (!element) {
-        log('Element not found with original selector, trying alternatives');
+        log('Element not found with original approach, trying alternatives');
 
         // 1. Try last part of the selector (most specific)
-        try {
-          const parts = selector.split('>');
-          const lastPart = parts[parts.length - 1].trim();
-          element = document.querySelector(lastPart);
+        if (selector) {
+          try {
+            const parts = selector.split('>');
+            const lastPart = parts[parts.length - 1].trim();
+            element = document.querySelector(lastPart);
 
-          if (element) {
-            log('Found element with simplified selector:', lastPart);
+            if (element) {
+              log('Found element with simplified selector:', lastPart);
+            }
+          } catch (e) {
+            log('Error with simplified selector:', e);
           }
-        } catch (e) {
-          log('Error with simplified selector:', e);
         }
 
         // 2. If still not found, try tag name with position
-        if (!element && selector.includes('nth-of-type')) {
+        if (!element && selector && selector.includes('nth-of-type')) {
           try {
             const match = selector.match(/(\w+):nth-of-type\(\d+\)$/);
             if (match && match[1]) {
@@ -211,7 +320,7 @@
         }
 
         // 3. For buttons, try to find by text content
-        if (!element && selector.includes('button')) {
+        if (!element && selector && selector.includes('button')) {
           try {
             document.querySelectorAll('button').forEach((button) => {
               if (!element && button.textContent.trim() !== '') {
@@ -238,7 +347,10 @@
 
         return true;
       } else {
-        log('❌ Element not found with any selector strategy:', selector);
+        log(
+          '❌ Element not found with any strategy for experiment:',
+          experimentId
+        );
       }
     } catch (error) {
       log('❌ Error applying attribute:', error);
@@ -249,7 +361,7 @@
 
   /**
    * Apply tracking for all active experiments on page load
-   * Now handles multiple experiments
+   * Now handles multiple experiments and uses window.hlx when available
    */
   function applyTrackingOnLoad() {
     const experimentIds = getActiveExperiments();
@@ -273,6 +385,35 @@
           if (experimentData && experimentData.selector) {
             log('Applying tracking for active experiment:', experimentId);
             applyRumAttribute(experimentData.selector, experimentId);
+          } else {
+            // If no stored selector but experiment is active, try to set it up
+            const expDetails = getExperimentDetails(experimentId);
+            log(
+              'No stored tracking data for active experiment:',
+              experimentId,
+              'type:',
+              expDetails.type
+            );
+
+            if (expDetails.type === 'section') {
+              // For section experiments, try to find a suitable element and store it
+              const sectionElement = findSectionElement(
+                experimentId,
+                expDetails.sectionIndex
+              );
+              if (sectionElement) {
+                log(
+                  'Found section element for experiment without stored selector:',
+                  experimentId
+                );
+                // Generate a selector
+                const selector = generateSelector(sectionElement);
+                // Store it for future use
+                storeTrackingData(experimentId, selector);
+                // Apply the attribute
+                applyRumAttribute(selector, experimentId);
+              }
+            }
           }
         });
 
@@ -291,10 +432,89 @@
         }
       } else {
         log('No stored tracking data found');
+
+        // Try to set up tracking for section experiments without stored data
+        experimentIds.forEach((expId) => {
+          const expDetails = getExperimentDetails(expId);
+          if (expDetails.type === 'section') {
+            log('Setting up new tracking for section experiment:', expId);
+            const sectionElement = findSectionElement(
+              expId,
+              expDetails.sectionIndex
+            );
+            if (sectionElement) {
+              const selector = generateSelector(sectionElement);
+              storeTrackingData(expId, selector);
+              applyRumAttribute(selector, expId);
+            }
+          }
+        });
       }
     } catch (e) {
       log('Error applying tracking on load:', e);
     }
+  }
+
+  /**
+   * Generate a unique CSS selector for an element
+   */
+  function generateSelector(element) {
+    if (!element) return null;
+
+    // Try ID selector if available (most specific)
+    if (element.id) {
+      return `#${element.id}`;
+    }
+
+    // Try using unique class combinations
+    if (element.classList.length > 0) {
+      const classSelector = Array.from(element.classList)
+        .map((c) => `.${c}`)
+        .join('');
+      if (document.querySelectorAll(classSelector).length === 1) {
+        return classSelector;
+      }
+    }
+
+    // Build path from element to document root
+    let path = [];
+    let currentElement = element;
+
+    while (
+      currentElement &&
+      currentElement !== document.body &&
+      path.length < 8
+    ) {
+      let selector = currentElement.tagName.toLowerCase();
+
+      if (currentElement.id) {
+        selector = `#${currentElement.id}`;
+        path.unshift(selector);
+        break; // ID is specific enough to stop here
+      }
+
+      // Add classes if they exist
+      if (currentElement.classList.length > 0) {
+        selector += Array.from(currentElement.classList)
+          .map((c) => `.${c}`)
+          .join('');
+      }
+
+      // Add nth-of-type if needed for specificity
+      const siblings = Array.from(
+        currentElement.parentNode?.children || []
+      ).filter((node) => node.tagName === currentElement.tagName);
+
+      if (siblings.length > 1) {
+        const index = siblings.indexOf(currentElement) + 1;
+        selector += `:nth-of-type(${index})`;
+      }
+
+      path.unshift(selector);
+      currentElement = currentElement.parentNode;
+    }
+
+    return path.join(' > ');
   }
 
   /**
@@ -363,72 +583,6 @@
   }
 
   /**
-   * Add a debug button to the page with enhanced info
-   */
-  function addDebugButton() {
-    if (!DEBUG) return;
-
-    const button = document.createElement('button');
-    button.textContent = '🔄 RUM Debug';
-    button.style.cssText =
-      'position:fixed; bottom:10px; right:10px; background:#0d66d0; color:white; border:none; border-radius:4px; padding:5px 10px; font-size:12px; z-index:9999; cursor:pointer;';
-
-    button.addEventListener('click', function () {
-      log('-- RUM Debug Information --');
-
-      // Show experiments
-      const experiments = getActiveExperiments();
-      log(`Active experiments (${experiments.length}):`, experiments);
-
-      // Show tracking data
-      try {
-        const storedData = localStorage.getItem(STORAGE_KEY);
-        if (storedData) {
-          const trackingData = JSON.parse(storedData);
-          log('Stored tracking data:', trackingData);
-
-          // Check each tracking entry
-          Object.entries(trackingData).forEach(([expId, data]) => {
-            const element = document.querySelector(data.selector);
-            log(
-              `[${expId}]`,
-              element ? '✅ Element found' : '❌ Element not found',
-              'Selector:',
-              data.selector
-            );
-
-            if (element) {
-              const hasAttr = element.hasAttribute('data-rum-source');
-              const attrValue = element.getAttribute('data-rum-source');
-              log(
-                `  Attribute: ${hasAttr ? `✅ Yes (${attrValue})` : '❌ No'}`
-              );
-
-              // Try to reapply
-              if (!hasAttr || attrValue !== `experiment-${expId}`) {
-                log('  Reapplying attribute...');
-                applyRumAttribute(data.selector, expId);
-              }
-            } else {
-              log('  Trying fallback strategies...');
-              applyRumAttribute(data.selector, expId);
-            }
-          });
-        } else {
-          log('No stored tracking data found');
-        }
-      } catch (e) {
-        log('Error during debug:', e);
-      }
-
-      // Reapply tracking
-      applyTrackingOnLoad();
-    });
-
-    document.body.appendChild(button);
-  }
-
-  /**
    * Apply all stored tracking data, not just active experiments
    */
   function applyAllStoredTracking() {
@@ -448,6 +602,7 @@
     }
   }
 
+
   /**
    * Initialize the script
    */
@@ -462,9 +617,6 @@
 
     // Then also apply all stored tracking (to catch section-exp and others)
     applyAllStoredTracking();
-
-    // Add debug button
-    addDebugButton();
 
     // Also apply when visibility changes
     document.addEventListener('visibilitychange', function () {
@@ -506,14 +658,6 @@
     setTimeout(applyAllStoredTracking, 1000);
     setTimeout(applyAllStoredTracking, 3000);
 
-    // Export testing functions to window
-    window.aemRumDebug = {
-      applyTracking: applyTrackingOnLoad,
-      applyAllTracking: applyAllStoredTracking,
-      getExperiments: getActiveExperiments,
-      applyAttribute: applyRumAttribute,
-      storeData: storeTrackingData,
-    };
 
     log('Initialization complete - ready to receive messages from MFE');
   }
