@@ -1,26 +1,30 @@
 /**
- * AEM Experimentation RUM Tracker
- * - Listens for messages from the experimentation MFE
- * - Stores tracking data in localStorage
- * - Auto-applies data-rum-source attributes on page load
+ * AEM Experimentation RUM Track Message Handler
+ * 
+ * This script listens for postMessage events from the AEM Experimentation MFE
+ * and handles the tracking of elements with data-rum-source attributes.
+ * 
+ * - Place this script on your client pages to enable RUM tracking
+ * - It will automatically listen for messages from the MFE
+ * - It will store tracking info in localStorage
+ * - It will apply data-rum-source attributes to elements on the page
  */
 (function() {
     // Configuration
     const STORAGE_KEY = 'aem-rum-tracking';
-    const RUM_ATTRIBUTE = 'data-rum-source';
     const DEBUG = true; // Set to false in production
     
     /**
-     * Log message if in debug mode
+     * Log debug messages
      */
     function log(...args) {
         if (DEBUG) {
-            console.log('[RUM Tracker]', ...args);
+            console.log('[AEM RUM Client]', ...args);
         }
     }
     
     /**
-     * Get the active experiment ID from body classes
+     * Get the current experiment ID from body classes
      */
     function getActiveExperimentId() {
         // Check body classes
@@ -50,7 +54,10 @@
      * Store tracking data in localStorage
      */
     function storeTrackingData(experimentId, selector) {
-        if (!experimentId || !selector) return false;
+        if (!experimentId || !selector) {
+            log('Invalid data for storage - missing experimentId or selector');
+            return false;
+        }
         
         try {
             // Get existing tracking data
@@ -73,265 +80,240 @@
             // Save to localStorage
             localStorage.setItem(STORAGE_KEY, JSON.stringify(trackingData));
             
-            log('Stored tracking data for experiment:', experimentId, 'selector:', selector);
+            log('✅ Stored tracking data for experiment:', experimentId, 'selector:', selector);
             return true;
         } catch (e) {
-            log('Error storing tracking data:', e);
+            log('❌ Error storing tracking data:', e);
             return false;
         }
-    }
-    
-    /**
-     * Get tracking data from localStorage
-     */
-    function getTrackingData(experimentId) {
-        try {
-            const storedData = localStorage.getItem(STORAGE_KEY);
-            if (storedData) {
-                const trackingData = JSON.parse(storedData);
-                return experimentId ? trackingData[experimentId] : trackingData;
-            }
-        } catch (e) {
-            log('Error getting tracking data:', e);
-        }
-        
-        return experimentId ? null : {};
     }
     
     /**
      * Apply the data-rum-source attribute to an element
      */
     function applyRumAttribute(selector, experimentId) {
-        if (!selector || !experimentId) return false;
+        if (!selector || !experimentId) {
+            log('Invalid data for attribute application - missing selector or experimentId');
+            return false;
+        }
         
         try {
             log('Looking for element with selector:', selector);
+            let element = document.querySelector(selector);
             
-            // Try different selector strategies
-            let element = findElement(selector);
+            // If that fails, try alternate selector strategies
+            if (!element) {
+                log('Element not found with original selector, trying alternatives');
+                
+                // Try last part of the selector (most specific)
+                try {
+                    const parts = selector.split('>');
+                    const lastPart = parts[parts.length - 1].trim();
+                    element = document.querySelector(lastPart);
+                    
+                    if (element) {
+                        log('Found element with simplified selector:', lastPart);
+                    }
+                } catch (e) {
+                    log('Error with simplified selector:', e);
+                }
+            }
             
             if (element) {
                 const attributeValue = `experiment-${experimentId}`;
-                element.setAttribute(RUM_ATTRIBUTE, attributeValue);
-                log(`Applied ${RUM_ATTRIBUTE}="${attributeValue}" to:`, element);
+                element.setAttribute('data-rum-source', attributeValue);
+                log(`✅ Applied data-rum-source="${attributeValue}" to:`, element);
                 
                 // Add visual indicator in debug mode
                 if (DEBUG) {
-                    const originalStyle = element.getAttribute('style') || '';
-                    element.setAttribute('style', originalStyle + '; outline: 2px solid #0d66d0 !important;');
+                    element.style.outline = '2px solid #0d66d0';
+                    element.style.outlineOffset = '2px';
                 }
                 
                 return true;
             } else {
-                log('Element not found with selector:', selector);
+                log('❌ Element not found with any selector strategy:', selector);
             }
         } catch (error) {
-            log('Error applying attribute:', error);
+            log('❌ Error applying attribute:', error);
         }
         
         return false;
     }
     
     /**
-     * Find an element using multiple selector strategies
-     */
-    function findElement(selector) {
-        let element = null;
-        
-        // Strategy 1: Try original selector
-        try {
-            element = document.querySelector(selector);
-            if (element) {
-                log('Found with original selector');
-                return element;
-            }
-        } catch (e) {
-            log('Original selector failed:', e.message);
-        }
-        
-        // Strategy 2: Look for ID in the selector
-        const idMatch = selector.match(/#([a-zA-Z0-9_-]+)/);
-        if (idMatch && idMatch[1]) {
-            element = document.getElementById(idMatch[1]);
-            if (element) {
-                log('Found with ID selector');
-                return element;
-            }
-        }
-        
-        // Strategy 3: Try last part of the selector (most specific)
-        try {
-            const parts = selector.split('>');
-            const lastPart = parts[parts.length - 1].trim();
-            
-            const candidates = document.querySelectorAll(lastPart);
-            if (candidates.length === 1) {
-                log('Found with simplified selector');
-                return candidates[0];
-            } else if (candidates.length > 0) {
-                log('Found multiple matches with simplified selector, using first');
-                return candidates[0];
-            }
-        } catch (e) {
-            log('Simplified selector failed:', e.message);
-        }
-        
-        return null;
-    }
-    
-    /**
-     * Apply tracking attributes for all stored experiments
-     */
-    function applyAllStoredAttributes() {
-        log('Applying stored RUM attributes');
-        
-        // Get currently active experiment
-        const activeExperimentId = getActiveExperimentId();
-        log('Active experiment:', activeExperimentId);
-        
-        // Always apply for active experiment if found
-        if (activeExperimentId) {
-            const data = getTrackingData(activeExperimentId);
-            if (data && data.selector) {
-                log('Found tracking data for active experiment', activeExperimentId);
-                applyRumAttribute(data.selector, activeExperimentId);
-            }
-        }
-        
-        // In debug mode, apply for all stored experiments
-        if (DEBUG) {
-            const allData = getTrackingData();
-            for (const expId in allData) {
-                if (expId !== activeExperimentId && allData[expId].selector) {
-                    log('Applying for non-active experiment (debug):', expId);
-                    applyRumAttribute(allData[expId].selector, expId);
-                }
-            }
-        }
-    }
-    
-    /**
-     * Handle messages from the experimentation MFE
+     * Handle postMessage events from the MFE
      */
     function handleMessage(event) {
-        // Only process messages from known origins
-        // You can restrict this to specific origins if needed
-        
-        // Check if this is a message from the experimentation MFE
+        // Skip messages that don't have the AEMExperimentation source
         if (!event.data || event.data.source !== 'AEMExperimentation') {
             return;
         }
         
-        log('Received message from experimentation MFE:', event.data);
+        log('📨 Received message from MFE:', event.data);
         
         // Handle different message types
-        if (event.data.action === 'track-element') {
-            // Handle element tracking message
-            const { experimentId, elementInfo } = event.data;
-            
-            if (experimentId && elementInfo && elementInfo.selector) {
-                log('Storing tracking data for experiment:', experimentId);
+        switch (event.data.action) {
+            case 'apply-rum-attribute':
+                // Direct request to apply an attribute
+                const { selector, value } = event.data;
                 
-                // Store in localStorage
-                storeTrackingData(experimentId, elementInfo.selector);
+                if (selector && value && value.startsWith('experiment-')) {
+                    const experimentId = value.replace('experiment-', '');
+                    log('Storing and applying RUM attribute for experiment:', experimentId);
+                    
+                    // Store for future use
+                    storeTrackingData(experimentId, selector);
+                    
+                    // Apply the attribute immediately
+                    applyRumAttribute(selector, experimentId);
+                } else if (selector && !value) {
+                    // This is a request to remove the attribute
+                    log('Removing RUM attribute from element with selector:', selector);
+                    try {
+                        const element = document.querySelector(selector);
+                        if (element) {
+                            element.removeAttribute('data-rum-source');
+                            log('✅ Removed data-rum-source attribute');
+                        }
+                    } catch (e) {
+                        log('❌ Error removing attribute:', e);
+                    }
+                }
+                break;
                 
-                // Apply immediately if this is the active experiment
-                const activeExperimentId = getActiveExperimentId();
-                if (activeExperimentId === experimentId) {
-                    applyRumAttribute(elementInfo.selector, experimentId);
+            case 'track-element':
+                // Track element message with detailed info
+                const { experimentId, elementInfo } = event.data;
+                
+                if (experimentId && elementInfo && elementInfo.selector) {
+                    log('Tracking element for experiment:', experimentId);
+                    
+                    // Store the tracking data
+                    storeTrackingData(experimentId, elementInfo.selector);
+                    
+                    // Apply if this is the active experiment
+                    const activeExperimentId = getActiveExperimentId();
+                    if (activeExperimentId === experimentId) {
+                        applyRumAttribute(elementInfo.selector, experimentId);
+                    }
+                }
+                break;
+                
+            default:
+                // Ignore other messages
+                break;
+        }
+    }
+    
+    /**
+     * Apply tracking for the active experiment on page load
+     */
+    function applyTrackingOnLoad() {
+        const experimentId = getActiveExperimentId();
+        if (!experimentId) {
+            log('No active experiment found on this page');
+            return;
+        }
+        
+        log('Active experiment found:', experimentId);
+        
+        // Check if we have stored tracking data for this experiment
+        try {
+            const storedData = localStorage.getItem(STORAGE_KEY);
+            if (storedData) {
+                const trackingData = JSON.parse(storedData);
+                const experimentData = trackingData[experimentId];
+                
+                if (experimentData && experimentData.selector) {
+                    log('Found stored tracking data for experiment:', experimentId);
+                    applyRumAttribute(experimentData.selector, experimentId);
+                } else {
+                    log('No stored tracking data for experiment:', experimentId);
                 }
             }
-        } else if (event.data.action === 'apply-rum-attribute') {
-            // Handle direct attribute application
-            const { selector, value } = event.data;
-            
-            if (selector && value && value.startsWith('experiment-')) {
-                const experimentId = value.replace('experiment-', '');
-                
-                // Store for future use
-                storeTrackingData(experimentId, selector);
-                
-                // Apply immediately
-                applyRumAttribute(selector, experimentId);
-            }
+        } catch (e) {
+            log('Error applying tracking on load:', e);
         }
+    }
+    
+    /**
+     * Add a debug button to the page
+     */
+    function addDebugButton() {
+        if (!DEBUG) return;
+        
+        const button = document.createElement('button');
+        button.textContent = '🔄 RUM Debug';
+        button.style.cssText = 'position:fixed; bottom:10px; right:10px; background:#0d66d0; color:white; border:none; border-radius:4px; padding:5px 10px; font-size:12px; z-index:9999; cursor:pointer;';
+        
+        button.addEventListener('click', function() {
+            log('Manual debug refresh triggered');
+            applyTrackingOnLoad();
+        });
+        
+        document.body.appendChild(button);
     }
     
     /**
      * Initialize the script
      */
     function init() {
-        log('Initializing RUM Tracker');
+        log('Initializing RUM message handler');
         
-        // Listen for messages from the experimentation MFE
+        // Add message listener
         window.addEventListener('message', handleMessage);
         
-        // Apply attributes from stored data
-        applyAllStoredAttributes();
+        // Apply tracking on load
+        applyTrackingOnLoad();
         
-        // Apply when visibility changes
+        // Add debug button
+        addDebugButton();
+        
+        // Also apply when visibility changes
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState === 'visible') {
                 log('Page visibility changed to visible');
-                applyAllStoredAttributes();
+                applyTrackingOnLoad();
             }
         });
         
-        // Listen for experiment events
-        document.addEventListener('rum', function(event) {
-            if (event.detail && (event.detail.checkpoint === 'experiment' || event.detail.checkpoint === 'convert')) {
-                log('RUM event detected:', event.detail);
-                applyAllStoredAttributes();
-            }
-        });
-        
-        // Setup MutationObserver to reapply when DOM changes
-        if ('MutationObserver' in window) {
+        // Listen for DOM changes with MutationObserver
+        if (typeof MutationObserver !== 'undefined') {
             const observer = new MutationObserver(function(mutations) {
                 let shouldReapply = false;
-                mutations.forEach(function(mutation) {
+                
+                for (const mutation of mutations) {
                     if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
                         shouldReapply = true;
+                        break;
                     }
-                });
+                }
                 
                 if (shouldReapply) {
-                    log('DOM changed, reapplying attributes');
-                    setTimeout(applyAllStoredAttributes, 100);
+                    log('DOM changed, reapplying tracking');
+                    setTimeout(applyTrackingOnLoad, 100);
                 }
             });
             
-            observer.observe(document.body, { 
+            observer.observe(document.body, {
                 childList: true,
                 subtree: true
             });
-            log('MutationObserver set up');
         }
         
-        // Export utility functions for manual testing
-        window.aemRumTracker = {
-            applyAll: applyAllStoredAttributes,
-            getActiveExperiment: getActiveExperimentId,
-            getTracking: getTrackingData,
-            applyAttribute: applyRumAttribute
+        // Export testing functions to window
+        window.aemRumDebug = {
+            applyTracking: applyTrackingOnLoad,
+            getExperimentId: getActiveExperimentId,
+            applyAttribute: applyRumAttribute,
+            storeData: storeTrackingData
         };
         
-        // Add debug button if in debug mode
-        if (DEBUG) {
-            const button = document.createElement('button');
-            button.textContent = '🏷️ RUM Tracker';
-            button.style.cssText = 'position:fixed; bottom:10px; right:10px; background:#0d66d0; color:white; border:none; border-radius:4px; padding:5px 10px; font-size:12px; z-index:9999; cursor:pointer;';
-            button.addEventListener('click', function() {
-                applyAllStoredAttributes();
-                alert('RUM attributes reapplied. Check console for details.');
-            });
-            document.body.appendChild(button);
-        }
-        
-        log('Initialization complete');
+        log('Initialization complete - ready to receive messages from MFE');
     }
     
-    // Run initialization when the DOM is ready
+    // Run when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
