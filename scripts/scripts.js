@@ -274,6 +274,7 @@ async function loadLazy(doc) {
  
   window.hlx.plugins.run('loadLazy');
   import('../tools/sidekick/aem-experimentation.js');
+  import('../tools/sidekick/rum-tracker.js');
 }
 
 /**
