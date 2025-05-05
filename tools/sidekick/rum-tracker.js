@@ -12,7 +12,7 @@
 (function () {
   // Configuration
   const STORAGE_KEY = 'aem-rum-tracking';
-  const DEBUG = false; // Set to false in production
+  const DEBUG = true; // Set to false in production
 
   /**
    * Log debug messages
@@ -563,7 +563,8 @@
 
       case 'track-element':
         // Track element message with detailed info
-        const { experimentId, elementInfo } = event.data;
+        const { experimentId, elementInfo, experimentInfo } = event.data;
+        console.log('experimentInfo', experimentInfo);
 
         if (experimentId && elementInfo && elementInfo.selector) {
           log('Tracking element for experiment:', experimentId);
@@ -601,7 +602,6 @@
       log('Error applying all stored tracking:', e);
     }
   }
-
 
   /**
    * Initialize the script
@@ -657,7 +657,6 @@
     // Delayed application for elements that might load later
     setTimeout(applyAllStoredTracking, 1000);
     setTimeout(applyAllStoredTracking, 3000);
-
 
     log('Initialization complete - ready to receive messages from MFE');
   }
