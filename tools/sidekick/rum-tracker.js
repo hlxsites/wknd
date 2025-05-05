@@ -1,173 +1,225 @@
 /**
- * AEM Experimentation RUM Tracking Script
- * Applies data-rum-source attribute to tracked elements
+ * AEM Experimentation RUM Debug Script
+ * Adds this to your page project to track and verify messages
  */
 (function() {
+    console.log('🔍 AEM EXPERIMENTATION RUM DEBUG SCRIPT ACTIVE');
+    console.log('📊 Current RUM data:', window.hlx?.rum);
+    
     // Constants
     const TRACKING_STORAGE_PREFIX = 'aem-experimentation-tracking-element-';
     const RUM_DATA_ATTR = 'data-rum-source';
     
+    // Track message receipts
+    let messageCount = 0;
+    
     /**
      * Check if the page has an active experiment
-     * @returns {string|null} Experiment ID or null
      */
     function getActiveExperimentId() {
         // Check for experiment class on body
         const bodyClasses = document.body.classList;
+        let experimentId = null;
+        
         for (let i = 0; i < bodyClasses.length; i++) {
             const cls = bodyClasses[i];
             if (cls.startsWith('experiment-')) {
-                return cls.replace('experiment-', '');
-            }
-        }
-
-        // Check RUM experiments data if available
-        if (window.hlx && window.hlx.rum) {
-            try {
-                const experimentsData = localStorage.getItem('unified-decisioning-experiments');
-                if (experimentsData) {
-                    const experiments = JSON.parse(experimentsData);
-                    return Object.keys(experiments)[0] || null;
-                }
-            } catch (e) {
-                console.error('[AEM Experimentation] Error reading experiment data:', e);
+                experimentId = cls.replace('experiment-', '');
+                break;
             }
         }
         
-        return null;
+        console.log('🧪 Active experiment from body class:', experimentId);
+        
+        // Also check localStorage
+        try {
+            const experimentsData = localStorage.getItem('unified-decisioning-experiments');
+            if (experimentsData) {
+                console.log('💾 Experiments data in localStorage:', experimentsData);
+                const experiments = JSON.parse(experimentsData);
+                const storageExperimentId = Object.keys(experiments)[0] || null;
+                console.log('🧪 Experiment from localStorage:', storageExperimentId);
+                
+                // Prefer body class if available
+                return experimentId || storageExperimentId;
+            }
+        } catch (e) {
+            console.error('Error checking localStorage:', e);
+        }
+        
+        return experimentId;
     }
     
     /**
-     * Apply the RUM source attribute to an element
+     * Apply RUM attribute to an element
      */
     function applyRumAttribute(elementSelector, experimentId) {
-        if (!elementSelector || !experimentId) return false;
+        if (!elementSelector || !experimentId) {
+            console.log('❌ Missing selector or experiment ID');
+            return false;
+        }
         
         try {
+            console.log('🔍 Looking for element:', elementSelector);
             const element = document.querySelector(elementSelector);
+            
             if (element) {
                 const attributeValue = `experiment-${experimentId}`;
-                if (element.getAttribute(RUM_DATA_ATTR) !== attributeValue) {
-                    element.setAttribute(RUM_DATA_ATTR, attributeValue);
-                    console.log(`[AEM Experimentation] Applied ${RUM_DATA_ATTR}="${attributeValue}" to:`, elementSelector);
-                }
+                element.setAttribute(RUM_DATA_ATTR, attributeValue);
+                console.log('✅ APPLIED ATTRIBUTE:');
+                console.log(`   ${RUM_DATA_ATTR}="${attributeValue}"`);
+                console.log('   To element:', element);
+                
+                // Highlight the element visually
+                const originalStyle = element.getAttribute('style') || '';
+                element.setAttribute('style', originalStyle + '; outline: 3px solid red !important; position: relative;');
+                
+                // Add a floating label
+                const label = document.createElement('div');
+                label.textContent = 'RUM Tracked: ' + experimentId;
+                label.style.cssText = 'position: absolute; top: -20px; left: 0; background: red; color: white; padding: 2px 5px; font-size: 10px; z-index: 9999;';
+                element.appendChild(label);
+                
                 return true;
             } else {
-                console.log(`[AEM Experimentation] Element not found for selector: ${elementSelector}`);
+                console.log('❌ ELEMENT NOT FOUND:', elementSelector);
+                // Try a simpler selector
+                const simplifiedSelector = elementSelector.split(' ').pop();
+                if (simplifiedSelector && simplifiedSelector !== elementSelector) {
+                    console.log('🔄 Trying simplified selector:', simplifiedSelector);
+                    const alternateElement = document.querySelector(simplifiedSelector);
+                    if (alternateElement) {
+                        const attributeValue = `experiment-${experimentId}`;
+                        alternateElement.setAttribute(RUM_DATA_ATTR, attributeValue);
+                        console.log('✅ APPLIED ATTRIBUTE with simplified selector:');
+                        console.log('   Element:', alternateElement);
+                        return true;
+                    }
+                }
             }
         } catch (error) {
-            console.error('[AEM Experimentation] Error applying attribute:', error);
+            console.error('Error applying attribute:', error);
         }
         
         return false;
     }
     
     /**
-     * Handle PostMessage from the MFE
+     * Handle tracking messages from MFE
      */
     function handleTrackingMessage(event) {
-        // Validate message
-        if (!event.data || 
-            event.data.source !== 'AEMExperimentation' || 
-            event.data.action !== 'track-element') {
-            return;
+        messageCount++;
+        
+        console.log(`📩 MESSAGE #${messageCount} RECEIVED FROM: ${event.origin}`);
+        console.log('📄 DATA:', JSON.stringify(event.data, null, 2));
+        
+        // Process AEM Experimentation messages
+        if (event.data && 
+            event.data.source === 'AEMExperimentation') {
+            
+            console.log('🎯 AEM EXPERIMENTATION MESSAGE DETECTED!');
+            console.log('Action:', event.data.action);
+            
+            if (event.data.action === 'track-element') {
+                const { experimentId, elementInfo } = event.data;
+                
+                if (!experimentId || !elementInfo) {
+                    console.warn('⚠️ Incomplete tracking data');
+                    return;
+                }
+                
+                // Store in localStorage
+                try {
+                    const storageKey = `${TRACKING_STORAGE_PREFIX}${experimentId}`;
+                    localStorage.setItem(storageKey, elementInfo.selector || '');
+                    console.log('💾 STORED IN LOCALSTORAGE:');
+                    console.log(`   Key: ${storageKey}`);
+                    console.log(`   Value: ${elementInfo.selector}`);
+                } catch (e) {
+                    console.error('Error storing in localStorage:', e);
+                }
+                
+                // Apply attribute if this is the active experiment
+                const activeExperimentId = getActiveExperimentId();
+                console.log('Current active experiment:', activeExperimentId);
+                console.log('Message is for experiment:', experimentId);
+                
+                // Always apply for debugging
+                applyRumAttribute(elementInfo.selector, experimentId);
+            }
+            else if (event.data.action === 'apply-rum-attribute') {
+                console.log('🏷️ APPLY ATTRIBUTE MESSAGE:');
+                console.log('   Selector:', event.data.selector);
+                console.log('   Attribute:', event.data.attribute);
+                console.log('   Value:', event.data.value);
+                
+                if (event.data.value && event.data.value.startsWith('experiment-')) {
+                    const experimentId = event.data.value.replace('experiment-', '');
+                    applyRumAttribute(event.data.selector, experimentId);
+                }
+            }
         }
         
-        const { experimentId, elementInfo } = event.data;
-        
-        if (!experimentId || !elementInfo) {
-            console.warn('[AEM Experimentation] Incomplete tracking data received');
-            return;
-        }
-        
-        // Store in localStorage as backup
-        try {
-            const storageKey = `${TRACKING_STORAGE_PREFIX}${experimentId}`;
-            localStorage.setItem(storageKey, elementInfo.selector || '');
-        } catch (e) {
-            // Storage might fail in private browsing
-        }
-        
-        // Apply if this is for the current experiment
-        const activeExperimentId = getActiveExperimentId();
-        if (activeExperimentId === experimentId) {
-            applyRumAttribute(elementInfo.selector, experimentId);
-        }
+        console.log('============================');
     }
     
     /**
-     * Apply RUM attribute from localStorage data
+     * Check localStorage and apply attributes
      */
     function applyFromStorage() {
+        console.log('🔄 CHECKING LOCALSTORAGE FOR TRACKING DATA');
         const experimentId = getActiveExperimentId();
-        if (!experimentId) return;
+        if (!experimentId) {
+            console.log('❌ NO ACTIVE EXPERIMENT FOUND');
+            return;
+        }
+        
+        console.log('🧪 ACTIVE EXPERIMENT:', experimentId);
         
         try {
-            // Try to get element selector from localStorage
             const storageKey = `${TRACKING_STORAGE_PREFIX}${experimentId}`;
             const elementSelector = localStorage.getItem(storageKey);
             
+            console.log('🔍 LOCALSTORAGE CHECK:');
+            console.log(`   Key: ${storageKey}`);
+            console.log(`   Value: ${elementSelector || 'not found'}`);
+            
             if (elementSelector) {
                 applyRumAttribute(elementSelector, experimentId);
+            } else {
+                console.log('⚠️ No selector found in localStorage');
             }
         } catch (e) {
-            console.error('[AEM Experimentation] Error applying from storage:', e);
+            console.error('Error applying from storage:', e);
         }
     }
     
-    /**
-     * Initialize the tracking script
-     */
-    function init() {
-        // Set up message listener
-        window.addEventListener('message', handleTrackingMessage);
-        
-        // Apply from storage on page load and visibility changes
+    // Set up event listeners
+    window.addEventListener('message', handleTrackingMessage);
+    
+    // Initial check
+    console.log('🚀 AEM EXPERIMENTATION TRACKING DEBUG ACTIVE');
+    console.log('🔍 CHECKING FOR ACTIVE EXPERIMENT...');
+    applyFromStorage();
+    
+    // Make functions globally available for testing
+    window.aemExpDebug = {
+        checkStorage: applyFromStorage,
+        checkExperiment: getActiveExperimentId,
+        applyAttribute: applyRumAttribute,
+        messageCount: () => messageCount
+    };
+    
+    console.log('🔧 DEBUG FUNCTIONS AVAILABLE AT window.aemExpDebug');
+    
+    // Create visual indicator
+    const debugIndicator = document.createElement('div');
+    debugIndicator.innerHTML = '🧪 AEM Exp Debug';
+    debugIndicator.style.cssText = 'position: fixed; bottom: 10px; right: 10px; background: red; color: white; padding: 5px 10px; z-index: 9999; font-size: 12px; cursor: pointer;';
+    debugIndicator.onclick = function() {
+        console.log('🔄 Manual check triggered');
         applyFromStorage();
-        
-        document.addEventListener('visibilitychange', function() {
-            if (document.visibilityState === 'visible') {
-                applyFromStorage();
-            }
-        });
-        
-        // Listen for DOM changes to reapply if needed
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && 
-                    mutation.attributeName === RUM_DATA_ATTR &&
-                    !mutation.target.getAttribute(RUM_DATA_ATTR)) {
-                    // Attribute was removed, try to reapply
-                    applyFromStorage();
-                }
-            });
-        });
-        
-        observer.observe(document.body, { 
-            subtree: true, 
-            attributes: true,
-            attributeFilter: [RUM_DATA_ATTR]
-        });
-        
-        // Also integrate with native RUM if available
-        if (window.hlx && window.hlx.rum) {
-            console.log('[AEM Experimentation] RUM detected, integration active');
-            
-            // Add a custom listener for RUM events
-            document.addEventListener('rum', function(event) {
-                if (event.detail && event.detail.checkpoint === 'experiment') {
-                    console.log('[AEM Experimentation] RUM experiment event detected, reapplying attributes');
-                    // Wait a bit for DOM changes
-                    setTimeout(applyFromStorage, 100);
-                }
-            });
-        }
-    }
-    
-    // Run initialization when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
+        alert('RUM Debug: ' + messageCount + ' messages received\nActive experiment: ' + getActiveExperimentId() + '\nCheck console for details');
+    };
+    document.body.appendChild(debugIndicator);
 })();
