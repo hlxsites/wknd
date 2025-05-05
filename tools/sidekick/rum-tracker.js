@@ -12,7 +12,7 @@
 (function () {
   // Configuration
   const STORAGE_KEY = 'aem-rum-tracking';
-  const DEBUG = true; // Set to false in production
+  const DEBUG = false; // Set to false in production
 
   /**
    * Log debug messages
@@ -95,7 +95,7 @@
     } catch (e) {
       log('Error reading experiments data:', e);
     }
-    
+
     return experiments;
   }
 
