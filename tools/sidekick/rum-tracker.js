@@ -561,21 +561,62 @@
         }
         break;
 
-      case 'track-element':
-        // Track element message with detailed info
-        const { experimentId, elementInfo, experimentInfo } = event.data;
-        console.log('experimentInfo', experimentInfo);
-
-        if (experimentId && elementInfo && elementInfo.selector) {
-          log('Tracking element for experiment:', experimentId);
-
-          // Store the tracking data
-          storeTrackingData(experimentId, elementInfo.selector);
-
-          // Always apply the attribute
-          applyRumAttribute(elementInfo.selector, experimentId);
-        }
-        break;
+           case 'track-element': {
+                        console.log('xinyiyiyiyiyiyiyiyiyiyiyi ----Received track-element message:', event.data);
+                        try {
+                            const { experimentId, elementInfo } = event.data;
+                            
+                            if (experimentId && elementInfo && elementInfo.selector) {
+                                console.log(`Processing tracking for experiment: ${experimentId}`);
+                                
+                                // Store tracking data in localStorage
+                                const storageKey = `aem-rum-tracking`;
+                                let trackingData = {};
+                                
+                                try {
+                                    const storedData = localStorage.getItem(storageKey);
+                                    if (storedData) {
+                                        trackingData = JSON.parse(storedData);
+                                    }
+                                } catch (e) {
+                                    console.error('Error parsing stored tracking data:', e);
+                                }
+                                
+                                // Add or update tracking for this experiment
+                                trackingData[experimentId] = {
+                                    selector: elementInfo.selector,
+                                    timestamp: new Date().toISOString(),
+                                };
+                                
+                                // Save to localStorage
+                                localStorage.setItem(storageKey, JSON.stringify(trackingData));
+                                console.log('✅ Stored tracking data for experiment:', experimentId);
+                                
+                                // Apply the data-rum-source attribute to the element
+                                try {
+                                    const element = document.querySelector(elementInfo.selector);
+                                    if (element) {
+                                        const attributeValue = `experiment-${experimentId}`;
+                                        element.setAttribute('data-rum-source', attributeValue);
+                                        console.log(`✅ Applied data-rum-source="${attributeValue}" to element:`, element);
+                                        
+                                        // Visual indicator for debugging
+                                        element.style.outline = '2px solid #0d66d0';
+                                        element.style.outlineOffset = '2px';
+                                    } else {
+                                        console.warn(`❌ No element found for selector: ${elementInfo.selector}`);
+                                    }
+                                } catch (e) {
+                                    console.error('Error applying data-rum-source attribute:', e);
+                                }
+                            } else {
+                                console.warn('Missing data in track-element message');
+                            }
+                        } catch (error) {
+                            console.error('Error handling track-element message:', error);
+                        }
+                        break;
+                    }
 
       default:
         // Ignore other messages
