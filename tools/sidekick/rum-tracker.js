@@ -1,6 +1,6 @@
 /**
- * AEM Experimentation RUM Track Message Handler
- * Simplified but resilient version
+ * AEM Experimentation RUM Track Message Handler (Simplified)
+ * Focuses on cascading fallback selectors for resilience
  */
 (function () {
     // Configuration
@@ -17,78 +17,31 @@
     }
   
     /**
-     * Get active experiments from window.hlx or localStorage
-     */
-    function getActiveExperiments() {
-      const experiments = [];
-  
-      // Check window.hlx.experiments (preferred)
-      if (window.hlx?.experiments && Array.isArray(window.hlx.experiments)) {
-        window.hlx.experiments.forEach(exp => {
-          if (exp.config?.id) {
-            experiments.push(exp.config.id);
-          }
-        });
-      }
-      // Legacy window.hlx.experiment
-      else if (window.hlx?.experiment?.config?.id) {
-        experiments.push(window.hlx.experiment.config.id);
-      }
-      
-      // Check localStorage as fallback
-      if (experiments.length === 0) {
-        try {
-          const storedExps = localStorage.getItem('unified-decisioning-experiments');
-          if (storedExps) {
-            Object.keys(JSON.parse(storedExps)).forEach(id => experiments.push(id));
-          }
-        } catch (e) {
-          log('Error reading experiments from localStorage', e);
-        }
-      }
-  
-      return experiments;
-    }
-  
-    /**
-     * Store tracking data in localStorage with support for multiple selectors
+     * Store tracking data in localStorage
      */
     function storeTrackingData(experimentId, elementInfo) {
-      if (!experimentId || !elementInfo) {
-        log('Missing data for storage');
+      if (!experimentId || !elementInfo || !elementInfo.selector) {
+        log('Invalid data for storage');
         return false;
       }
   
       try {
         // Get existing tracking data
         let trackingData = {};
-        const storedData = localStorage.getItem(STORAGE_KEY);
-        if (storedData) {
-          try {
+        try {
+          const storedData = localStorage.getItem(STORAGE_KEY);
+          if (storedData) {
             trackingData = JSON.parse(storedData);
-          } catch (e) {
-            log('Error parsing stored data, creating new tracking data', e);
           }
+        } catch (e) {
+          log('Error parsing stored data', e);
         }
   
-        // Update tracking for this experiment
+        // Store or update info for this experiment
         trackingData[experimentId] = {
-          // Primary selector
           selector: elementInfo.selector,
-          
-          // Alternative selectors for resilience
-          alternativeSelectors: elementInfo.alternativeSelectors || [],
-          
-          // Display name for debugging
-          displayName: elementInfo.displayName || 'Selected Element',
-          
-          // Element semantic type
-          semanticType: elementInfo.semanticType || 'unknown',
-          
-          // Text content for content-based matching
-          textContent: elementInfo.textContent || null,
-          
-          // Timestamp for debugging
+          fallbackSelectors: elementInfo.fallbackSelectors || [],
+          displayName: elementInfo.displayName || 'Element',
           timestamp: new Date().toISOString()
         };
   
@@ -103,18 +56,17 @@
     }
   
     /**
-     * Find element using resilient selectors
-     * Tries multiple selector strategies to find element even if DOM changes
+     * Find element using cascading selector strategy
      */
-    function findElementResilience(trackingInfo) {
+    function findElementByCascadingSelectors(trackingInfo) {
       if (!trackingInfo) return null;
       
-      // 1. Try primary selector
+      // 1. Try primary selector first
       if (trackingInfo.selector) {
         try {
           const element = document.querySelector(trackingInfo.selector);
           if (element) {
-            log('Found element with primary selector:', trackingInfo.selector);
+            log('Found element with primary selector');
             return element;
           }
         } catch (e) {
@@ -122,87 +74,39 @@
         }
       }
       
-      // 2. Try alternative selectors
-      if (trackingInfo.alternativeSelectors && trackingInfo.alternativeSelectors.length) {
-        for (const selector of trackingInfo.alternativeSelectors) {
-          // Skip text-based selectors which use our custom format
+      // 2. Try fallback selectors in order
+      if (trackingInfo.fallbackSelectors && trackingInfo.fallbackSelectors.length) {
+        for (const selector of trackingInfo.fallbackSelectors) {
+          // Skip text-based selectors
           if (selector.startsWith('__text__:')) continue;
           
           try {
             const element = document.querySelector(selector);
             if (element) {
-              log('Found element with alternative selector:', selector);
+              log('Found element with fallback selector:', selector);
               return element;
             }
           } catch (e) {
-            log('Error with alternative selector:', selector, e);
+            log('Error with fallback selector:', selector, e);
           }
         }
       }
       
-      // 3. Try text-based matching for buttons/links
-      if (trackingInfo.textContent && ['button', 'button-link', 'link'].includes(trackingInfo.semanticType)) {
-        log('Trying text-based matching:', trackingInfo.textContent);
+      // 3. Text-based matching as last resort
+      if (trackingInfo.fallbackSelectors) {
+        const textSelectors = trackingInfo.fallbackSelectors.filter(s => s.startsWith('__text__:'));
         
-        const tagSelectors = {
-          'button': 'button',
-          'button-link': 'a',
-          'link': 'a'
-        };
-        
-        const tagSelector = tagSelectors[trackingInfo.semanticType] || 'button, a';
-        
-        // Find elements with matching text
-        const elements = Array.from(document.querySelectorAll(tagSelector));
-        const match = elements.find(el => 
-          el.textContent && 
-          el.textContent.trim() === trackingInfo.textContent
-        );
-        
-        if (match) {
-          log('Found element with matching text content');
-          return match;
-        }
-      }
-      
-      // 4. For form elements, try to find within form
-      if (trackingInfo.context && trackingInfo.context.inForm) {
-        const forms = document.querySelectorAll('form');
-        if (forms.length > 0) {
-          // Try to find buttons in forms
-          if (['button', 'submit'].includes(trackingInfo.semanticType)) {
-            log('Looking for button in forms');
-            for (const form of forms) {
-              const buttons = form.querySelectorAll('button, input[type="submit"]');
-              if (buttons.length > 0) {
-                log('Found button in form as fallback');
-                return buttons[buttons.length - 1]; // Use last button (likely submit)
-              }
+        for (const textSel of textSelectors) {
+          const text = textSel.substring(8); // Remove __text__: prefix
+          log('Trying to find by text content:', text);
+          
+          const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+          for (const heading of headings) {
+            if (heading.textContent && heading.textContent.trim() === text) {
+              log('Found element by text content match');
+              return heading;
             }
           }
-        }
-      }
-      
-      // 5. If it's a section experiment, try section fallback
-      if (trackingInfo.context && trackingInfo.context.section) {
-        const sectionSelector = `.${trackingInfo.context.section}`;
-        try {
-          const section = document.querySelector(sectionSelector);
-          if (section) {
-            log('Found section for section experiment');
-            
-            // Try to find interactive elements in section
-            const interactive = section.querySelectorAll('button, a[href], input[type="submit"]');
-            if (interactive.length > 0) {
-              log('Found interactive element in section');
-              return interactive[interactive.length - 1]; // Use last one (likely CTA)
-            }
-            
-            // Fallback to section itself
-            return section;
-          }
-        } catch (e) {
-          log('Error with section fallback', e);
         }
       }
       
@@ -210,7 +114,7 @@
     }
   
     /**
-     * Apply RUM attribute to element with fallback strategies
+     * Apply data-rum-source attribute to element
      */
     function applyRumAttribute(trackingInfo, experimentId) {
       if (!experimentId || !trackingInfo) {
@@ -219,8 +123,8 @@
       }
   
       try {
-        // Find the element using resilient selector strategy
-        const element = findElementResilience(trackingInfo);
+        // Find element using cascading selectors
+        const element = findElementByCascadingSelectors(trackingInfo);
         
         if (element) {
           // Apply the attribute
@@ -228,13 +132,10 @@
           element.setAttribute('data-rum-source', attributeValue);
           log(`✅ Applied data-rum-source="${attributeValue}" to:`, element);
   
-          // Add visual indicator in debug mode
+          // Visual indicator in debug mode
           if (DEBUG) {
             element.style.outline = '2px solid #0d66d0';
             element.style.outlineOffset = '2px';
-            
-            // Add tooltip to show tracking info on hover
-            element.setAttribute('title', `Tracking: ${trackingInfo.displayName || experimentId}`);
           }
   
           return true;
@@ -249,12 +150,34 @@
     }
   
     /**
-     * Apply tracking for all active experiments on page load
+     * Get all active experiment IDs
+     */
+    function getActiveExperiments() {
+      const experiments = [];
+  
+      // Check window.hlx.experiments
+      if (window.hlx?.experiments && Array.isArray(window.hlx.experiments)) {
+        window.hlx.experiments.forEach(exp => {
+          if (exp.config?.id) {
+            experiments.push(exp.config.id);
+          }
+        });
+      } 
+      // Legacy window.hlx.experiment
+      else if (window.hlx?.experiment?.config?.id) {
+        experiments.push(window.hlx.experiment.config.id);
+      }
+      
+      return experiments;
+    }
+  
+    /**
+     * Apply tracking for active experiments
      */
     function applyTrackingOnLoad() {
       const experimentIds = getActiveExperiments();
       if (experimentIds.length === 0) {
-        log('No active experiments found on this page');
+        log('No active experiments found');
         return;
       }
   
@@ -288,33 +211,24 @@
         return;
       }
   
-      log('📨 Received message from MFE:', event.data);
-  
+      // Handle message based on action
       switch (event.data.action) {
         case 'track-element': {
           try {
             const { experimentId, elementInfo } = event.data;
             
-            if (experimentId && elementInfo) {
+            if (experimentId && elementInfo && elementInfo.selector) {
               log(`Processing tracking for experiment: ${experimentId}`);
+              log(`Primary selector: ${elementInfo.selector}`);
+              log(`Fallback selectors:`, elementInfo.fallbackSelectors || []);
               
-              // Store the tracking info with all resilient selectors
+              // Store tracking info with selectors
               storeTrackingData(experimentId, elementInfo);
               
-              // Apply the data-rum-source attribute
+              // Apply the attribute
               applyRumAttribute(elementInfo, experimentId);
-              
-              // Send confirmation back to MFE
-              try {
-                window.parent.postMessage({
-                  source: 'AEMRumClient',
-                  action: 'element-tracked',
-                  experimentId,
-                  success: true
-                }, '*');
-              } catch (e) {
-                log('Error sending confirmation message', e);
-              }
+            } else {
+              log('Missing required data in track-element message');
             }
           } catch (error) {
             log('Error handling track-element message:', error);
@@ -323,31 +237,30 @@
         }
         
         case 'apply-rum-attribute': {
+          // Direct attribute application
           const { selector, value } = event.data;
           
           if (selector && value && value.startsWith('experiment-')) {
             const experimentId = value.replace('experiment-', '');
-            log('Storing and applying RUM attribute directly');
             
-            // Create minimal tracking info
+            // Create simple tracking info
             const trackingInfo = {
               selector,
-              alternativeSelectors: [],
-              displayName: 'Direct selection'
+              fallbackSelectors: [],
+              displayName: 'Selected Element'
             };
             
             // Store and apply
             storeTrackingData(experimentId, trackingInfo);
             applyRumAttribute(trackingInfo, experimentId);
           } else if (selector && !value) {
-            // This is a request to remove the attribute
+            // Remove attribute
             try {
               const element = document.querySelector(selector);
               if (element) {
                 element.removeAttribute('data-rum-source');
                 log('✅ Removed data-rum-source attribute');
                 
-                // Remove debug styling
                 if (DEBUG) {
                   element.style.outline = '';
                   element.style.outlineOffset = '';
@@ -363,57 +276,6 @@
     }
   
     /**
-     * Add debugging utilities
-     */
-    function setupDebugTools() {
-      if (!DEBUG) return;
-      
-      window.aemRumDebug = {
-        // Inspect stored tracking data
-        showStoredData: () => {
-          try {
-            const data = localStorage.getItem(STORAGE_KEY);
-            console.log('Stored tracking data:', data ? JSON.parse(data) : 'None');
-            return data ? JSON.parse(data) : null;
-          } catch (e) {
-            console.error('Error parsing tracking data', e);
-            return null;
-          }
-        },
-        
-        // Test element finding with a given experiment ID
-        testElementFinding: (experimentId) => {
-          try {
-            const data = localStorage.getItem(STORAGE_KEY);
-            if (!data) return 'No tracking data stored';
-            
-            const trackingData = JSON.parse(data);
-            const info = trackingData[experimentId];
-            
-            if (!info) return `No tracking info for experiment ${experimentId}`;
-            
-            console.log('Testing element finding for', experimentId);
-            console.log('Tracking info:', info);
-            
-            const element = findElementResilience(info);
-            return element ? 
-              { found: true, element, info } : 
-              { found: false, info };
-          } catch (e) {
-            console.error('Error testing element finding', e);
-            return { error: e.message };
-          }
-        },
-        
-        // Apply tracking to all experiments
-        applyAllTracking: () => {
-          applyTrackingOnLoad();
-          return 'Applied tracking to all active experiments';
-        }
-      };
-    }
-  
-    /**
      * Initialize the script
      */
     function init() {
@@ -422,23 +284,30 @@
       // Set up message listener
       window.addEventListener('message', handleMessage);
       
-      // Apply tracking on init
+      // Apply tracking for active experiments
       applyTrackingOnLoad();
       
-      // Watch for DOM changes
-      if (typeof MutationObserver !== 'undefined') {
-        const observer = new MutationObserver(mutations => {
-          if (mutations.some(m => m.type === 'childList' && m.addedNodes.length > 0)) {
-            log('DOM changed, reapplying tracking');
-            setTimeout(applyTrackingOnLoad, 300);
+      // Debug utility
+      if (DEBUG) {
+        window.aemRumDebug = {
+          showStoredData: () => {
+            try {
+              const data = localStorage.getItem(STORAGE_KEY);
+              return data ? JSON.parse(data) : null;
+            } catch (e) {
+              console.error('Error parsing data', e);
+              return null;
+            }
+          },
+          testSelector: (selector) => {
+            try {
+              return document.querySelector(selector);
+            } catch (e) {
+              return null;
+            }
           }
-        });
-        
-        observer.observe(document.body, { childList: true, subtree: true });
+        };
       }
-      
-      // Set up debug tools
-      setupDebugTools();
       
       log('Initialization complete');
     }
@@ -450,4 +319,3 @@
       init();
     }
   })();
-  
