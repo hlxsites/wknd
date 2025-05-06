@@ -237,40 +237,91 @@
         }
         
         case 'apply-rum-attribute': {
-          // Direct attribute application
-          const { selector, value } = event.data;
-          
-          if (selector && value && value.startsWith('experiment-')) {
-            const experimentId = value.replace('experiment-', '');
+            // Direct attribute application
+            const { selector, value } = event.data;
             
-            // Create simple tracking info
-            const trackingInfo = {
-              selector,
-              fallbackSelectors: [],
-              displayName: 'Selected Element'
-            };
-            
-            // Store and apply
-            storeTrackingData(experimentId, trackingInfo);
-            applyRumAttribute(trackingInfo, experimentId);
-          } else if (selector && !value) {
-            // Remove attribute
-            try {
-              const element = document.querySelector(selector);
-              if (element) {
-                element.removeAttribute('data-rum-source');
-                log('✅ Removed data-rum-source attribute');
+            if (selector && value && value.startsWith('experiment-')) {
+                const experimentId = value.replace('experiment-', '');
                 
-                if (DEBUG) {
-                  element.style.outline = '';
-                  element.style.outlineOffset = '';
+                // First check if we already have tracking info with fallback selectors
+                let existingInfo = null;
+                try {
+                    const storedData = localStorage.getItem(STORAGE_KEY);
+                    if (storedData) {
+                        const trackingData = JSON.parse(storedData);
+                        if (trackingData[experimentId] && 
+                            trackingData[experimentId].fallbackSelectors && 
+                            trackingData[experimentId].fallbackSelectors.length > 0) {
+                            // Use existing data if it has fallback selectors
+                            existingInfo = trackingData[experimentId];
+                        }
+                    }
+                } catch (e) {
+                    log('Error checking existing data', e);
                 }
-              }
-            } catch (e) {
-              log('Error removing attribute:', e);
+                
+                // If we have existing info with fallbacks, use it but update the selector
+                if (existingInfo) {
+                    log('Found existing tracking info with fallbacks, updating selector');
+                    existingInfo.selector = selector; // Update to new selector
+                    storeTrackingData(experimentId, existingInfo);
+                    applyRumAttribute(existingInfo, experimentId);
+                } else {
+                    // Otherwise create new tracking info
+                    // Generate some basic fallbacks for this selector
+                    const fallbackSelectors = generateFallbackSelectors(selector);
+                    
+                    const trackingInfo = {
+                        selector,
+                        fallbackSelectors,
+                        displayName: 'Selected Element'
+                    };
+                    
+                    storeTrackingData(experimentId, trackingInfo);
+                    applyRumAttribute(trackingInfo, experimentId);
+                }
+            } 
+            // Rest of code for removing attribute...
+            break;
+        }
+        
+        // Add this helper function
+        function generateFallbackSelectors(selector) {
+            if (!selector || typeof selector !== 'string') return [];
+            
+            const fallbacks = [];
+            
+            // For ID selectors, don't need fallbacks
+            if (selector.startsWith('#') && !selector.includes(' ')) {
+                return fallbacks;
             }
-          }
-          break;
+            
+            // For complex selectors with path
+            if (selector.includes('>')) {
+                const parts = selector.split('>');
+                
+                // Extract ID if present
+                for (const part of parts) {
+                    if (part.includes('#')) {
+                        const idMatch = part.match(/#([^.:\s]+)/);
+                        if (idMatch && idMatch[0]) {
+                            fallbacks.push(idMatch[0]);
+                            break;
+                        }
+                    }
+                }
+                
+                // Create simplified paths by removing last part
+                for (let i = parts.length - 1; i > 0; i--) {
+                    const simplified = parts.slice(0, i).join('>');
+                    if (simplified && simplified !== selector) {
+                        fallbacks.push(simplified);
+                        if (fallbacks.length >= 3) break;
+                    }
+                }
+            }
+            
+            return fallbacks;
         }
       }
     }
