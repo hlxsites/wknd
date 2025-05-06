@@ -561,62 +561,151 @@
         }
         break;
 
-           case 'track-element': {
-                        console.log('xinyiyiyiyiyiyiyiyiyiyiyi ----Received track-element message:', event.data);
-                        try {
-                            const { experimentId, elementInfo } = event.data;
-                            
-                            if (experimentId && elementInfo && elementInfo.selector) {
-                                console.log(`Processing tracking for experiment: ${experimentId}`);
-                                
-                                // Store tracking data in localStorage
-                                const storageKey = `aem-rum-tracking`;
-                                let trackingData = {};
-                                
-                                try {
-                                    const storedData = localStorage.getItem(storageKey);
-                                    if (storedData) {
-                                        trackingData = JSON.parse(storedData);
-                                    }
-                                } catch (e) {
-                                    console.error('Error parsing stored tracking data:', e);
-                                }
-                                
-                                // Add or update tracking for this experiment
-                                trackingData[experimentId] = {
-                                    selector: elementInfo.selector,
-                                    timestamp: new Date().toISOString(),
-                                };
-                                
-                                // Save to localStorage
-                                localStorage.setItem(storageKey, JSON.stringify(trackingData));
-                                console.log('✅ Stored tracking data for experiment:', experimentId);
-                                
-                                // Apply the data-rum-source attribute to the element
-                                try {
-                                    const element = document.querySelector(elementInfo.selector);
-                                    if (element) {
-                                        const attributeValue = `experiment-${experimentId}`;
-                                        element.setAttribute('data-rum-source', attributeValue);
-                                        console.log(`✅ Applied data-rum-source="${attributeValue}" to element:`, element);
-                                        
-                                        // Visual indicator for debugging
-                                        element.style.outline = '2px solid #0d66d0';
-                                        element.style.outlineOffset = '2px';
-                                    } else {
-                                        console.warn(`❌ No element found for selector: ${elementInfo.selector}`);
-                                    }
-                                } catch (e) {
-                                    console.error('Error applying data-rum-source attribute:', e);
-                                }
-                            } else {
-                                console.warn('Missing data in track-element message');
-                            }
-                        } catch (error) {
-                            console.error('Error handling track-element message:', error);
-                        }
-                        break;
+      case 'track-element': {
+        // Enhanced logging to see exactly what the MFE is sending
+        console.log('=== TRACK ELEMENT MESSAGE START ===');
+        console.log(
+          'Full message from MFE:',
+          JSON.stringify(event.data, null, 2)
+        );
+
+        // Log specific parts of interest
+        if (event.data.experimentId) {
+          console.log('Experiment ID:', event.data.experimentId);
+        }
+
+        if (event.data.elementInfo) {
+          console.log('Element Info:');
+          console.log('- Selector:', event.data.elementInfo.selector);
+          console.log('- Tag Name:', event.data.elementInfo.tagName);
+          console.log('- ID:', event.data.elementInfo.id);
+          console.log('- Classes:', event.data.elementInfo.classes);
+          console.log(
+            '- Text Signature:',
+            event.data.elementInfo.textSignature
+          );
+          if (event.data.elementInfo.attributes) {
+            console.log('- Attributes:', event.data.elementInfo.attributes);
+          }
+          if (event.data.elementInfo.position) {
+            console.log('- Position:', event.data.elementInfo.position);
+          }
+        }
+        console.log('=== TRACK ELEMENT MESSAGE END ===');
+
+        // Continue with the existing implementation
+        try {
+          const { experimentId, elementInfo } = event.data;
+
+          if (experimentId && elementInfo && elementInfo.selector) {
+            console.log(`Processing tracking for experiment: ${experimentId}`);
+
+            // Store tracking data in localStorage
+            const storageKey = `aem-rum-tracking`;
+            let trackingData = {};
+
+            try {
+              const storedData = localStorage.getItem(storageKey);
+              if (storedData) {
+                trackingData = JSON.parse(storedData);
+              }
+            } catch (e) {
+              console.error('Error parsing stored tracking data:', e);
+            }
+
+            // Add or update tracking for this experiment
+            trackingData[experimentId] = {
+              selector: elementInfo.selector,
+              timestamp: new Date().toISOString(),
+            };
+
+            // Save to localStorage
+            localStorage.setItem(storageKey, JSON.stringify(trackingData));
+            console.log(
+              '✅ Stored tracking data for experiment:',
+              experimentId
+            );
+
+            // Apply the data-rum-source attribute to the element
+            try {
+              // First try the exact selector
+              let element = document.querySelector(elementInfo.selector);
+              console.log('Element found with selector?', !!element);
+
+              // If not found with selector but we have text signature, try that
+              if (!element && elementInfo.textSignature) {
+                console.log(
+                  'Trying to find by text:',
+                  elementInfo.textSignature
+                );
+                document.querySelectorAll('button').forEach((btn) => {
+                  if (
+                    !element &&
+                    btn.textContent &&
+                    btn.textContent.trim() === elementInfo.textSignature
+                  ) {
+                    element = btn;
+                    console.log('Found element by matching text content!');
+                  }
+                });
+              }
+
+              // If not found but it's a section experiment, apply some special handling
+              if (!element && experimentId === 'section-exp') {
+                console.log('Applying special handling for section-exp');
+
+                // Look for any buttons with file-related text
+                document.querySelectorAll('button').forEach((btn) => {
+                  if (!element) {
+                    const text = btn.textContent?.trim().toLowerCase() || '';
+                    if (
+                      text.includes('file') ||
+                      text.includes('upload') ||
+                      text.includes('select')
+                    ) {
+                      element = btn;
+                      console.log('Found button with file-related text:', text);
                     }
+                  }
+                });
+
+                // If still nothing, try the last button as a fallback
+                if (!element) {
+                  const buttons = document.querySelectorAll('button');
+                  if (buttons.length > 0) {
+                    element = buttons[buttons.length - 1];
+                    console.log('Using last button as fallback');
+                  }
+                }
+              }
+
+              if (element) {
+                const attributeValue = `experiment-${experimentId}`;
+                element.setAttribute('data-rum-source', attributeValue);
+                console.log(
+                  `✅ Applied data-rum-source="${attributeValue}" to element:`,
+                  element
+                );
+
+                // Visual indicator for debugging
+                element.style.outline = '2px solid #0d66d0';
+                element.style.outlineOffset = '2px';
+              } else {
+                console.warn(
+                  `❌ No element found for experiment: ${experimentId}`
+                );
+              }
+            } catch (e) {
+              console.error('Error applying data-rum-source attribute:', e);
+            }
+          } else {
+            console.warn('Missing data in track-element message');
+          }
+        } catch (error) {
+          console.error('Error handling track-element message:', error);
+        }
+        break;
+      }
 
       default:
         // Ignore other messages
