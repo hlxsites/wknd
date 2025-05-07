@@ -309,7 +309,6 @@
               existingInfo && !selectorChanged
                 ? existingInfo.fallbackSelectors || []
                 : [],
-            displayName: existingInfo?.displayName || 'Element',
             timestamp: new Date().toISOString(),
           };
 
@@ -319,22 +318,41 @@
           if (!existingInfo || selectorChanged) {
             console.log('Generating new fallback selectors');
 
-            // For simple ID selectors, we don't need fallbacks
-            if (selector.startsWith('#') && !selector.includes(' ')) {
-              // ID selectors are already unique
-              console.log('ID selector found, no fallbacks needed');
+            // For ID selectors, we add text content as fallback too
+            if (selector.startsWith('#') || selector.includes('#')) {
+              const idMatch = selector.match(/#([^.:\s]+)/);
+              if (idMatch && idMatch[0]) {
+                trackingInfo.fallbackSelectors.push(idMatch[0]);
+                try {
+                  const element = document.querySelector(selector);
+                  if (element && element.textContent) {
+                    const textContent = element.textContent.trim();
+                    if (textContent) {
+                      trackingInfo.fallbackSelectors.push(
+                        `__text__:${textContent}`
+                      );
+                    }
+                  }
+                } catch (e) {
+                  console.log('Error getting text content from ID element:', e);
+                }
+              }
+
+              // Extract heading tag if present (for h1#id, h2#id, etc.)
+              const headingMatch = selector.match(/^h([1-6])#/i);
+              if (headingMatch) {
+                trackingInfo.fallbackSelectors.push(`h${headingMatch[1]}`);
+              }
             } else {
               // For complex selectors with path (>)
               if (selector.includes('>')) {
                 const parts = selector.split('>');
 
-                // Extract ID if present in any part
                 for (const part of parts) {
                   if (part.includes('#')) {
                     const idMatch = part.match(/#([^.:\s]+)/);
                     if (idMatch && idMatch[0]) {
                       trackingInfo.fallbackSelectors.push(idMatch[0]);
-                      console.log('Added ID fallback:', idMatch[0]);
                       break;
                     }
                   }
@@ -381,13 +399,28 @@
                     console.log('Added class fallback:', cls);
                   });
                 }
-              }
 
-              // Special handling for section experiments
-              if (experimentId === 'section-exp') {
-                trackingInfo.fallbackSelectors.push('button');
-                trackingInfo.fallbackSelectors.push('__text__:Select files');
-                console.log('Added section-exp specific fallbacks');
+                // For heading selectors, try to get text content too
+                const headingMatch = selector.match(/^h([1-6])/i);
+                if (headingMatch) {
+                  try {
+                    const element = document.querySelector(selector);
+                    if (element && element.textContent) {
+                      const textContent = element.textContent.trim();
+                      if (textContent) {
+                        trackingInfo.fallbackSelectors.push(
+                          `__text__:${textContent}`
+                        );
+                        console.log(
+                          'Added text content fallback from heading:',
+                          textContent
+                        );
+                      }
+                    }
+                  } catch (e) {
+                    console.log('Error getting text content from heading:', e);
+                  }
+                }
               }
             }
 
