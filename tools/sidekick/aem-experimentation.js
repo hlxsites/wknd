@@ -1,4 +1,28 @@
 (function () {
+  function isDebugEnvironment() {
+    const { host, hostname, origin } = window.location;
+
+    return (
+      hostname === 'localhost' ||
+      hostname.endsWith('.page') ||
+      (window.hlx?.experimentation?.options?.isProd &&
+        typeof window.hlx.experimentation?.options?.isProd === 'function' &&
+        !window.hlx.experimentation?.options?.isProd()) ||
+      (window.hlx?.experimentation?.options?.prodHost &&
+        ![host, hostname, origin].includes(
+          window.hlx.experimentation?.options?.prodHost
+        )) ||
+      false
+    );
+  }
+
+  if (!isDebugEnvironment()) {
+    console.log(
+      '[AEM Exp] Experimentation UI disabled in production environment'
+    );
+    return;
+  }
+
   let isAEMExperimentationAppLoaded = false;
   let scriptLoadPromise = null;
   let isHandlingSimulation = false;
