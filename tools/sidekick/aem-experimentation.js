@@ -1,4 +1,25 @@
 (function () {
+  // Check if we should enable the experimentation UI based on environment
+  function shouldEnableExperimentationUI() {
+    const { hostname } = window.location;
+
+    // Check common development hostnames
+    return (
+      hostname === 'localhost' ||
+      hostname.endsWith('.hlx.page') ||
+      hostname.endsWith('.hlx.live')
+    );
+  }
+
+  // Exit immediately in production environments
+  if (!shouldEnableExperimentationUI()) {
+    console.log(
+      '[AEM Exp] Experimentation UI disabled in production environment'
+    );
+    return;
+  }
+
+  // Continue with existing code - only executes in development environments
   let isAEMExperimentationAppLoaded = false;
   let scriptLoadPromise = null;
   let isHandlingSimulation = false;
