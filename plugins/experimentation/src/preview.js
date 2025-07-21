@@ -209,6 +209,7 @@ function createVariant(experiment, variantName, config, options) {
   const percentage = percentformat.format(split);
 
   const experimentURL = new URL(window.location.href);
+  // this will retain other query params such as ?rum=on
   experimentURL.searchParams.set(options.experimentsQueryParameter, `${experiment}/${variantName}`);
 
   return {
