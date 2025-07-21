@@ -59,11 +59,6 @@ function createButton(label) {
 }
 
 function createPopupItem(item) {
-  const actions = typeof item === 'object'
-    ? item.actions.map((action) => (action.href
-      ? `<div class="hlx-button"><a href="${action.href}">${action.label}</a></div>`
-      : `<div class="hlx-button"><a href="#">${action.label}</a></div>`))
-    : [];
   const div = document.createElement('div');
   div.className = `hlx-popup-item${item.isSelected ? ' is-selected' : ''}`;
 
@@ -84,10 +79,26 @@ function createPopupItem(item) {
   performance.className = 'performance';
   div.appendChild(performance);
 
-  if (actions.length) {
+  if (typeof item === 'object' && item.actions && item.actions.length) {
     const actionsDiv = document.createElement('div');
     actionsDiv.className = 'hlx-popup-item-actions';
-    actionsDiv.innerHTML = actions.join('');
+    
+    item.actions.forEach((action) => {
+      const buttonDiv = document.createElement('div');
+      buttonDiv.className = 'hlx-button';
+      
+      const link = document.createElement('a');
+      link.href = action.href || '#';
+      link.textContent = action.label; // Safe: use textContent
+      
+      if (action.onclick) {
+        link.addEventListener('click', action.onclick);
+      }
+      
+      buttonDiv.appendChild(link);
+      actionsDiv.appendChild(buttonDiv);
+    });
+    
     div.appendChild(actionsDiv);
   }
 
@@ -351,21 +362,21 @@ function populatePerformanceMetrics(div, config, {
     summary.textContent += ` not yet enough data to determine a winner. Keep going until you get ${bigcountformat.format((500 * totals.total_experimentations) / totals.total_conversion_events)} visits.`;
   } else if (winner.p_value > 0.05) {
     summary.appendChild(document.createTextNode(' no significant difference between variants. In doubt, stick with '));
-    const controlCode1 = document.createElement('code');
-    controlCode1.textContent = 'control';
-    summary.appendChild(controlCode1);
+    const noSignificanceControlElement = document.createElement('code');
+    noSignificanceControlElement.textContent = 'control';
+    summary.appendChild(noSignificanceControlElement);
     summary.appendChild(document.createTextNode('.'));
   } else if (winner.variant === 'control') {
     summary.appendChild(document.createTextNode(' Stick with '));
-    const controlCode2 = document.createElement('code');
-    controlCode2.textContent = 'control';
-    summary.appendChild(controlCode2);
+    const controlWinnerElement = document.createElement('code');
+    controlWinnerElement.textContent = 'control';
+    summary.appendChild(controlWinnerElement);
     summary.appendChild(document.createTextNode('. No variant is better than the control.'));
   } else {
     summary.appendChild(document.createTextNode(' '));
-    const winnerCode = document.createElement('code');
-    winnerCode.textContent = winner.variant;
-    summary.appendChild(winnerCode);
+    const variantWinnerElement = document.createElement('code');
+    variantWinnerElement.textContent = winner.variant;
+    summary.appendChild(variantWinnerElement);
     summary.appendChild(document.createTextNode(' is the winner.'));
   }
 
