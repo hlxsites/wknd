@@ -115,7 +115,11 @@ function createPopupDialog(header, items = []) {
   if (header.description) {
     const headerDescription = document.createElement('div');
     headerDescription.className = 'hlx-popup-header-description';
-    headerDescription.textContent = header.description;
+    if (typeof header.description === 'string') {
+      headerDescription.textContent = header.description;
+    } else {
+      headerDescription.appendChild(header.description);
+    }
     headerDiv.appendChild(headerDescription);
   }
   
