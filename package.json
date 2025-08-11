@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/adobe/helix-project-boilerplate#readme",
   "devDependencies": {
+    "@adobe/aem-cli": "^16.10.42",
     "@babel/core": "7.18.10",
     "@babel/eslint-parser": "7.18.9",
     "@esm-bundle/chai": "4.3.4-fix.0",
@@ -31,10 +32,10 @@
     "eslint": "8.22.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.26.0",
+    "puppeteer": "^21.2.1",
     "sinon": "14.0.0",
     "stylelint": "14.10.0",
     "stylelint-config-prettier": "9.0.3",
-    "stylelint-config-standard": "25.0.0",
-    "puppeteer": "^21.2.1"
+    "stylelint-config-standard": "25.0.0"
   }
 }
