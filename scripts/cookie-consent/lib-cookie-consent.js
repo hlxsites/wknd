@@ -4,7 +4,7 @@
  * https://github.com/sandstreamdev/cookieconsent
  */
 import { getPlaceholderOrDefault } from '../lib-franklin.js';
-import { updateUserConsent } from '../adobe-martech/index.js';
+import { updateUserConsent } from '../../plugins/martech/index.js';
 
 const REVOKE_CONSENT_ELEMENT_ID = 'cc-revoke-choice';
 const configureCookieConsent = () => {

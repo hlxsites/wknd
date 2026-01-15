@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-cycle
 import { fetchPlaceholders, sampleRUM } from './lib-franklin.js';
 import loadCookieConsent from './cookie-consent/lib-cookie-consent.js';
-import { updateUserConsent } from './adobe-martech/index.js';
+import { updateUserConsent } from '../plugins/martech/index.js';
 
 // Core Web Vitals RUM collection
 sampleRUM('cwv');

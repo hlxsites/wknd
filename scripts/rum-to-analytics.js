@@ -1,5 +1,5 @@
 import { sampleRUM } from './lib-franklin.js';
-import { initRumTracking, pushEventToDataLayer } from './adobe-martech/index.js';
+import { initRumTracking, pushEventToDataLayer } from '../plugins/martech/index.js';
 
 // Define RUM tracking function
 const track = initRumTracking(sampleRUM, { withRumEnhancer: true });

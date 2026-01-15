@@ -20,7 +20,7 @@ import {
   martechEager,
   martechLazy,
   martechDelayed,
-} from './adobe-martech/index.js';
+} from '../plugins/martech/index.js';
 
 const LCP_BLOCKS = ['carousel']; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
@@ -54,7 +54,8 @@ const martechLoadedPromise = initMartech({
   },
 }, {
   launchUrls: [
-    'https://assets.adobedtm.com/51b39232f128/2609377b4aba/launch-6c3a8fffe137-development.min.js',
+    // 'https://assets.adobedtm.com/51b39232f128/2609377b4aba/launch-6c3a8fffe137-development.min.js',
+    'https://assets.adobedtm.com/1281f6ff0c59/10bd8e51e424/launch-c7a9cd9019d1-development.min.js',
   ],
   personalization: getMetadata('target') || new URLSearchParams(window.location.search).has('target'),
 });
