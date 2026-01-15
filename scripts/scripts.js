@@ -295,7 +295,7 @@ async function loadLazy(doc) {
  */
 function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
-  window.setTimeout(() => {
+  (window.requestIdleCallback || window.setTimeout)(() => {
     window.hlx.plugins.load('delayed');
     window.hlx.plugins.run('loadDelayed');
     martechDelayed();
