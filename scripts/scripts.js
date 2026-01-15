@@ -295,13 +295,18 @@ async function loadLazy(doc) {
  */
 function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
-  (window.requestIdleCallback || window.setTimeout)(() => {
+  const cb = () => {
     window.hlx.plugins.load('delayed');
     window.hlx.plugins.run('loadDelayed');
     martechDelayed();
     return import('./delayed.js');
-  }, 3000);
+  };
   // load anything that can be postponed to the latest here
+  if (window.requestIdleCallback) {
+    window.requestIdleCallback(cb, { timeout: 3000 });
+  } else {
+    window.setTimeout(cb, 3000);
+  }
 }
 
 async function loadPage() {
